@@ -1,36 +1,32 @@
 import pygame
 from pygame.locals import *
+			
 
-class Ground():
-	def __init__(self, coordinaten_liste, background):
-		self.coordinaten_liste = coordinaten_liste #liste von Koordinaten
+class Ground(list):
+	def __init__(self, platform_list, background, source):
+		super().__init__()
+		right_mom = 0
+		for i in range(0, len(platform_list)):
+			print(right_mom)
+			self.insert(i, Platform(platform_list[i][0], platform_list[i][1], right_mom, 600 - platform_list[i][1], background, source))
+			right_mom = right_mom + platform_list[i][0]
+		
+		
+class Platform(pygame.sprite.Sprite):
+	def __init__(self, width, height, top, left, background, source):
+		super().__init__()
 		self.background = background
-		self.moment_right = 0
-		
-		
-	def selfblit(self, source):
-		for i in range(len(self.coordinaten_liste)):
-			surf = pygame.Surface((self.coordinaten_liste[i][0], self.coordinaten_liste[i][1]))
-			for y in range(0, surf.get_height(), self.background.get_height()):
-				for x in range(0, surf.get_width(), self.background.get_width()):
-					surf.blit(self.background, (x, y))
-			source.blit(surf, (self.moment_right, 600 - self.coordinaten_liste[i][1]))
-			rect = surf.get_rect()
-			self.moment_right = self.moment_right +  rect.right
-			
-			
-
-class Platform(pygame.Surface):
-	def __init__(self, width, height, top, left , background):
-		super().__init__((width, height))
 		self.top = top
 		self.left = left
-		self.background = background
+		self.surf = pygame.Surface((width, height))
+		self.rect = pygame.Rect(width, height, top, left)
+		self.source = source
+		self.selfblit()
 		
-	def selfblit(self, source):
-		for y in range(0, self.get_height(), self.background.get_height()):
-				for x in range(0, self.get_width(), self.background.get_width()):
-					self.blit(self.background, (x, y))
-		source.blit(self, (self.top, self.left))
+	def selfblit(self):
+		for y in range(0, self.surf.get_height(), self.background.get_height()):
+			for x in range(0, self.surf.get_width(), self.background.get_width()):
+				self.surf.blit(self.background, (x, y))
+		self.source.blit(self.surf, (self.top, self.left))
 
 			
