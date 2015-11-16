@@ -5,7 +5,7 @@ BLACK = (0,0,0)
 WHITE = (255, 255, 255)
 
 class Player(pygame.sprite.Sprite):
-	def __init__(self, img_list, left, top, moveSpeed, jumpPower, clock, source, isMoving=True, isColliding=False, isGrounded = True):
+	def __init__(self, img_list, left, top, moveSpeed, jumpPower, clock, source, direction, isMoving=True, isColliding=False, isGrounded = True):
 		pygame.sprite.Sprite.__init__(self)
 		self.img_list = img_list
 		self.moveSpeed = moveSpeed
@@ -13,11 +13,12 @@ class Player(pygame.sprite.Sprite):
 		self.jumpPower = jumpPower
 		self.isColliding = isColliding
 		self.isGrounded = isGrounded
-		self.surf = pygame.Surface((img_list[0].get_width(), img_list[0].get_height()))
+		self.surf = pygame.Surface((img_list[0][0].get_width(), img_list[0][0].get_height()))
 		self.rect = pygame.Rect(left, top, self.surf.get_width(), self.surf.get_height())
 		self.clock = clock
 		self.source = source
 		self.i = 0
+		self.direction = 'right'
 
 		
 	def move(self, direction):
@@ -29,8 +30,6 @@ class Player(pygame.sprite.Sprite):
 				
 	def jump(self):
 		if self.isGrounded:
-			keys = pygame.key.get_pressed()
-			if keys[pygame.K_UP]:
 				self.rect.top -= self.jumpPower
 			
 			
@@ -42,7 +41,7 @@ class Player(pygame.sprite.Sprite):
 			else:
 				self.isGrounded = False
 		if not self.isGrounded:
-			self.rect.top += 10 #Gravitation
+			self.rect.top += 10			#Gravitation
 		keys = pygame.key.get_pressed()
 		if not keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
 			self.isMoving = False
@@ -52,23 +51,38 @@ class Player(pygame.sprite.Sprite):
 			self.isMoving = True
 		if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
 			self.move('right')
+			self.direction = 'right'
 		if keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
 			self.move('left')
-		if keys[pygame.K_UP]:
+			self.direction = 'left'
+		if keys[pygame.K_SPACE]:
 			self.jump()
-		self.selfblit("des")
+		self.selfblit()
 			
-	def selfblit(self, direction):
-		if not self.isMoving:
-			self.surf.blit(self.img_list[0], (0,0))
-			self.source.blit(self.surf, (self.rect.left, self.rect.top))
-		else:
-			self.surf.fill(BLACK)
-			self.surf.blit(self.img_list[self.i], (0,0))
-			self.source.blit(self.surf, (self.rect.left, self.rect.top))
-			self.clock.tick(30)
-			self.i += 1
-			if self.i >= len(self.img_list):
-				self.i = 0
+	def selfblit(self):
+		if self.direction == 'right':
+			if not self.isMoving:
+				self.surf.blit(self.img_list[0][0], (0,0))
+				self.source.blit(self.surf, (self.rect.left, self.rect.top))
+			else:
+				self.surf.fill(BLACK)
+				self.surf.blit(self.img_list[0][self.i], (0,0))
+				self.source.blit(self.surf, (self.rect.left, self.rect.top))
+				self.clock.tick(50)
+				self.i += 1
+				if self.i >= len(self.img_list):
+					self.i = 0
+		elif self.direction == 'left':
+			if not self.isMoving:
+				self.surf.blit(self.img_list[1][0], (0,0))
+				self.source.blit(self.surf, (self.rect.left, self.rect.top))
+			else:
+				self.surf.fill(BLACK)
+				self.surf.blit(self.img_list[1][self.i], (0,0))
+				self.source.blit(self.surf, (self.rect.left, self.rect.top))
+				self.clock.tick(50)
+				self.i += 1
+				if self.i >= len(self.img_list):
+					self.i = 0
 
 	
