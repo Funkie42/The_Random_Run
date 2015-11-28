@@ -70,7 +70,7 @@ class Main:
             self.on_render()
         self.endIt()
 
-
+    #Alles, was man interaktiv machen kann
     def on_event(self, event):
         if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
             self.running = False
@@ -78,6 +78,7 @@ class Main:
             (clickX,clickY) = event.pos
             self.mouseclick(clickX,clickY)
 
+    #Rendern eben :)
     def on_render(self):
         self.display_surf.blit(self.image_surf,(0,0))
         for button in self.menu_in_use.buttons: # button des Menüs                                      
@@ -102,8 +103,6 @@ class Main:
         for button in self.menu_in_use.buttons:
             if ((clickX > button.xpos) & (clickX < (button.xpos+buttonWidth))) & ((clickY > button.ypos) & (clickY < button.ypos+buttonHeight)):
                 new_menu = button.clicked()
-                print(button.xpos+buttonWidth)
-                print(button.ypos+buttonHeight)
                 self.menu_in_use = self.menus[new_menu]
                 return
                 
@@ -133,15 +132,19 @@ class Menu:
             self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos + buttonHeight + buttonDistance, 3))
             self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance,
                                                                                firstButtonYpos + buttonHeight + buttonDistance, 4))
-        elif self.menuname == "Highscore":
-            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos,5))
-            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos, 0))
-            
-        elif self.menuname == "Multiplayer":
-            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos,5))
-            
         else:
-            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos,5))
+            if self.menuname == "Highscore":
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos,5))
+                
+            elif self.menuname == "Multiplayer":
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos,5))
+
+            elif self.menuname == "Credits":
+                pass
+            else:
+                pass
+                
+            self.buttons.append(Button(buttonWidth,int(buttonHeight/2),firstButtonXpos,WINDOWh - 120,0))
     
 
 
