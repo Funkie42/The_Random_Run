@@ -1,6 +1,6 @@
-import pygame, sys, Gegner
+import pygame, sys
 from pygame.locals import *
-import Gegner
+
 
 class Spieler(pygame.sprite.Sprite):
 	def __init__(self):
