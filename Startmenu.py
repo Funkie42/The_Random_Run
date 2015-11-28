@@ -10,8 +10,16 @@ class Button(pygame.Surface):
         self.ypos = ypos
 
         self.display_surf = None
-        self.image_surf = pygame.image.load("startmenu.jpg").convert()
+        self.image_surf = pygame.image.load("Gui/ground.png").convert()
         self.image_surf = pygame.transform.scale(self.image_surf,(self.width,self.height))
+        self.sound = pygame.mixer.Sound('GtaVocals/GameOver.wav')
+        
+    def pressed(self):
+        pass
+
+    def get_dimensions(self):
+        pass
+    
 
         
         
@@ -44,7 +52,7 @@ class Startmenu:
             self.on_loop()
 
             self.on_render()
-            singleButton.blit(singleButton.image_surf,
+            #singleButton.blit(singleButton.image_surf,
         self.on_cleanup()
 
     def on_init(self):
