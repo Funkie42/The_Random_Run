@@ -1,4 +1,5 @@
 import pygame,time
+import Spieler
 from pygame.locals import *
 
 WINDOWh = 800 #window height
@@ -15,8 +16,8 @@ buttonCursorOver = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/man1.png")
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
-version = "Version 0.02"
-gamename = "The RanD0m RuN"
+version = "Version 0.027"
+gamename = "The Random Run"
 
 
 class Button(pygame.Surface):
@@ -39,8 +40,10 @@ class Button(pygame.Surface):
         self.sound.play()
         # Evtl. kurz verzögern
         time.sleep(0.2)
-        
-        return self.number # Nächster Menübildschirm
+        if(self.number == -1):
+            Spieler.main()
+        else:
+            return self.number # Nächster Menübildschirm
         
 
 class Main:
@@ -101,7 +104,7 @@ class Main:
 
     def mouseclick(self, clickX, clickY, is_clicked = False):
         for button in self.menu_in_use.buttons:
-            if ((clickX > button.xpos) & (clickX < (button.xpos+buttonWidth))) & ((clickY > button.ypos) & (clickY < button.ypos+buttonHeight)):
+            if ((clickX > button.xpos) & (clickX < (button.xpos+button.width))) & ((clickY > button.ypos) & (clickY < button.ypos+button.height)):
                 if is_clicked:
                     button.image_surf = buttonClicked.convert()
                     button.image_surf = pygame.transform.scale(button.image_surf,(button.width,button.height)) # Geklickter Button
@@ -159,6 +162,10 @@ class Menu:
             self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance,
                                                                                firstButtonYpos + buttonHeight + buttonDistance, 4))
         else:
+            if self.menuname == "Singleplayer":
+                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos,-1)) # Spielstart
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos+ buttonHeight + buttonDistance,5))
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance,firstButtonYpos+ buttonHeight + buttonDistance,5))
             if self.menuname == "Highscore":
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos,5))
                 
