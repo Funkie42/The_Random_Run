@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys#, Startmenu
 from pygame.locals import *
 
 
@@ -108,8 +108,12 @@ class Spieler(pygame.sprite.Sprite):
 				self.rev_sprite_list()
 				
 	def kill(self):
-		pygame.quit()
-		sys.exit()
+		#pygame.quit()
+		#sys.exit()
+		return True
+                
+                
+                
 			
 		
 	def update(self):
@@ -158,7 +162,8 @@ class Welt():
 				j.ende -= 4 * self.spieler.direction
 		
 		
-	def update(self):			
+	def update(self):
+		game_over = False
 		for i in self.bloecke:
 			DISPLAYSURF.blit(pygame.Surface((i.width, i.height)), (i.left, i.top))
 		for j in self.gegner:
@@ -167,9 +172,10 @@ class Welt():
 				self.spieler.raiseJumpPower(15)
 				j.kill()
 			elif self.spieler.rect().colliderect(j.bodyRect()):
-				self.spieler.kill()
+				game_over = self.spieler.kill()
 		self.spieler.update()
 		pygame.display.update()
+		return game_over
 		
 
 		
@@ -262,8 +268,8 @@ spieler = Spieler()
 welt = Welt([block1, block2, block3, block4, block5, block6, block7, block8, block9, block10] , [g1], spieler)
 
 def main():
-	
-	while True:
+	peter = True
+	while peter:
 		DISPLAYSURF.fill((255, 255, 255))
 		keys = pygame.key.get_pressed()
 		for event in pygame.event.get():
@@ -277,7 +283,7 @@ def main():
 			spieler.jump()
 		if keys[K_RIGHT] or keys[K_LEFT]:
 			welt.move()
-		welt.update()
+		peter = not (welt.update())
 		clock.tick(fps)
 			
 						

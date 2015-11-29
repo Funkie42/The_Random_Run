@@ -16,6 +16,9 @@ buttonCursorOver = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/man1.png")
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
+game_start_sound = pygame.mixer.Sound('/home/pi/Desktop/The_Random_Run/GtaVocals/Respect.wav')
+game_over_sound = pygame.mixer.Sound('/home/pi/Desktop/The_Random_Run/GtaVocals/GameOver.wav')
+
 version = "Version 0.027"
 gamename = "The Random Run"
 
@@ -37,12 +40,18 @@ class Button(pygame.Surface):
         self.sound = pygame.mixer.Sound('/home/pi/Git/The_Random_Run/GtaVocals/Laugh7.wav')
         
     def clicked(self): # Was tun wenn Button geclickt
-        self.sound.play()
-        # Evtl. kurz verzögern
-        time.sleep(0.2)
-        if(self.number == -1):
+
+        if(self.number == -1): # Singleplayer start simple (Beginning)
+            game_start_sound.play()
+            time.sleep(1)
             Spieler.main()
+            game_over_sound.play()
+            time.sleep(1)
+            return 1
         else:
+            self.sound.play()
+            # Evtl. kurz verzögern
+            time.sleep(0.2)
             return self.number # Nächster Menübildschirm
         
 
@@ -180,9 +189,6 @@ class Menu:
             self.buttons.append(Button(buttonWidth,int(buttonHeight/2),firstButtonXpos,WINDOWh - 120,0))
     
 
-    #Nur Startmenu render:
-    def get_title(self):
-        return self.menuname 
 
 
 
