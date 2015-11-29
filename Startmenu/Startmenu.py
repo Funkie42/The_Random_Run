@@ -1,4 +1,4 @@
-import pygame
+import pygame,time
 from pygame.locals import *
 
 WINDOWh = 800 #window height
@@ -9,10 +9,13 @@ buttonWidth = 200
 buttonHeight = 100
 
 buttonImage = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/ground.png")
+buttonClicked = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/man2.png")
+buttonCursorOver = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/man1.png") #Testzweck
+
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
-version = "Version 0.01"
+version = "Version 0.02"
 gamename = "The RanD0m RuN"
 
 
@@ -24,16 +27,19 @@ class Button(pygame.Surface):
         self.xpos = xpos
         self.ypos = ypos
         self.number = number_in_menu
+        
 
         #self.display_surf = None
         self.image_surf = buttonImage.convert()
         self.image_surf = pygame.transform.scale(self.image_surf,(self.width,self.height))
-
-        self.sound = pygame.mixer.Sound('/home/pi/Git/The_Random_Run/GtaVocals/Laugh8.wav')
+    
+        self.sound = pygame.mixer.Sound('/home/pi/Git/The_Random_Run/GtaVocals/Laugh7.wav')
         
     def clicked(self): # Was tun wenn Button geclickt
         self.sound.play()
         # Evtl. kurz verzögern
+        time.sleep(0.2)
+        
         return self.number # Nächster Menübildschirm
         
 
@@ -49,24 +55,16 @@ class Main:
                           Menu("Highscore"),Menu("Credits"),Menu("Under Construction")] # Test
         self.menu_in_use = self.menus[0] # Startmenu in Benutzung
 
-        #
-        #
-        #
-        #
 
     def on_execute(self):
-
         
         pygame.mixer.music.load('tetris.mid')
         pygame.mixer.music.play(-1, 0.0)
-
-        #buttonding
         
         while(self.running):
             for event in pygame.event.get():
                 self.on_event(event)
             #self.on_loop()
-
             self.on_render()
         self.endIt()
 
@@ -74,9 +72,12 @@ class Main:
     def on_event(self, event):
         if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
             self.running = False
-        elif event.type == MOUSEBUTTONUP:
+        elif event.type == MOUSEMOTION: # Mausposition
+            (mousex,mousey) = event.pos
+            self.mouseclick(mousex,mousey)
+        elif event.type == MOUSEBUTTONUP: # Click-Ort
             (clickX,clickY) = event.pos
-            self.mouseclick(clickX,clickY)
+            self.mouseclick(clickX,clickY,True)
 
     #Rendern eben :)
     def on_render(self):
@@ -84,8 +85,7 @@ class Main:
         for button in self.menu_in_use.buttons: # button des Menüs                                      
             self.display_surf.blit(button.image_surf,(button.xpos,button.ypos))
 
-        title = self.menu_in_use.get_title()
-        self.showText(title, textsize = 64)
+        self.showText(self.menu_in_use.menuname, textsize = 64) # Menuname oben anzeigen
 
         self.showText(version,(WINDOWw/2,WINDOWh-50),15) # versionnummer Text
         pygame.display.flip()
@@ -99,13 +99,37 @@ class Main:
         pygame.quit()
 
 
-    def mouseclick(self, clickX, clickY ):
+    def mouseclick(self, clickX, clickY, is_clicked = False):
         for button in self.menu_in_use.buttons:
             if ((clickX > button.xpos) & (clickX < (button.xpos+buttonWidth))) & ((clickY > button.ypos) & (clickY < button.ypos+buttonHeight)):
-                new_menu = button.clicked()
-                self.menu_in_use = self.menus[new_menu]
+                if is_clicked:
+                    button.image_surf = buttonClicked.convert()
+                    button.image_surf = pygame.transform.scale(button.image_surf,(button.width,button.height)) # Geklickter Button
+                    self.on_render()
+                    
+                    new_menu = button.clicked()
+                    
+                    button.image_surf = buttonImage.convert()
+                    self.menu_in_use = self.menus[new_menu]
+                else:
+                    self.set_back_button_image() # Behebt Bug des Aufgedecktbleibens
+                    
+                    button.image_surf = buttonCursorOver.convert()
+                    self.menu_in_use.curser_over_button = button
+
+                button.image_surf = pygame.transform.scale(button.image_surf,(button.width,button.height))
                 return
-                
+            else:
+                self.set_back_button_image()
+
+    def set_back_button_image(self): # Auslagerung auf Methode, da sonst 2mal der Code verwendet wird (oder auftreten eines Bugs)
+        if  self.menu_in_use.curser_over_button != None:
+            self.menu_in_use.curser_over_button.image_surf = buttonImage.convert()
+            self.menu_in_use.curser_over_button.image_surf = pygame.transform.scale(self.menu_in_use.curser_over_button.image_surf,
+                                                                                    (self.menu_in_use.curser_over_button.width,self.menu_in_use.curser_over_button.height))
+            self.menu_in_use.curser_over_button = None
+
+    
     def showText(self,myString,textpos = (WINDOWw/2, 50), textsize = 32, waitingTime = 0):
         thisPrint = pygame.font.Font('freesansbold.ttf', textsize).render(myString,True,(255,255,255))
         thisRect = thisPrint.get_rect()
@@ -122,6 +146,8 @@ class Menu:
         
         self.menuname = menuname
         self.buttons = []
+
+        self.curser_over_button = None
 
         self.fill_buttons()
 
@@ -146,9 +172,6 @@ class Menu:
                 
             self.buttons.append(Button(buttonWidth,int(buttonHeight/2),firstButtonXpos,WINDOWh - 120,0))
     
-
-
-
 
     #Nur Startmenu render:
     def get_title(self):
