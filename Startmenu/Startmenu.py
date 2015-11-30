@@ -3,7 +3,7 @@ import Spieler
 from pygame.locals import *
 
 WINDOWh = 800 #window height
-WINDOWw = 800 #window width
+WINDOWw = 1000 #window width
 
 buttonDistance = 50
 buttonWidth = 200
@@ -11,18 +11,18 @@ buttonHeight = 100
 
 #Generic Button
 buttonImage = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/ground.png")
+buttonCursorOver = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/man1.png")
 buttonClicked = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/man2.png")
-buttonCursorOver = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/man1.png")#Testzweck
 
 #Singleplayer Button
-singleplayer_button = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Buttons/red_off.png")
-singleplayer_button_cursor_over = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Buttons/red_on.png")
-singleplayer_button_clicked = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Buttons/red_clicked.png")
+singleplayer_button = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/red_off.png")
+singleplayer_button_cursor_over = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/red_on.png")
+singleplayer_button_clicked = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/red_clicked.png")
 
 #Multiplayer Button
-multiplayer_button = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Buttons/blue_off.png")
-multiplayer_button_cursor_over = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Buttons/blue_on.png")
-multiplayer_button_clicked = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Buttons/blue_clicked.png")
+multiplayer_button = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/blue_off.png")
+multiplayer_button_cursor_over = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/blue_on.png")
+multiplayer_button_clicked = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/blue_clicked.png")
 
 
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
@@ -31,7 +31,7 @@ firstButtonYpos = WINDOWh/3
 game_start_sound = pygame.mixer.Sound('/home/pi/Desktop/The_Random_Run/GtaVocals/Respect.wav')
 game_over_sound = pygame.mixer.Sound('/home/pi/Desktop/The_Random_Run/GtaVocals/GameOver.wav')
 
-version = "Version 0.031"
+version = "Version 0.042"
 gamename = "The Random Run"
 
 
@@ -52,7 +52,6 @@ class Button(pygame.Surface):
         self.image_surf = normal.convert()
         self.image_surf = pygame.transform.scale(self.image_surf,(self.width,self.height))
 
-        #To do
         self.normal_surf = normal.convert()
         self.normal_surf = pygame.transform.scale(self.normal_surf,(self.width,self.height))
         
@@ -66,14 +65,15 @@ class Button(pygame.Surface):
         self.sound = pygame.mixer.Sound('/home/pi/Git/The_Random_Run/GtaVocals/Laugh7.wav')
 
     def get_images(self):
+        #First normal, then cursor over, then clicked
         if self.goto_menutitle == "Singleplayer_screen" or self.goto_menutitle == "Game_start":
             return singleplayer_button,singleplayer_button_cursor_over,singleplayer_button_clicked
         
         elif self.goto_menutitle == "Multiplayer_screen":
-            return multiplayer_button,multiplayer_button_cursor_over,singleplayer_button_clicked
+            return multiplayer_button,multiplayer_button_cursor_over,multiplayer_button_clicked
         
         else:
-            return (buttonImage,buttonClicked,buttonCursorOver)
+            return (buttonImage,buttonCursorOver,buttonClicked)
             
     
     def clicked(self): # Was tun wenn Button geclickt
@@ -106,8 +106,8 @@ class Main:
         pygame.init()
         self.running = True
         self.display_surf = pygame.display.set_mode((WINDOWw,WINDOWh))    # ,pygame.FULLSCREEN  für fullscreen (ehem. None)
-        self.image_surf = pygame.image.load("startmenu.jpg").convert()# (ehem. None)
-        self.image_surf = pygame.transform.scale(self.image_surf,(WINDOWh,WINDOWw))
+        self.image_surf = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/background.png").convert()# (ehem. None)
+        self.image_surf = pygame.transform.scale(self.image_surf,(WINDOWw,WINDOWh))
         self.menus = {"Start_screen": Menu(gamename),
                       "Singleplayer_screen": Menu("Singleplayer"),
                       "Multiplayer_screen":Menu("Multiplayer"),
@@ -152,7 +152,7 @@ class Main:
         for button in self.menu_in_use.buttons: # button des Menüs                                      
             self.display_surf.blit(button.image_surf,(button.xpos,button.ypos))
 
-        self.showText(self.menu_in_use.menuname, textsize = 64) # Menuname oben anzeigen
+        self.showText(self.menu_in_use.menuname, textsize = 56) # Menuname oben anzeigen
 
         self.showText(version,(WINDOWw/2,WINDOWh-50),15) # versionnummer Text
         pygame.display.flip()
@@ -197,14 +197,17 @@ class Main:
             self.menu_in_use.curser_over_button = None
 
     
-    def showText(self,myString,textpos = (WINDOWw/2, 50), textsize = 32, waitingTime = 0):
-        thisPrint = pygame.font.Font('freesansbold.ttf', textsize).render(myString,True,(255,255,255))
-        thisRect = thisPrint.get_rect()
-        thisRect.center = (textpos)
-        self.display_surf.blit(thisPrint,thisRect)
-        if(waitingTime != 0):
-            pygame.display.update()
-            pygame.time.wait(waitingTime)  
+    def showText(self,myString,textpos = (WINDOWw/2, 50), textsize = 26, waitingTime = 0):
+        if myString == gamename:
+            pass
+        else:
+            thisPrint = pygame.font.Font('freesansbold.ttf', textsize).render(myString,True,(255,255,255))
+            thisRect = thisPrint.get_rect()
+            thisRect.center = (textpos)
+            self.display_surf.blit(thisPrint,thisRect)
+            if(waitingTime != 0):
+                pygame.display.update()
+                pygame.time.wait(waitingTime)  
         
 
 class Menu:
