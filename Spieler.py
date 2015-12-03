@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys#, Startmenu
 from pygame.locals import *
 
 
@@ -108,8 +108,12 @@ class Spieler(pygame.sprite.Sprite):
 				self.rev_sprite_list()
 				
 	def kill(self):
-		pygame.quit()
-		sys.exit()
+		#pygame.quit()
+		#sys.exit()
+		return True
+                
+                
+                
 			
 		
 	def update(self):
@@ -158,7 +162,8 @@ class Welt():
 				j.ende -= 4 * self.spieler.direction
 		
 		
-	def update(self):			
+	def update(self):
+		game_over = False
 		for i in self.bloecke:
 			DISPLAYSURF.blit(pygame.Surface((i.width, i.height)), (i.left, i.top))
 		for j in self.gegner:
@@ -167,9 +172,10 @@ class Welt():
 				self.spieler.raiseJumpPower(15)
 				j.kill()
 			elif self.spieler.rect().colliderect(j.bodyRect()):
-				self.spieler.kill()
+				game_over = self.spieler.kill()
 		self.spieler.update()
 		pygame.display.update()
+		return game_over
 		
 
 		
@@ -229,17 +235,12 @@ class Feind(pygame.sprite.Sprite):
 		
 pygame.init()
 DISPLAYSURF = pygame.display.set_mode((1600, 1200))
-man1 = pygame.image.load("man1.png")
-man2 = pygame.image.load("man2.png")
-man3 = pygame.image.load("man3.png")
-man4 = pygame.image.load("man4.png")
-man1r = pygame.image.load("man1r.png")
-man2r = pygame.image.load("man2r.png")
-man3r = pygame.image.load("man3r.png")
-man4r = pygame.image.load("man4r.png")
+man1 = pygame.image.load("Gui/man1.png")
+man2 = pygame.image.load("Gui/man2.png")
+man3 = pygame.image.load("Gui/man3.png")
+man4 = pygame.image.load("Gui/man4.png")
 listman2 = [man1, man2, man3, man4]
 listman = [man1, man2, man3, man4]
-listmanr = [man1r, man2r, man3r, man4r]
 
 block1 = pygame.Rect(50, 550, 250, 40)
 block2 = pygame.Rect(650, 550, 100, 40)
@@ -262,8 +263,8 @@ spieler = Spieler()
 welt = Welt([block1, block2, block3, block4, block5, block6, block7, block8, block9, block10] , [g1], spieler)
 
 def main():
-	
-	while True:
+	peter = True
+	while peter:
 		DISPLAYSURF.fill((255, 255, 255))
 		keys = pygame.key.get_pressed()
 		for event in pygame.event.get():
@@ -277,9 +278,8 @@ def main():
 			spieler.jump()
 		if keys[K_RIGHT] or keys[K_LEFT]:
 			welt.move()
-		welt.update()
+		peter = not (welt.update())
 		clock.tick(fps)
 			
-main()
 						
 			
