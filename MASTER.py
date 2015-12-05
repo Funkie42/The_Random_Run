@@ -39,7 +39,6 @@ class Spieler(pygame.sprite.Sprite):
                 return self.sprite_list[self.state][self.sprite_iterator]
                 
 
-
         def rev_sprite_list(self):
                 for i in range(len(self.sprite_list)):
                         for j in range(len(self.sprite_list[i])):
@@ -120,6 +119,7 @@ class Welt():
                 self.spieler.selfblit()
                 #pygame.draw.polygon(LEVELSURF, ((76, 45, 98)), self.spieler.shape.get_vertices())
                 #pygame.draw.circle(LEVELSURF, ((45,34,23)), (int(self.spieler.body.position.x), int(self.spieler.body.position.y)), 10)
+                
                 if self.moveSpeed > 0:
                         self.moveSpeed -= 0.25
 
@@ -136,14 +136,13 @@ DISPLAYSURF = pygame.display.set_mode((1000,800))
 LEVELSURF = pygame.Surface((4000, 8000))
 space = pymunk.Space()
 mars = pygame.image.load("ground.png")
-decke = Boden.Block(pygame.Rect(0, 50, 4000, 50), mars)
 bl = Boden.Block(pygame.Rect(0,400,600,50), mars)
-bl2 = Boden.Block(pygame.Rect(600, 500, 300, 50), mars)
-bl4 = Boden.Block(pygame.Rect(700, 500, 300, 50), mars)
-bl5 = Boden.Block(pygame.Rect(1000, 300, 300, 50), mars)
-bl3 = Boden.Block(pygame.Rect(600, 200, 300, 50), mars)
+bl2 = Boden.Block(pygame.Rect(800, 650, 300, 50), mars)
+bl4 = Boden.Block(pygame.Rect(1400, 800, 300, 50), mars)
+bl5 = Boden.Block(pygame.Rect(2000 ,900, 300, 50), mars)
+bl3 = Boden.Block(pygame.Rect(2500, 700, 300, 50), mars)
 s = Spieler()
-w = Welt([decke, bl, bl2, bl3, bl4, bl5], [], [], s)
+w = Welt([bl, bl2, bl3, bl4, bl5], [], [], s)
 
 def touch(space, arbiter):
         s.is_Grounded = True
@@ -160,15 +159,13 @@ def camera_blit():
         try:
                 rect.center = s.body.position
                 surf = LEVELSURF.subsurface(rect)
-                return surf
-                
+                return surf         
         except:
                 if s.body.position.x < 500:
                         rect.left = 0
                 if s.body.position.y < 400:
                         rect.top = 0
-                # zu erweitern
-                        
+                # zu erweitern    
                 surf = LEVELSURF.subsurface(rect)
                 return surf
 
@@ -197,7 +194,7 @@ while True:
         LEVELSURF.fill((255, 255, 255))
         w.update()
         space.step(1/45)
-        clock.tick(20)
+        clock.tick(fps)
         DISPLAYSURF.blit(camera_blit(), (0,0))
         pygame.display.flip()
         #pygame.quit()
