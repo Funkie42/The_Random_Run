@@ -1,4 +1,4 @@
-import sys, pygame, pymunk, Boden
+import sys, pygame, pymunk, Boden, Hindernis
 from pygame.locals import*
 
 class Spieler(pygame.sprite.Sprite):
@@ -97,6 +97,8 @@ class Welt():
                 self.maxMoveSpeed = 16
                 for i in self.boeden:
                                         space.add(i.shape)
+                for i in self.hindernisse:
+                        space.add(i.body, i.shape)
 
         def move(self):
             if self.moveSpeed < self.maxMoveSpeed:
@@ -109,11 +111,17 @@ class Welt():
                 self.spieler.state_update()
                 for i in self.boeden:
                         i.update()
-                        i.shape.bb
-                        i.body.update_position(i.body, 1/50)
+                        #i.shape.bb
+                        #i.body.update_position(i.body, 1/50)
                         LEVELSURF.blit(i.surf, (i.center_rect()))
                         #pygame.draw.polygon(LEVELSURF, ((34,66,34)), i.shape.get_vertices())
                        # pygame.draw.circle(LEVELSURF, ((4,5,6)), (int(i.body.position.x), int(i.body.position.y)), 10)
+                for i in self.hindernisse:
+                        i.update()
+                        LEVELSURF.blit(i.blit_surf(), i.center_rect())
+                        #pygame.draw.circle(LEVELSURF, ((4,5,6)), (int(i.body.position.x), int(i.body.position.y)), 10)
+                        #pygame.draw.polygon(LEVELSURF, ((34,66,34)), i.shape.get_vertices())
+                        
                 self.spieler.body.update_position(self.spieler.body, 1/50)
                 self.spieler.shape.bb
                 self.spieler.selfblit()
@@ -124,6 +132,20 @@ class Welt():
                         self.moveSpeed -= 0.25
 
 
+class Kugel():
+        def __init__(self, vec):
+                self.vec = vec
+                self.body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, 10))
+                self.body.position = (s.body.position.x, s.body.position.y - 40)
+                self.shape = pymunk.Circle(self.body, 10)
+                space.add(self.body, self.shape)
+                self.body.apply_impulse(vec)
+                kugeln.append(self)
+
+        def update(self):
+                pygame.draw.circle(LEVELSURF, ((0,0,0)), (int(self.body.position.x), int(self.body.position.y)), 10)
+        
+
 pygame.init()
 
 
@@ -132,6 +154,7 @@ man2 = pygame.image.load("man2.png")
 man3 = pygame.image.load("man3.png")
 man4 = pygame.image.load("man4.png")
 listman = [man1, man2, man3, man4]
+listman2 = [man1, man2, man3, man4]
 DISPLAYSURF = pygame.display.set_mode((1000,800))
 LEVELSURF = pygame.Surface((4000, 8000))
 space = pymunk.Space()
@@ -141,8 +164,10 @@ bl2 = Boden.Block(pygame.Rect(800, 650, 300, 50), mars)
 bl4 = Boden.Block(pygame.Rect(1400, 800, 300, 50), mars)
 bl5 = Boden.Block(pygame.Rect(2000 ,900, 300, 50), mars)
 bl3 = Boden.Block(pygame.Rect(2500, 700, 300, 50), mars)
+g = Hindernis.Gegner(bl4, 15, listman2, 3)
 s = Spieler()
-w = Welt([bl, bl2, bl3, bl4, bl5], [], [], s)
+kugeln = []
+w = Welt([bl, bl2, bl3, bl4, bl5], [g], [], s)
 
 def touch(space, arbiter):
         s.is_Grounded = True
@@ -157,6 +182,7 @@ def cänt_touch_dis(space, arbiter):
 rect = pygame.Rect(0,0,1000,800)
 def camera_blit():
         try:
+                #rect.center = w.hindernisse[0].body.position
                 rect.center = s.body.position
                 surf = LEVELSURF.subsurface(rect)
                 return surf         
@@ -179,12 +205,16 @@ fps = 25
 
 while True:
         for event in pygame.event.get():
+                mousepos = pygame.mouse.get_pos()
+                print(mousepos)
                 if event.type == QUIT:
                         pygame.quit()
                         sys.exit()
                 elif event.type == KEYDOWN:
                         if event.key == K_SPACE:
                                 s.jump()
+                        if event.key == K_UP:
+                                k = Kugel((1500, -15))
         keys = pygame.key.get_pressed()
         if keys[K_RIGHT] or keys[K_LEFT]:
                 s.move()
@@ -193,6 +223,8 @@ while True:
         #print(space.collision_handler(1,2))
         LEVELSURF.fill((255, 255, 255))
         w.update()
+        for i in kugeln:
+                i.update()
         space.step(1/45)
         clock.tick(fps)
         DISPLAYSURF.blit(camera_blit(), (0,0))
