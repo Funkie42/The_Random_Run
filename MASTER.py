@@ -136,7 +136,7 @@ class Kugel():
         def __init__(self, vec):
                 self.vec = vec
                 self.body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, 10))
-                self.body.position = (s.body.position.x, s.body.position.y - 40)
+                self.body.position = (s.body.position.x +40 * s.direction, s.body.position.y - 40)
                 self.shape = pymunk.Circle(self.body, 10)
                 space.add(self.body, self.shape)
                 self.body.apply_impulse(vec)
@@ -155,6 +155,9 @@ man3 = pygame.image.load("man3.png")
 man4 = pygame.image.load("man4.png")
 listman = [man1, man2, man3, man4]
 listman2 = [man1, man2, man3, man4]
+listman3 = [man1, man2, man3, man4]
+listman4 = [man1, man2, man3, man4]
+listman5 = [man1, man2, man3, man4]
 DISPLAYSURF = pygame.display.set_mode((1000,800))
 LEVELSURF = pygame.Surface((4000, 8000))
 space = pymunk.Space()
@@ -165,9 +168,12 @@ bl4 = Boden.Block(pygame.Rect(1400, 800, 300, 50), mars)
 bl5 = Boden.Block(pygame.Rect(2000 ,900, 300, 50), mars)
 bl3 = Boden.Block(pygame.Rect(2500, 700, 300, 50), mars)
 g = Hindernis.Gegner(bl4, 15, listman2, 3)
+g2 = Hindernis.Gegner(bl5, 15, listman3, 3)
+g3= Hindernis.Gegner(bl3, 15, listman4, 3)
+g4 = Hindernis.Gegner(bl, 15, listman5, 3)
 s = Spieler()
 kugeln = []
-w = Welt([bl, bl2, bl3, bl4, bl5], [g], [], s)
+w = Welt([bl, bl2, bl3, bl4, bl5], [g,g2,g3,g4], [], s)
 
 def touch(space, arbiter):
         s.is_Grounded = True
@@ -214,7 +220,7 @@ while True:
                         if event.key == K_SPACE:
                                 s.jump()
                         if event.key == K_UP:
-                                k = Kugel((1500, -15))
+                                k = Kugel((1500 * s.direction, -100))
         keys = pygame.key.get_pressed()
         if keys[K_RIGHT] or keys[K_LEFT]:
                 s.move()
