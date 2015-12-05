@@ -235,12 +235,17 @@ class Feind(pygame.sprite.Sprite):
 		
 pygame.init()
 DISPLAYSURF = pygame.display.set_mode((1600, 1200))
-man1 = pygame.image.load("Gui/man1.png")
-man2 = pygame.image.load("Gui/man2.png")
-man3 = pygame.image.load("Gui/man3.png")
-man4 = pygame.image.load("Gui/man4.png")
+man1 = pygame.image.load("man1.png")
+man2 = pygame.image.load("man2.png")
+man3 = pygame.image.load("man3.png")
+man4 = pygame.image.load("man4.png")
+man1r = pygame.image.load("man1r.png")
+man2r = pygame.image.load("man2r.png")
+man3r = pygame.image.load("man3r.png")
+man4r = pygame.image.load("man4r.png")
 listman2 = [man1, man2, man3, man4]
 listman = [man1, man2, man3, man4]
+listmanr = [man1r, man2r, man3r, man4r]
 
 block1 = pygame.Rect(50, 550, 250, 40)
 block2 = pygame.Rect(650, 550, 100, 40)

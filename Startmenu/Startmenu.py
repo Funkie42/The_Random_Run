@@ -2,34 +2,34 @@ import pygame,time
 import Spieler
 from pygame.locals import *
 
-WINDOWh = 600 #window height
-WINDOWw = 600 #window width
+WINDOWh = 800 #window height
+WINDOWw = 1000 #window width
 
 buttonDistance = 50
 buttonWidth = 200
 buttonHeight = 100
 
 #Generic Button
-buttonImage = pygame.image.load("Gui/Buttons/load_button.png")
-buttonCursorOver = pygame.image.load("Gui/Buttons/load_button.png")
-buttonClicked = pygame.image.load("Gui/Buttons/load_button.png")
+buttonImage = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/ground.png")
+buttonCursorOver = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/man1.png")
+buttonClicked = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/man2.png")
 
 #Singleplayer Button
-singleplayer_button = pygame.image.load("Gui/Buttons/red_off.png")
-singleplayer_button_cursor_over = pygame.image.load("Gui/Buttons/red_on.png")
-singleplayer_button_clicked = pygame.image.load("Gui/Buttons/red_clicked.png")
+singleplayer_button = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/red_off.png")
+singleplayer_button_cursor_over = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/red_on.png")
+singleplayer_button_clicked = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/red_clicked.png")
 
 #Multiplayer Button
-multiplayer_button = pygame.image.load("Gui/Buttons/blue_off.png")
-multiplayer_button_cursor_over = pygame.image.load("Gui/Buttons/blue_on.png")
-multiplayer_button_clicked = pygame.image.load("Gui/Buttons/blue_clicked.png")
+multiplayer_button = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/blue_off.png")
+multiplayer_button_cursor_over = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/blue_on.png")
+multiplayer_button_clicked = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/blue_clicked.png")
 
 
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
-game_start_sound = pygame.mixer.Sound('GtaVocals/Respect.wav')
-game_over_sound = pygame.mixer.Sound('GtaVocals/GameOver.wav')
+game_start_sound = pygame.mixer.Sound('/home/pi/Desktop/The_Random_Run/GtaVocals/Respect.wav')
+game_over_sound = pygame.mixer.Sound('/home/pi/Desktop/The_Random_Run/GtaVocals/GameOver.wav')
 
 version = "Version 0.042"
 gamename = "The Random Run"
@@ -62,7 +62,7 @@ class Button(pygame.Surface):
         self.clicked_surf = pygame.transform.scale(self.clicked_surf,(self.width,self.height))
         
     
-        self.sound = pygame.mixer.Sound('GtaVocals/Laugh7.wav')
+        self.sound = pygame.mixer.Sound('/home/pi/Git/The_Random_Run/GtaVocals/Laugh7.wav')
 
     def get_images(self):
         #First normal, then cursor over, then clicked
@@ -106,7 +106,7 @@ class Main:
         pygame.init()
         self.running = True
         self.display_surf = pygame.display.set_mode((WINDOWw,WINDOWh))    # ,pygame.FULLSCREEN  für fullscreen (ehem. None)
-        self.image_surf = pygame.image.load("Gui/background.png").convert()# (ehem. None)
+        self.image_surf = pygame.image.load("/home/pi/Git/The_Random_Run/Gui/Startmenu/background.png").convert()# (ehem. None)
         self.image_surf = pygame.transform.scale(self.image_surf,(WINDOWw,WINDOWh))
         self.menus = {"Start_screen": Menu(gamename),
                       "Singleplayer_screen": Menu("Singleplayer"),
