@@ -1,4 +1,4 @@
-import pygame,time, sys #, MASTER Auskommentiert, da sonst direkt ins Spiel eingestiegen wird
+import pygame,time, sys, MASTER #Auskommentiert, da sonst direkt ins Spiel eingestiegen wird
 from Startmenu_Images import *
 
 from pygame.locals import *
@@ -50,8 +50,9 @@ Sounds
 
 button_sound = "Sounds/click.wav"
 
-#game_start_sound = pygame.mixer.Sound("Sounds/GtaVocals/Respect.wav")
-#game_over_sound = pygame.mixer.Sound("Sounds/GtaVocals/GameOver.wav")
+game_start_sound = "Sounds/GtaVocals/Respect.wav"
+game_over_sound  = "Sounds/GtaVocals/GameOver.wav"
+
 
 game_music = 'Sounds/tetris.mid'
 menu_music = None
@@ -121,7 +122,8 @@ class Button(pygame.Surface):
         #Spielstart
         
         if(self.goto_menutitle == "Game_start"): # Singleplayer start simple (Beginning)
-            game_start_sound.play()
+            pygame.mixer.Sound(game_start_sound).play()
+            #game_start_sound.play()
             time.sleep(1)
 
 
@@ -130,7 +132,7 @@ class Button(pygame.Surface):
             pygame.mixer.music.play(-1, 0.0)
 
             survival_time = time.time()
-            Spieler.main()
+            MASTER.game_run()
             survival_time = int(time.time() - survival_time)
 
             get_Highscore(playername,survival_time)
@@ -138,7 +140,7 @@ class Button(pygame.Surface):
 
             pygame.mixer.music.stop()
             
-            game_over_sound.play()
+            pygame.mixer.Sound(game_over_sound).play()
             time.sleep(1)
             
             return "Singleplayer_screen"

@@ -58,7 +58,7 @@ class build_chipmunk(distutils.cmd.Command):
         if arch == 64 and platform.system() == 'Linux':
             compiler_preargs += ['-m64', '-O3']
         elif arch == 32 and platform.system() == 'Linux':
-            compiler_preargs += ['-m32', '-O3']
+            compiler_preargs += ['-O3'] 
         elif platform.system() == 'Darwin':
             #No -O3 on OSX. There's a bug in the clang compiler when using O3.
             compiler_preargs += ['-arch', 'i386', '-arch', 'x86_64']
