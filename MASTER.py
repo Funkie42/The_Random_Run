@@ -178,7 +178,7 @@ listman3 = [man1, man2, man3, man4]
 listman4 = [man1, man2, man3, man4]
 listman5 = [man1, man2, man3, man4]
 listman6 = [man1, man2, man3, man4]
-DISPLAYSURF = pygame.display.set_mode((1200, 800))
+DISPLAYSURF = pygame.display.set_mode((800, 600))
 BACKGROUNDSURF = pygame.image.load("Gui/menu.png")
 BACKGROUNDSURF = pygame.transform.scale(BACKGROUNDSURF, (4000, 8000))
 LEVELSURF = pygame.Surface((4000, 8000))
@@ -260,41 +260,44 @@ space.add_collision_handler(3,4, begin=kugel_hits_gegner)
 space.add_collision_handler(1,4, begin=player_hits_kugel)
 space.gravity = (0, 900)
 clock = pygame.time.Clock()
-fps = 25
+fps = 15
 
 
-
-while True:
-        for event in pygame.event.get():
-                if event.type == QUIT:
-                        pygame.quit()
-                        sys.exit()
-                elif event.type == KEYDOWN:
-                        if event.key == K_SPACE:
-                                if s.is_Grounded:
-                                        s.jump()
-                                else:
-                                        if s.double_jump_counter > 0:
+def game_run():
+        while True:
+                for event in pygame.event.get():
+                        if event.type == QUIT:
+                                pygame.quit()
+                                sys.exit()
+                        elif event.type == KEYDOWN:
+                                if event.key == K_SPACE:
+                                        if s.is_Grounded:
                                                 s.jump()
-                                                s.double_jump_counter -= 1
-                        if event.key == K_UP:
-                                k = Kugel((800 * s.direction, -75))
-                        if event.key == K_d:
-                                if not s.is_Grounded:
-                                        s.dash_counter += 5
-        keys = pygame.key.get_pressed()
-        if keys[K_RIGHT] or keys[K_LEFT]:
-                s.move()
-        LEVELSURF.fill((255, 255, 255))
-        #LEVELSURF.blit(hintergrund(), camera_blit().get_rect())
-        w.update()
-        for i in kugeln:
-                i.update()
-        space.step(1/fps)
-        clock.tick(fps)
-        #print(s.body.velocity.y)
-        
-        DISPLAYSURF.blit(camera_blit(), (0,0))
-        pygame.display.flip()
-        #pygame.quit()
-        #sys.exit()
+                                        else:
+                                                if s.double_jump_counter > 0:
+                                                        s.jump()
+                                                        s.double_jump_counter -= 1
+                                if event.key == K_UP:
+                                        k = Kugel((800 * s.direction, -75))
+                                if event.key == K_d:
+                                        if not s.is_Grounded:
+                                                s.dash_counter += 5
+                keys = pygame.key.get_pressed()
+                if keys[K_RIGHT] or keys[K_LEFT]:
+                        s.move()
+                LEVELSURF.fill((255, 255, 255))
+                #LEVELSURF.blit(hintergrund(), camera_blit().get_rect())
+                w.update()
+                for i in kugeln:
+                        i.update()
+                space.step(1/fps)
+                clock.tick(fps)
+                #print(s.body.velocity.y)
+                
+                DISPLAYSURF.blit(camera_blit(), (0,0))
+                pygame.display.flip()
+                #pygame.quit()
+                #sys.exit()
+
+if __name__ == '__main__':
+        game_run()
