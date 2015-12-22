@@ -15,7 +15,7 @@ class Spieler(pygame.sprite.Sprite):
 
                 self.jump_force = (0,0)
 
-                self.sprite = SpriteSheet.SpriteSheet("player.png")
+                self.sprite = SpriteSheet.SpriteSheet("Gui/player.png")
                 
                 self.double_jump_iterator = 0
 
@@ -41,23 +41,20 @@ class Spieler(pygame.sprite.Sprite):
 
         def current_sprite(self):
                 #return self.sprite_list[self.state][self.sprite_iterator]
-                return self.sprite.get_image(self.reihe * self.sprite.sprite_sheet.get_width()/7 , self.spalte * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7, self.sprite.sprite_sheet.get_height()/3)
-                
+                if self.direction == 1:
+                        return self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/7 , self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7, self.sprite.sprite_sheet.get_height()/3)
+                else:
+                         return pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/7 , self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7, self.sprite.sprite_sheet.get_height()/3), True, False)
 
-        def rev_sprite_list(self):
-                #for i in range(len(self.sprite_list)):
-                        #for j in range(len(self.sprite_list[i])):
-                                #self.sprite_list[i][j] = pygame.transform.flip(self.sprite_list[i][j], True, False)
-                self.sprite.sprite_sheet = pygame.transform.flip(self.sprite.sprite_sheet, True, False)
 
         def state_update(self):
                 keys = pygame.key.get_pressed()
                 if self.direction == 1 and keys[K_LEFT] and not keys[K_RIGHT]:
                         self.direction = -1
-                        self.rev_sprite_list()
+                        #self.rev_sprite_list()
                 elif self.direction == -1 and keys[K_RIGHT] and not keys[K_LEFT]:
                         self.direction = 1
-                        self.rev_sprite_list()
+                        #self.rev_sprite_list()
                 if self.is_Grounded and not (keys[K_RIGHT] or keys[K_LEFT]):
                         self.state = 0
                 elif self.is_Grounded and (keys[K_RIGHT] or keys[K_LEFT]):
@@ -84,24 +81,22 @@ class Spieler(pygame.sprite.Sprite):
         def selfblit(self):
                 #if self.sprite_iterator >= len(self.sprite_list[self.state]):
                 if self.state == 0:
-                        self.spalte = 0
-                        self.reihe = 2
-                elif self.state == 3:
-                        self.spalte = 2
-                        self.reihe = 2                        
-                else:
-                        if self.sprite_iterator == 1:
-                                if self.spalte <= 2:
-                                        if self.reihe <= 6:
-                                                 self.reihe += 1
-                                        else:
-                                                 self.reihe = 0
-
+                        self.spalte = 5
+                        self.reihe = 1
+                elif self.state == 1:
+                        if self.sprite_iterator >= 1:
+                                if self.spalte <= 5:
                                         self.spalte += 1
                                 else:
                                         self.spalte = 0
+                                        if self.reihe <= 1:
+                                                self.reihe += 1
+                                        else: self.reihe = 0
                                 self.sprite_iterator = 0
-                        self.sprite_iterator += 1
+                        else:
+                                self.sprite_iterator += 1
+                                        
+
                         
                 LEVELSURF.blit(self.current_sprite(), self.rect())
                 #self.sprite_iterator += 1
@@ -166,6 +161,7 @@ class Welt():
                 self.spieler.dash()
                 self.spieler.body.reset_forces()
                 self.spieler.selfblit()
+                print(self.spieler.spalte)
                 #pygame.draw.polygon(LEVELSURF, ((76, 45, 98)), self.spieler.shape.get_vertices())
                 #pygame.draw.circle(LEVELSURF, ((45,34,23)), (int(self.spieler.body.position.x), int(self.spieler.body.position.y)), 10)
                 
