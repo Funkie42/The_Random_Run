@@ -15,7 +15,7 @@ class Spieler(pygame.sprite.Sprite):
 
                 self.jump_force = (0,0)
 
-                self.sprite = SpriteSheet.SpriteSheet("Gui/player.png")
+                self.sprite = woman
                 
                 self.double_jump_iterator = 0
 
@@ -156,7 +156,7 @@ class Welt():
                         i.rect.center = i.body.position
                         i.body.position = i.rect.center
                         i.body.velocity.x = 0
-                        LEVELSURF.blit(i.sprite_list[i.sprite_iterator], i.rect)
+                        LEVELSURF.blit(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/7 , self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7, self.sprite.sprite_sheet.get_height()/3), i.rect)
                         
                 self.spieler.dash()
                 self.spieler.body.reset_forces()
@@ -312,6 +312,7 @@ man3 = pygame.transform.scale(man3,(80,100))
 man4 = pygame.image.load("Gui/man4.png")
 man4 = pygame.transform.scale(man4,(80,100))
 listman = [man1, man2, man3, man4]
+woman = SpriteSheet.SpriteSheet("Gui/player.png")
 
 #GELÄNDESPRITES
 mars = pygame.image.load("Gui/ground.png")
@@ -333,10 +334,10 @@ bl9 = Boden.Block(pygame.Rect(4500,2200,600,50), mars)
 bl10 = Boden.Block(pygame.Rect(4900,2100,600,50), mars)
 bl11 = Boden.Block(pygame.Rect(5200,2000,600,50), mars)
 
-g = Hindernis.Gegner(bl, 15, list(listman), 3)
-g2 = Hindernis.FliegenderGegner(400, 900, 1800, 15, list(listman), 3)
+g = Hindernis.Gegner(bl, 15,woman, 3)
+g2 = Hindernis.FliegenderGegner(400, 900, 1800, 15, woman, 3)
 
-p = Power_Ups.High_Jump(bl3, [man1])
+p = Power_Ups.High_Jump(bl3, woman)
 
 w1 = Welt(pygame.image.load("Gui/wald.jpg"), [bl,bl1,bl2,bl3,bl4,bl5,bl6,bl7,bl8,bl9,bl10,bl11,], [g, g2], [p], s, 200, 1500)
 
