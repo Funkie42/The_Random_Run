@@ -33,7 +33,7 @@ class Spieler(pygame.sprite.Sprite):
                 self.double_jump_counter = 1
 
                 self.is_Grounded = False
-                self.is_Alive = True
+                self.is_alive = True
 
         def rect(self):
                 x = pygame.Rect(0,0, self.current_sprite().get_width(), self.current_sprite().get_height())
@@ -43,9 +43,9 @@ class Spieler(pygame.sprite.Sprite):
         def current_sprite(self):
                 #return self.sprite_list[self.state][self.sprite_iterator]
                 if self.direction == 1:
-                        return self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/7 , self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7, self.sprite.sprite_sheet.get_height()/3)
+                        return self.sprite.get_image(15 + self.spalte * self.sprite.sprite_sheet.get_width()/7 ,  5 +self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7 - 35, self.sprite.sprite_sheet.get_height()/3 - 15)
                 else:
-                         return pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/7 , self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7, self.sprite.sprite_sheet.get_height()/3), True, False)
+                         return pygame.transform.flip(self.sprite.get_image(15 + self.spalte * self.sprite.sprite_sheet.get_width()/7 , 5 + self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7 - 35, self.sprite.sprite_sheet.get_height()/3 - 15), True, False)
 
 
         def state_update(self):
@@ -178,6 +178,8 @@ class Welt():
                                  
                         
                 if self.spieler.body.position.y > LEVELSURF.get_height() - 200:
+                        self.spieler.is_alive == False
+                if self.spieler.is_alive == False:
                         self.spieler.body.velocity.y = -50
                         self.spieler.body.position = (current_speicherpunkt.rect.left + 50, current_speicherpunkt.rect.top - 200)
                 self.spieler.dash()
@@ -416,7 +418,7 @@ while True:
                         space.step(1/35)
                         clock.tick(fps)
                         #print(len(space.bodies))
-                        print(current_speicherpunkt)
+                        print(current_level.speicherpunkte)
                         DISPLAYSURF.blit(camera_blit(), (0,0))
                         pygame.display.flip()
                         #pygame.quit()
