@@ -278,9 +278,7 @@ def player_jumps_gegner(space, arbiter):
                 s.double_jump_counter = 1
                 #print("HURA")
         else:
-                s.body.position.y -= 30
-                s.body.velocity.y = -500
-                s.body.velocity.x = - 500 * s.direction
+                pass
         return True
 
 def player_jumps_fliegender_gegner(space, arbiter):
@@ -290,9 +288,7 @@ def player_jumps_fliegender_gegner(space, arbiter):
                 space.add(arbiter.shapes[1].body)
                 arbiter.shapes[1].collision_type = 3
         else:
-                s.body.position.y -= 30
-                s.body.velocity.y = -500
-                s.body.velocity.x = - 500 * s.direction
+                pass
         return True
 
 def player_jumps_highjump(space, arbiter):
