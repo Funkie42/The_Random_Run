@@ -22,6 +22,8 @@ class Spieler(pygame.sprite.Sprite):
                 self.direction = 1 #1 = rechts, -1 = links
 
                 self.mass = 100
+                self.moveSpeed = 15
+                self.jumpPower = 650
 
                 self.body = pymunk.Body(self.mass, pymunk.inf)
                 self.body.position = (800, 1500)
@@ -66,12 +68,12 @@ class Spieler(pygame.sprite.Sprite):
                         
         def jump(self):
                 if s.body.velocity.y > 0:
-                        self.body.velocity.y = -650
+                        self.body.velocity.y = -self.jumpPower
                 else:
-                        self.body.velocity.y = -650
+                        self.body.velocity.y = -self.jumpPower
 
         def move(self):
-            self.body.position.x += self.direction * 15
+            self.body.position.x += self.direction * self.moveSpeed
             hintergrund_rect.left += 2 * self.direction
 
         def dash(self):
@@ -246,7 +248,15 @@ def hintergrund_blit():
 def touch(space, arbiter):
         s.is_Grounded = True
         s.double_jump_counter = 1
-        s.body.velocity.x = 0
+        if current_level.spieler.body.velocity.x <= -50:
+                current_level.spieler.body.velocity.x += 50
+                current_level.spieler.moveSpeed = 0
+        elif current_level.spieler.body.velocity.x >= 50:
+                current_level.spieler.body.velocity.x -= 50
+                current_level.spieler.moveSpeed = 0
+        if -50 < current_level.spieler.body.velocity.x < 50:
+                current_level.spieler.body.velocity.x = 0
+                current_level.spieler.moveSpeed = 15
         return True
 
 def cänt_touch_dis(space, arbiter):
@@ -279,9 +289,8 @@ def player_jumps_gegner(space, arbiter):
                 current_level.spieler.double_jump_counter = 1
                 #print("HURA")
         else:
-                current_level.spieler.body.velocity.x = -200 * current_level.spieler.direction
-                current_level.spieler.body.velocity.y = -200
-
+                current_level.spieler.body.velocity.x = -600 * current_level.spieler.direction
+                current_level.spieler.body.velocity.y = -750
                 pass
         return True
 
@@ -292,7 +301,9 @@ def player_jumps_fliegender_gegner(space, arbiter):
                 space.add(arbiter.shapes[1].body)
                 arbiter.shapes[1].collision_type = 3
         else:
-                pass
+                current_level.spieler.body.velocity.x = -600 * current_level.spieler.direction
+                current_level.spieler.body.velocity.y = -750
+                current_level.spieler.moveSpeed = 0
         return True
 
 def player_jumps_highjump(space, arbiter):
@@ -315,6 +326,7 @@ DISPLAYSURF = pygame.display.set_mode((1200, 800))
 LEVELSURF = pygame.Surface((6000, 8000))
 current_speicherpunkt = False
 space = pymunk.Space()
+space.damping = 1
 #COLLISIONTYPES:
 # 1 = SPIELER
 # 2 = Böden
@@ -431,6 +443,7 @@ while True:
                         clock.tick(fps)
                         #print(len(space.bodies))
                         #print(current_speicherpunkt)
+                        print(current_level.spieler.body.velocity.x)
                         DISPLAYSURF.blit(camera_blit(), (0,0))
                         pygame.display.flip()
                         #pygame.quit()
