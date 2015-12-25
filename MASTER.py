@@ -178,10 +178,11 @@ class Welt():
                                  
                         
                 if self.spieler.body.position.y > LEVELSURF.get_height() - 200:
-                        self.spieler.is_alive == False
+                        self.spieler.is_alive = False
                 if self.spieler.is_alive == False:
                         self.spieler.body.velocity.y = -50
                         self.spieler.body.position = (current_speicherpunkt.rect.left + 50, current_speicherpunkt.rect.top - 200)
+                        self.spieler.is_alive = True
                 self.spieler.dash()
                 self.spieler.body.reset_forces()
                 self.spieler.selfblit()
@@ -274,17 +275,20 @@ def player_hits_kugel(space, arbiter):
 
 def player_jumps_gegner(space, arbiter):
         if arbiter.contacts[0].normal.int_tuple[0] == 0:
-                s.body.velocity.y = -650
-                s.double_jump_counter = 1
+                current_level.spieler.body.velocity.y = -650
+                current_level.spieler.double_jump_counter = 1
                 #print("HURA")
         else:
+                current_level.spieler.body.velocity.x = -200 * current_level.spieler.direction
+                current_level.spieler.body.velocity.y = -200
+
                 pass
         return True
 
 def player_jumps_fliegender_gegner(space, arbiter):
         if arbiter.contacts[0].normal.int_tuple[0] == 0:
-                s.body.velocity.y = -650
-                s.double_jump_counter = 1
+                current_level.spieler.body.velocity.y = -650
+                current_level.spieler.double_jump_counter = 1
                 space.add(arbiter.shapes[1].body)
                 arbiter.shapes[1].collision_type = 3
         else:
@@ -293,8 +297,8 @@ def player_jumps_fliegender_gegner(space, arbiter):
 
 def player_jumps_highjump(space, arbiter):
         if arbiter.contacts[0].normal.int_tuple[0] == 0:
-                s.body.velocity.y = -1000
-                print("DEPP")
+                current_level.spieler.body.velocity.y = -1000
+                current_level.spieler.double_jump_counter = 1
         else:
                 arbiter.shapes[1].body.position.x += 5 * s.direction
         return True
@@ -309,7 +313,19 @@ def kugel_hits_highjump(space, arbiter):
 pygame.init()
 DISPLAYSURF = pygame.display.set_mode((1200, 800))
 LEVELSURF = pygame.Surface((6000, 8000))
+current_speicherpunkt = False
 space = pymunk.Space()
+#COLLISIONTYPES:
+# 1 = SPIELER
+# 2 = Böden
+# 3 = Bodengegner
+# 4 = Kugel
+# 5 = Highjump
+# 6 = fliegender Gegner
+
+#SPRITEGROUPS
+# 1 = Kugel
+# 2 = Highjump
 space.add_collision_handler(1,2,post_solve=touch, separate=cänt_touch_dis)
 space.add_collision_handler(3,4, begin=kugel_hits_gegner)
 #space.add_collision_handler(6,4, begin=kugel_hits_fliegender_gegner)
@@ -414,7 +430,7 @@ while True:
                         space.step(1/35)
                         clock.tick(fps)
                         #print(len(space.bodies))
-                        print(current_level.speicherpunkte)
+                        #print(current_speicherpunkt)
                         DISPLAYSURF.blit(camera_blit(), (0,0))
                         pygame.display.flip()
                         #pygame.quit()
