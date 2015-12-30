@@ -18,4 +18,6 @@ class High_Jump(Power_Up):
         self.shape.collision_type = 5
         self.shape.group = 2
 
+
+
         

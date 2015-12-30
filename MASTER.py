@@ -98,6 +98,9 @@ class Spieler(pygame.sprite.Sprite):
                                 self.sprite_iterator = 0
                         else:
                                 self.sprite_iterator += 1
+                elif self.state == 2:
+                        self.reihe = 0
+                        self.spalte = 0
                                         
 
                         
@@ -249,10 +252,10 @@ def touch(space, arbiter):
         s.is_Grounded = True
         s.double_jump_counter = 1
         if current_level.spieler.body.velocity.x <= -50:
-                current_level.spieler.body.velocity.x += 50
+                current_level.spieler.body.velocity.x += 25
                 current_level.spieler.moveSpeed = 0
         elif current_level.spieler.body.velocity.x >= 50:
-                current_level.spieler.body.velocity.x -= 50
+                current_level.spieler.body.velocity.x -= 25
                 current_level.spieler.moveSpeed = 0
         if -50 < current_level.spieler.body.velocity.x < 50:
                 current_level.spieler.body.velocity.x = 0
@@ -270,11 +273,8 @@ def kugel_hits_gegner(space, arbiter):
         return True
 
 def kugel_hits_fliegender_gegner(space, arbiter):
-        try:
-                space.add(arbiter.shapes[0].body)
-                return True
-        except:
-                return False
+        space.add(arbiter.shapes[0].body)
+        arbiter.shapes[0].collision_type = 3
         
 
 def player_hits_kugel(space, arbiter):
@@ -289,7 +289,7 @@ def player_jumps_gegner(space, arbiter):
                 current_level.spieler.double_jump_counter = 1
                 #print("HURA")
         else:
-                current_level.spieler.body.velocity.x = -600 * current_level.spieler.direction
+                current_level.spieler.body.velocity.x = -450 * current_level.spieler.direction
                 current_level.spieler.body.velocity.y = -750
                 pass
         return True
@@ -301,7 +301,7 @@ def player_jumps_fliegender_gegner(space, arbiter):
                 space.add(arbiter.shapes[1].body)
                 arbiter.shapes[1].collision_type = 3
         else:
-                current_level.spieler.body.velocity.x = -600 * current_level.spieler.direction
+                current_level.spieler.body.velocity.x = -450 * current_level.spieler.direction
                 current_level.spieler.body.velocity.y = -750
                 current_level.spieler.moveSpeed = 0
         return True
@@ -326,7 +326,8 @@ DISPLAYSURF = pygame.display.set_mode((1200, 800))
 LEVELSURF = pygame.Surface((6000, 8000))
 current_speicherpunkt = False
 space = pymunk.Space()
-space.damping = 1
+space.collision_bias = 0.00001
+current_speicherpunkt = False
 #COLLISIONTYPES:
 # 1 = SPIELER
 # 2 = Böden
@@ -340,7 +341,7 @@ space.damping = 1
 # 2 = Highjump
 space.add_collision_handler(1,2,post_solve=touch, separate=cänt_touch_dis)
 space.add_collision_handler(3,4, begin=kugel_hits_gegner)
-#space.add_collision_handler(6,4, begin=kugel_hits_fliegender_gegner)
+space.add_collision_handler(6,4, begin=kugel_hits_fliegender_gegner)
 space.add_collision_handler(1,4, begin=player_hits_kugel)
 space.add_collision_handler(1,3, begin=player_jumps_gegner)
 space.add_collision_handler(1,6, begin=player_jumps_fliegender_gegner)
@@ -371,30 +372,37 @@ mars = pygame.image.load("Gui/ground.png")
 
 #SPIELER
 s = Spieler()
-
+#1200 2300 2900
 #LEVEL1
 bl = Boden.Block(pygame.Rect(0,2000,1200,50), mars)
-bl1 = Boden.Block(pygame.Rect(700,2400,600,50), mars)
-bl2 = Boden.Block(pygame.Rect(1400,1900,600,50), mars)
-bl3 = Boden.Block(pygame.Rect(1800,1500,600,50), mars)
-bl4 = Boden.Block(pygame.Rect(2000,2000,600,50), mars)
-bl5 = Boden.Block(pygame.Rect(2500,1800,600,50), mars)
-bl6 = Boden.Block(pygame.Rect(3000,2000,600,50), mars)
-bl7 = Boden.Block(pygame.Rect(3600,2400,600,50), mars)
-bl8 = Boden.Block(pygame.Rect(4200,2400,50,200), mars)
-bl9 = Boden.Block(pygame.Rect(4500,2200,600,50), mars)
-bl10 = Boden.Block(pygame.Rect(4900,2100,600,50), mars)
-bl11 = Boden.Block(pygame.Rect(5200,2000,600,50), mars)
+bl1 = Boden.Block(pygame.Rect(1700,2000,1200,50), mars)
+bl2 = Boden.Block(pygame.Rect(2900,1700,750, 50), mars)
+bl3 = Boden.Block(pygame.Rect(3650,1700,50, 800), mars)
+bl4 = Boden.Block(pygame.Rect(3650, 2400,1450, 50), mars)
+bl5 = Boden.Block(pygame.Rect(4400,2000,100, 50), mars)
+bl5_2 = Boden.Block(pygame.Rect(4500,2000,550, 50), mars)
+bl6 = Boden.Block(pygame.Rect(5100,2250,200, 200), mars)
+bl7 = Boden.Block(pygame.Rect(4550,1450,700, 50), mars)
+bl8 = Boden.Block(pygame.Rect(4350,1300,50, 750), mars)
+bl9 = Boden.Block(pygame.Rect(5450,1450,300, 50), mars)
+bl9_2 = Boden.Block(pygame.Rect(5750,1450,400, 50), mars)
+bl10 = Boden.Block(pygame.Rect(5950,1000,50, 450), mars)
 
-g = Hindernis.Gegner(bl, 15,woman, 3)
-g2 = Hindernis.FliegenderGegner(400, 900, 1800, 15, woman, 3)
 
-p = Power_Ups.High_Jump(bl3,  [man1])
+g = Hindernis.Gegner(bl2, 1, woman, 5)
+g1 = Hindernis.Gegner(bl1, 1, woman, 5)
+g2 = Hindernis.Gegner(bl4, 1, woman, 5)
+g3 = Hindernis.Gegner(bl5_2, 1, woman, 5)
+g4 = Hindernis.Gegner(bl7, 1, woman, 5)
 
-sp = Speicherpunkt.Speicherpunkt(bl4, [man1])
+fg = Hindernis.FliegenderGegner(5250, 5500, 1600, 2, woman, 5)
 
-current_speicherpunkt = False
-w1 = Welt(pygame.image.load("Gui/wald.jpg"), [bl,bl1,bl2,bl3,bl4,bl5,bl6,bl7,bl8,bl9,bl10,bl11,], [g, g2], [p], [sp], s)
+hj = Power_Ups.High_Jump(bl5, [man1])
+
+sp = Speicherpunkt.Speicherpunkt(bl9_2, [man1])
+
+
+w1 = Welt(pygame.image.load("Gui/wald.jpg"), [bl,bl1,bl2,bl3, bl4, bl5, bl5_2, bl6, bl7, bl8, bl9,bl9_2, bl10], [g,g1,g2,g3, g4, fg], [hj], [sp], s)
 
 #LEVEL2
 #w2 = Welt( pygame.image.load("Gui/wald.jpg"), [], [], [], [], s, 500, 1500)
@@ -443,7 +451,8 @@ while True:
                         clock.tick(fps)
                         #print(len(space.bodies))
                         #print(current_speicherpunkt)
-                        print(current_level.spieler.body.velocity.x)
+                        #print(current_level.spieler.body.velocity.x)
+                        print(space.collision_bias)
                         DISPLAYSURF.blit(camera_blit(), (0,0))
                         pygame.display.flip()
                         #pygame.quit()

@@ -37,6 +37,7 @@ class Gegner(Hindernis):
         self.body.position = self.rect.center
         self.shape = pymunk.Poly.create_box(self.body, (self.current_sprite().get_width(), self.current_sprite().get_height()))
         self.shape.collision_type = 3
+        self.shape.sprite_group = 2
         self.direction = 1
 
     def init(self, space):
