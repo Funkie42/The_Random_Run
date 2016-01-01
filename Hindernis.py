@@ -1,5 +1,6 @@
-import pymunk, pygame
+import pymunk, pygame, cProfile
 from pygame.locals import*
+
 
 class Hindernis():
     def __init__(self, sprite, moveSpeed, mass):
@@ -62,12 +63,17 @@ class Gegner(Hindernis):
                                 self.sprite_iterator += 1
 
 class FliegenderGegner(Hindernis):
-    def __init__(self, anfang, ende, top, moveSpeed, sprite, mass):
+    def __init__(self, anfang, ende, topOrleft, moveSpeed, sprite, mass, waagrecht=True):
         Hindernis.__init__(self, sprite, moveSpeed, mass)
         self.anfang = anfang
         self.ende = ende
-        self.rect.left = self.anfang + 1
-        self.rect.top = top
+        self.waagrecht = waagrecht
+        if self.waagrecht:
+            self.rect.top = topOrleft
+            self.rect.left = self.anfang + 1
+        else:
+            self.top = self.anfang + 1
+            self.rect.left = topOrleft
         #self.body = pymunk.Body()
         self.body.position = self.rect.center
         self.shape = pymunk.Poly.create_box(self.body, (self.current_sprite().get_width(), self.current_sprite().get_height()))
@@ -76,12 +82,24 @@ class FliegenderGegner(Hindernis):
     def init(self, space):
         space.add(self.shape)
 
+    def course(self):
+        if self.waagrecht:
+            self.body.position.x += self.moveSpeed * self.direction
+        else:
+            self.body.position.y += self.moveSpeed * self.direction
+
     def update(self):
-        if self.rect.right >= self.ende:
-            self.direction = -1
-        if self.rect.left <= self.anfang:
-            self.direction = 1
-        self.body.position.x += self.moveSpeed * self.direction
+        if self.waagrecht:
+            if self.rect.right >= self.ende:
+                self.direction = -1
+            if self.rect.left <= self.anfang:
+                self.direction = 1
+        else:
+            if self.rect.top >= self.ende:
+                self.direction = -1
+            if self.rect.top <= self.anfang:
+                self.direction = 1
+        self.course()
         self.sprite_counter += 1
         if self.sprite_counter >= 3:
             self.sprite_iterator += 1
