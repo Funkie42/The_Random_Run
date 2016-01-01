@@ -48,7 +48,7 @@ class Gegner(Hindernis):
             self.direction = -1
         if self.rect.left <= self.block.rect.left:
             self.direction = 1
-        self.body.position.x += 1 * self.direction
+        self.body.position.x += self.moveSpeed * self.direction
         if self.sprite_iterator >= 1:
                                 if self.spalte <= 5:
                                         self.spalte += 1
@@ -81,7 +81,7 @@ class FliegenderGegner(Hindernis):
             self.direction = -1
         if self.rect.left <= self.anfang:
             self.direction = 1
-        self.body.position.x += 1 * self.direction
+        self.body.position.x += self.moveSpeed * self.direction
         self.sprite_counter += 1
         if self.sprite_counter >= 3:
             self.sprite_iterator += 1

@@ -6,7 +6,6 @@ class Spieler(pygame.sprite.Sprite):
         def __init__(self):
                 pygame.sprite.Sprite.__init__(self)
                 self.sprite_iterator = 0
-                self.sprite_list = ([man1], listman, [man2], [], [], [], [])
 
                 self.reihe = 0
                 self.spalte = 0
@@ -22,7 +21,7 @@ class Spieler(pygame.sprite.Sprite):
                 self.direction = 1 #1 = rechts, -1 = links
 
                 self.mass = 100
-                self.moveSpeed = 15
+                self.moveSpeed = 1
                 self.jumpPower = 650
 
                 self.body = pymunk.Body(self.mass, pymunk.inf)
@@ -74,7 +73,6 @@ class Spieler(pygame.sprite.Sprite):
 
         def move(self):
             self.body.position.x += self.direction * self.moveSpeed
-            hintergrund_rect.left += 2 * self.direction
 
         def dash(self):
                 if self.dash_counter > 0:
@@ -259,7 +257,7 @@ def touch(space, arbiter):
                 current_level.spieler.moveSpeed = 0
         if -50 < current_level.spieler.body.velocity.x < 50:
                 current_level.spieler.body.velocity.x = 0
-                current_level.spieler.moveSpeed = 15
+                current_level.spieler.moveSpeed = 25
         return True
 
 def cänt_touch_dis(space, arbiter):
@@ -382,27 +380,38 @@ bl4 = Boden.Block(pygame.Rect(3650, 2400,1450, 50), mars)
 bl5 = Boden.Block(pygame.Rect(4400,2000,100, 50), mars)
 bl5_2 = Boden.Block(pygame.Rect(4500,2000,550, 50), mars)
 bl6 = Boden.Block(pygame.Rect(5100,2250,200, 200), mars)
+bl6_2 = Boden.Block(pygame.Rect(5300,1700,50, 750), mars)
+bl6_3 = Boden.Block(pygame.Rect(5100,1700,200, 50), mars)
+bl6_4 = Boden.Block(pygame.Rect(5100,1450,50, 250), mars)
 bl7 = Boden.Block(pygame.Rect(4550,1450,700, 50), mars)
 bl8 = Boden.Block(pygame.Rect(4350,1300,50, 750), mars)
 bl9 = Boden.Block(pygame.Rect(5450,1450,300, 50), mars)
 bl9_2 = Boden.Block(pygame.Rect(5750,1450,400, 50), mars)
 bl10 = Boden.Block(pygame.Rect(5950,1000,50, 450), mars)
+bl11 = Boden.Block(pygame.Rect(5600,1800,400, 50), mars)
+bl12 = Boden.Block(pygame.Rect(5700,2100,300, 50), mars)
+bl13 = Boden.Block(pygame.Rect(5800,2400,200, 50), mars)
+bl14 = Boden.Block(pygame.Rect(5800,2700,50, 50), mars)
+bl15 = Boden.Block(pygame.Rect(5500,2900,50, 50), mars)
+bl16 = Boden.Block(pygame.Rect(5200,3100,50, 50), mars)
+bl17 = Boden.Block(pygame.Rect(4200,3100,250, 50), mars)
 
-
-g = Hindernis.Gegner(bl2, 1, woman, 5)
-g1 = Hindernis.Gegner(bl1, 1, woman, 5)
-g2 = Hindernis.Gegner(bl4, 1, woman, 5)
+g = Hindernis.Gegner(bl2, 5, woman, 5)
+g1 = Hindernis.Gegner(bl1, 5, woman, 5)
+g2 = Hindernis.Gegner(bl4, 5, woman, 5)
 g3 = Hindernis.Gegner(bl5_2, 1, woman, 5)
 g4 = Hindernis.Gegner(bl7, 1, woman, 5)
+g5 = Hindernis.Gegner(bl12, 10, woman, 5)
 
-fg = Hindernis.FliegenderGegner(5250, 5500, 1600, 2, woman, 5)
+fg = Hindernis.FliegenderGegner(5350, 5800, 1600, 2, woman, 5)
+fg1 = Hindernis.FliegenderGegner(4700, 5100, 3100, 5, woman, 5)
 
 hj = Power_Ups.High_Jump(bl5, [man1])
 
 sp = Speicherpunkt.Speicherpunkt(bl9_2, [man1])
 
 
-w1 = Welt(pygame.image.load("Gui/wald.jpg"), [bl,bl1,bl2,bl3, bl4, bl5, bl5_2, bl6, bl7, bl8, bl9,bl9_2, bl10], [g,g1,g2,g3, g4, fg], [hj], [sp], s)
+w1 = Welt(pygame.image.load("Gui/wald.jpg"), [bl,bl1,bl2,bl3, bl4, bl5, bl5_2, bl6, bl6_2, bl6_3, bl6_4, bl7, bl8, bl9,bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17], [g,g1,g2,g3, g4, g5, fg, fg1], [hj], [sp], s)
 
 #LEVEL2
 #w2 = Welt( pygame.image.load("Gui/wald.jpg"), [], [], [], [], s, 500, 1500)
@@ -427,17 +436,17 @@ while True:
                                                         s.jump()
                                                 else:
                                                         if s.double_jump_counter > 0:
-                                                                s.jump()
-                                                                s.double_jump_counter -= 1
+                                                                current_level.spieler.jump()
+                                                                current_level.spieler.double_jump_counter -= 1
                                         if event.key == K_UP:
                                                 k = Kugel((900 * s.direction, -75))
                                         if event.key == K_d:
-                                                if not s.is_Grounded:
-                                                        s.dash_counter += 5
+                                                if not current_level.spieler.is_Grounded:
+                                                        current_level.spieler.dash_counter += 5
                                                         
                         keys = pygame.key.get_pressed()
                         if keys[K_RIGHT] or keys[K_LEFT]:
-                                s.move()
+                                current_level.spieler.move()
                                 
                         LEVELSURF.fill((65, 165, 200, 0.5))
                         #LEVELSURF.blit(hintergrund_blit(), (rect.left -25, rect.top -25))
@@ -452,7 +461,8 @@ while True:
                         #print(len(space.bodies))
                         #print(current_speicherpunkt)
                         #print(current_level.spieler.body.velocity.x)
-                        print(space.collision_bias)
+                        #print(space.collision_bias)
+                        print(current_level.spieler.moveSpeed)
                         DISPLAYSURF.blit(camera_blit(), (0,0))
                         pygame.display.flip()
                         #pygame.quit()
