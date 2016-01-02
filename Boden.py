@@ -1,5 +1,5 @@
 #<<<<<<< HEAD
-import pygame, sys, pymunk, cProfile
+import pygame, sys, pymunk
 from pygame.locals import*
 
 class Boden(pygame.sprite.Sprite):
@@ -21,12 +21,14 @@ class Block(Boden):
 		x = self.rect
 		x.center = self.body.position
 		return x
-	
 		
-	def update(self):
+	def update(self, rect):
 		for i in range(0, self.surf.get_height(), self.sprite.get_height()):
 			for j in range(0, self.surf.get_width(), self.sprite.get_width()):
-				self.surf.blit(self.sprite, (j,i))
+				if rect.collidepoint(self.center_rect().left + j, self.center_rect().top + i):
+					self.surf.blit(self.sprite, (j,i))
+				#pygame.draw.circle(self.surf, ((0,0,0)), (j, i), 10)
+                                                                                
 		
 '''=======
 import pygame, os, sys

@@ -112,7 +112,7 @@ class Spieler(pygame.sprite.Sprite):
 class Welt():
         def __init__(self, BACKGROUNDSURF, boeden, hindernisse, power_ups, speicherpunkte, spieler):
                 self.BACKGROUNDSURF = BACKGROUNDSURF
-                self.BACKGROUNDSURF = pygame.transform.scale(self.BACKGROUNDSURF, (DISPLAYSURF.get_width() + 20, DISPLAYSURF.get_height() + 20))
+                self.BACKGROUNDSURF = pygame.transform.scale(self.BACKGROUNDSURF, (DISPLAYSURF.get_width() + 20, DISPLAYSURF.get_height() + 30))
                 self.boeden = boeden
                 self.hindernisse = hindernisse
                 self.power_ups = power_ups
@@ -144,7 +144,7 @@ class Welt():
                 
                 for i in self.boeden:
                         if rect.colliderect(i.center_rect()) and i.center_rect().top < LEVELSURF.get_height() - 200:
-                                i.update()
+                                i.update(rect)
                                 LEVELSURF.blit(i.surf, (i.center_rect()))
                                 #pygame.draw.polygon(LEVELSURF, ((34,66,34)), i.shape.get_vertices())
                                # pygame.draw.circle(LEVELSURF, ((4,5,6)), (int(i.body.position.x), int(i.body.position.y)), 10)
