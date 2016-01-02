@@ -1,40 +1,3 @@
-<<<<<<< HEAD
-import pygame,time
-import Spieler
-from pygame.locals import *
-
-WINDOWh = 600 #window height
-WINDOWw = 600 #window width
-
-buttonDistance = 50
-buttonWidth = 200
-buttonHeight = 100
-
-#Generic Button
-buttonImage = pygame.image.load("Gui/Buttons/load_button.png")
-buttonCursorOver = pygame.image.load("Gui/Buttons/load_button.png")
-buttonClicked = pygame.image.load("Gui/Buttons/load_button.png")
-
-#Singleplayer Button
-singleplayer_button = pygame.image.load("Gui/Buttons/red_off.png")
-singleplayer_button_cursor_over = pygame.image.load("Gui/Buttons/red_on.png")
-singleplayer_button_clicked = pygame.image.load("Gui/Buttons/red_clicked.png")
-
-#Multiplayer Button
-multiplayer_button = pygame.image.load("Gui/Buttons/blue_off.png")
-multiplayer_button_cursor_over = pygame.image.load("Gui/Buttons/blue_on.png")
-multiplayer_button_clicked = pygame.image.load("Gui/Buttons/blue_clicked.png")
-
-
-firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
-firstButtonYpos = WINDOWh/3
-
-game_start_sound = pygame.mixer.Sound('GtaVocals/Respect.wav')
-game_over_sound = pygame.mixer.Sound('GtaVocals/GameOver.wav')
-
-version = "Version 0.042"
-gamename = "The Random Run"
-=======
 import pygame,time, sys, MASTER
 from Startmenu_Images import *
 
@@ -107,7 +70,6 @@ Images:
 #
 
 
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
 
 
 class Button(pygame.Surface):
@@ -120,30 +82,6 @@ class Button(pygame.Surface):
         self.goto_menutitle = menutitle
         
         
-<<<<<<< HEAD
-        #self.display_surf = None
-
-        (normal,cursor_on,clicked) = self.get_images()
-        
-        self.image_surf = normal.convert()
-        self.image_surf = pygame.transform.scale(self.image_surf,(self.width,self.height))
-
-        self.normal_surf = normal.convert()
-        self.normal_surf = pygame.transform.scale(self.normal_surf,(self.width,self.height))
-        
-        self.cursor_on_surf = cursor_on.convert()
-        self.cursor_on_surf = pygame.transform.scale(self.cursor_on_surf,(self.width,self.height))
-        
-        self.clicked_surf = clicked.convert()
-        self.clicked_surf = pygame.transform.scale(self.clicked_surf,(self.width,self.height))
-        
-    
-        self.sound = pygame.mixer.Sound('GtaVocals/Laugh7.wav')
-
-    def get_images(self):
-        #First normal, then cursor over, then clicked
-        if self.goto_menutitle == "Singleplayer_screen" or self.goto_menutitle == "Game_start":
-=======
         (normal,cursor_on,clicked) = self.get_images()
         
         self.image_surf = normal#.convert() # Aktuelles Bild
@@ -164,20 +102,16 @@ class Button(pygame.Surface):
     def get_images(self):
         #First normal, then cursor over, then clicked
         if self.goto_menutitle == "Singleplayer_screen":# or self.goto_menutitle == "Game_start":
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
             return singleplayer_button,singleplayer_button_cursor_over,singleplayer_button_clicked
         
         elif self.goto_menutitle == "Multiplayer_screen":
             return multiplayer_button,multiplayer_button_cursor_over,multiplayer_button_clicked
-<<<<<<< HEAD
-=======
         elif self.goto_menutitle == "Quit_screen":
             return quit_button,quit_button_cursor_over,quit_button_clicked
         elif self.goto_menutitle == "Game_start":
             return ng_button,ng_button_cursor_over,ng_button_clicked
         elif self.goto_menutitle == "Start_screen":
             return back_button,back_button_cursor_over,back_button_clicked
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
         
         else:
             return (buttonImage,buttonCursorOver,buttonClicked)
@@ -188,21 +122,6 @@ class Button(pygame.Surface):
         #Spielstart
         
         if(self.goto_menutitle == "Game_start"): # Singleplayer start simple (Beginning)
-<<<<<<< HEAD
-            game_start_sound.play()
-            time.sleep(1)
-
-            pygame.mixer.music.load('tetris.mid')
-            pygame.mixer.music.play(-1, 0.0)
-            
-            Spieler.main()
-
-            pygame.mixer.music.stop()
-            
-            game_over_sound.play()
-            time.sleep(1)
-            return "Singleplayer_screen"
-=======
           #  pygame.mixer.Sound(game_start_sound).play()
             #game_start_sound.play()
             time.sleep(1)
@@ -213,7 +132,7 @@ class Button(pygame.Surface):
             pygame.mixer.music.play(-1, 0.0)
 
             survival_time = time.time()
-            MASTER.game_run()
+            MASTER.main()
             survival_time = int(time.time() - survival_time)
 
             get_Highscore(playername,survival_time)
@@ -229,7 +148,6 @@ class Button(pygame.Surface):
         elif(self.goto_menutitle == "End"):
             pygame.quit()
             sys.exit()
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
         else:
             self.sound.play()
             # Evtl. kurz verzögern
@@ -241,33 +159,22 @@ class Main:
     def __init__(self):
         pygame.init()
         self.running = True
-        self.display_surf = pygame.display.set_mode((WINDOWw,WINDOWh))    # ,pygame.FULLSCREEN  für fullscreen (ehem. None)
-<<<<<<< HEAD
-        self.image_surf = pygame.image.load("Gui/background.png").convert()# (ehem. None)
-=======
+        self.display_surf = pygame.display.set_mode((WINDOWw,WINDOWh))#,RESIZABLE)    # ,pygame.FULLSCREEN  für fullscreen (ehem. None)
         self.image_surf = pygame.image.load(PFAD + background_image).convert()# (ehem. None)
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
         self.image_surf = pygame.transform.scale(self.image_surf,(WINDOWw,WINDOWh))
         self.menus = {"Start_screen": Menu(gamename),
                       "Singleplayer_screen": Menu("Singleplayer"),
                       "Multiplayer_screen":Menu("Multiplayer"),
-<<<<<<< HEAD
-                      "Highscore_screen": Menu("Highscore"),
-                      "Credits_screen": Menu("Credits"),
-                      "NotDone": Menu("Under Construction"),
-                      "Game_start": Menu("Singleplayer")} # Spiel starten, danach zurück zum singleplayer menu
-        #self.menus = [Menu(gamename),Menu("Singleplayer"),Menu("Multiplayer"),
-        #                  Menu("Highscore"),Menu("Credits"),Menu("Under Construction")] # Test
-=======
                       #"Highscore_screen": Menu("Highscore"), Egal, da Highscore immer neu generiert werden muss
                       "Credits_screen": Menu("Credits"),
                       "NotDone": Menu("Under Construction"),
                       "Game_start": Menu("Singleplayer"),# Spiel starten, danach zurück zum singleplayer menu
                       "Quit_screen": Menu("Quit Confirm"), # Bestätigen des Spielverlassens
-                      "End": Menu("End")} # Verlässt das Spiel
+                      "End": Menu("End"),# Verlässt das Spiel
+                      "Open_Multi_screen": Menu ("Open Server"),
+                      "Link_In_screen": Menu("Enter Multiplayergame")} 
             
 
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
         self.menu_in_use = self.menus["Start_screen"] # Startmenu in Benutzung
 
 
@@ -300,21 +207,12 @@ class Main:
     #Rendern eben :)
     def on_render(self):
         self.display_surf.blit(self.image_surf,(0,0))
-<<<<<<< HEAD
-        for button in self.menu_in_use.buttons: # button des Menüs                                      
-            self.display_surf.blit(button.image_surf,(button.xpos,button.ypos))
-
-        self.showText(self.menu_in_use.menuname, textsize = 56) # Menuname oben anzeigen
-
-        self.showText(version,(WINDOWw/2,WINDOWh-50),15) # versionnummer Text
-=======
         for button in self.menu_in_use.buttons: # button des Menüs anzeigen                         
             self.display_surf.blit(button.image_surf,(button.xpos,button.ypos))
         for (myString,pos,size) in self.menu_in_use.texts: # Alle Texte anzeigen
             self.showText(myString,pos,size)
         self.showText(self.menu_in_use.menuname, textsize = int(WINDOWh/20)) # Menuname oben anzeigen
 
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
         pygame.display.flip()
 
     def on_loop(self):
@@ -324,15 +222,6 @@ class Main:
     def endIt(self):
         pygame.mixer.music.stop()
         pygame.quit()
-<<<<<<< HEAD
-
-
-    def mouseclick(self, clickX, clickY, is_clicked = False):
-        for button in self.menu_in_use.buttons:
-            if ((clickX > button.xpos) & (clickX < (button.xpos+button.width))) & ((clickY > button.ypos) & (clickY < button.ypos+button.height)):
-                if is_clicked:
-                    button.image_surf = button.clicked_surf.convert()
-=======
         sys.exit()
 
 
@@ -344,20 +233,11 @@ class Main:
             if ((clickX > button.xpos) & (clickX < (button.xpos+button.width))) & ((clickY > button.ypos) & (clickY < button.ypos+button.height)):
                 if is_clicked:
                     button.image_surf = button.clicked_surf#.convert()
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
                     button.image_surf = pygame.transform.scale(button.image_surf,(button.width,button.height)) # Geklickter Button
                     self.on_render()
                     
                     new_menu = button.clicked()
                     
-<<<<<<< HEAD
-                    button.image_surf = button.normal_surf.convert()
-                    self.menu_in_use = self.menus[new_menu]
-                else:
-                    self.set_back_button_image() # Behebt Bug des Aufgedecktbleibens
-                    
-                    button.image_surf = button.cursor_on_surf.convert()
-=======
                     button.image_surf = button.normal_surf#.convert()
                     if new_menu == "Highscore_screen":
                         self.menus 
@@ -368,7 +248,6 @@ class Main:
                     self.set_back_button_image() # Behebt Bug des Aufgedecktbleibens
                     
                     button.image_surf = button.cursor_on_surf#.convert()
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
                     self.menu_in_use.curser_over_button = button
 
                 button.image_surf = pygame.transform.scale(button.image_surf,(button.width,button.height))
@@ -378,22 +257,14 @@ class Main:
 
     def set_back_button_image(self): # Auslagerung auf Methode, da sonst 2mal der Code verwendet wird (oder auftreten eines Bugs)
         if  self.menu_in_use.curser_over_button != None:
-<<<<<<< HEAD
-            self.menu_in_use.curser_over_button.image_surf = self.menu_in_use.curser_over_button.normal_surf.convert()
-=======
             self.menu_in_use.curser_over_button.image_surf = self.menu_in_use.curser_over_button.normal_surf#.convert()
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
             self.menu_in_use.curser_over_button.image_surf = pygame.transform.scale(self.menu_in_use.curser_over_button.image_surf,
                                                                                     (self.menu_in_use.curser_over_button.width,self.menu_in_use.curser_over_button.height))
             self.menu_in_use.curser_over_button = None
 
     
     def showText(self,myString,textpos = (WINDOWw/2, 50), textsize = 26, waitingTime = 0):
-<<<<<<< HEAD
-        if myString == gamename:
-=======
         if myString == gamename or myString == "Quit Confirm":
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
             pass
         else:
             thisPrint = pygame.font.Font('freesansbold.ttf', textsize).render(myString,True,(255,255,255))
@@ -411,11 +282,8 @@ class Menu:
         
         self.menuname = menuname
         self.buttons = []
-<<<<<<< HEAD
-=======
         
         self.texts = []# Tripel mit String, Position und Größe 
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
 
         self.curser_over_button = None
 
@@ -426,10 +294,6 @@ class Menu:
             self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos, "Singleplayer_screen"))
             self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos, "Multiplayer_screen"))
             self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos + buttonHeight + buttonDistance, "Highscore_screen"))
-<<<<<<< HEAD
-            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance,
-                                                                               firstButtonYpos + buttonHeight + buttonDistance, "Credits_screen"))
-=======
             self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos + buttonHeight + buttonDistance, "Credits_screen"))
             
             self.buttons.append(Button(int(buttonWidth/2),buttonHeight,WINDOWw/2-(buttonWidth/2/2),WINDOWh-(int(WINDOWh/4)), "Quit_screen")) # Quit game screen
@@ -439,26 +303,12 @@ class Menu:
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos+100, "End"))
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos+100, "Start_screen"))
                                 
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
         else:
             if self.menuname == "Singleplayer":
                 self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos,"Game_start")) # Spielstart
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos+ buttonHeight + buttonDistance,"NotDone"))
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance,firstButtonYpos+ buttonHeight + buttonDistance,"NotDone"))
             if self.menuname == "Highscore":
-<<<<<<< HEAD
-                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos,"NotDone"))
-                
-            elif self.menuname == "Multiplayer":
-                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos,"NotDone"))
-
-            elif self.menuname == "Credits":
-                pass
-            else:
-                pass
-                
-            self.buttons.append(Button(buttonWidth,int(buttonHeight/2),firstButtonXpos,WINDOWh - 120,"Start_screen"))
-=======
                 #self.buttons.append(Button(int(buttonWidth/2),buttonHeight,firstButtonXpos,firstButtonYpos,"NotDone"))
                 place = 1
                 place_y_pos = WINDOWh/2-100
@@ -478,20 +328,23 @@ class Menu:
                     self.texts.append(("GOAL: Beat Mister Man!",(WINDOWw/2,place_y_pos+30),30))
                 
             elif self.menuname == "Multiplayer":
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"NotDone"))
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos, "Not Done"))
+                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"Open_Multi_screen"))
+                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos, "Link_In_screen"))
 
             elif self.menuname == "Credits":
                 self.texts.append(("Graphical Design: The Phil",(WINDOWw/2,WINDOWh/2+50),20))
                 self.texts.append(("Physiks and mechanics: Tom-Master",(WINDOWw/2,WINDOWh/2),20))
                 self.texts.append(("Menu and Multiplayer: General Funky",(WINDOWw/2,WINDOWh/2-50),20))
                 self.texts.append(("Supervision and advice: Clemens Schefel",(WINDOWw/2,WINDOWh/2+100),20))
+            elif self.menuname == "Open Server":
+                pass
 
+            elif self.menuname == "Enter Multiplayergame":
+                self.buttons.append(Button(buttonWidth*2,buttonHeight,firstButtonXpos,firstButtonYpos,"Search"))
             else:
                 pass
                 
             self.buttons.append(Button(buttonWidth,int(buttonHeight),firstButtonXpos,WINDOWh - 100,"Start_screen"))
->>>>>>> ee13f5583c50029f0181b0b725404f56dac561c4
     
 
 
