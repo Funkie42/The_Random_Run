@@ -321,7 +321,7 @@ def kugel_hits_highjump(space, arbiter):
 
 # UNIVERSELLE OPTIONEN
 pygame.init()
-DISPLAYSURF = pygame.display.set_mode((1200, 800))
+DISPLAYSURF = pygame.display.set_mode((800, 600))
 LEVELSURF = pygame.Surface((6000, 8000))
 current_speicherpunkt = False
 space = pymunk.Space()
@@ -466,4 +466,6 @@ def main():
                                 #pygame.quit()
                                 #sys.exit()
 
-cProfile.run("main()")
+if __name__ == "__main__":
+        cProfile.run("main()")
+
