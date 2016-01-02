@@ -3,6 +3,7 @@ from Startmenu_Images import *
 
 from pygame.locals import *
 
+
 WINDOWw = 800 #window width
 WINDOWh = 600 #window height
 
@@ -15,8 +16,11 @@ firstButtonYpos = WINDOWh/3
 
 
 gamename = "The Random Run"
-
 playername = "Player"
+
+# For Mulitplayer
+
+server_IP = "localhost"
 
 #
 '''
@@ -50,8 +54,8 @@ Sounds
 
 button_sound = "Sounds/click.wav"
 
-#game_start_sound = "Sounds/GtaVocals/Respect.wav" Dateien fehlen noch
-#game_over_sound  = "Sounds/GtaVocals/GameOver.wav"
+game_start_sound = None
+
 
 
 game_music = 'Sounds/tetris.mid'
@@ -98,6 +102,7 @@ class Button(pygame.Surface):
         
     
         self.sound = pygame.mixer.Sound(button_sound)
+        #self.gameover_sound = pygame.mixer.Sound("Sounds/GtaVocals/Respect.wav")
 
     def get_images(self):
         #First normal, then cursor over, then clicked
@@ -117,44 +122,7 @@ class Button(pygame.Surface):
             return (buttonImage,buttonCursorOver,buttonClicked)
             
     
-    def clicked(self): # Was tun wenn Button geclickt
-
-        #Spielstart
-        
-        if(self.goto_menutitle == "Game_start"): # Singleplayer start simple (Beginning)
-          #  pygame.mixer.Sound(game_start_sound).play()
-            #game_start_sound.play()
-            time.sleep(1)
-
-
-            #In der Endversion soll das am besten in der Spiel-Datei stehen und nicht hier, zwecks Highscore anzeige
-            pygame.mixer.music.load(game_music)
-            pygame.mixer.music.play(-1, 0.0)
-
-            survival_time = time.time()
-            MASTER.main()
-            survival_time = int(time.time() - survival_time)
-
-            get_Highscore(playername,survival_time)
-                
-
-            pygame.mixer.music.stop()
-            
-            pygame.mixer.Sound(game_over_sound).play()
-            time.sleep(1)
-            
-            return "Singleplayer_screen"
-        
-        elif(self.goto_menutitle == "End"):
-            pygame.quit()
-            sys.exit()
-        else:
-            self.sound.play()
-            # Evtl. kurz verzögern
-            time.sleep(0.2)
-            return self.goto_menutitle # Nächster Menübildschirm
-        
-
+    
 class Main:
     def __init__(self):
         pygame.init()
@@ -171,7 +139,7 @@ class Main:
                       "Game_start": Menu("Singleplayer"),# Spiel starten, danach zurück zum singleplayer menu
                       "Quit_screen": Menu("Quit Confirm"), # Bestätigen des Spielverlassens
                       "End": Menu("End"),# Verlässt das Spiel
-                      "Open_Multi_screen": Menu ("Open Server"),
+                      "Open_Multi_screen": Menu ("Open TCP-Server"),
                       "Link_In_screen": Menu("Enter Multiplayergame")} 
             
 
@@ -197,32 +165,112 @@ class Main:
     def on_event(self, event):
         if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
             self.running = False
+            
         elif event.type == MOUSEMOTION: # Mausposition
             (mousex,mousey) = event.pos
             self.mouseclick(mousex,mousey)
+            
         elif event.type == MOUSEBUTTONUP: # Click-Ort
             (clickX,clickY) = event.pos
             self.mouseclick(clickX,clickY,True)
+        
+        elif (self.menu_in_use.write_text_config != None) & (event.type == KEYDOWN):
+            if event.key == K_RETURN:
+                if self.menu_in_use.writeable_text != "":
+                    pass # TODO
+            elif event.key == K_BACKSPACE:
+                if len(self.menu_in_use.writeable_text) > 0:
+                    self.menu_in_use.writeable_text = self.menu_in_use.writeable_text[:-1]
+            else:
+                if len(self.menu_in_use.writeable_text) < 19: # Maxlänge, damit es nicht aus der Box kommt
+                    try: self.menu_in_use.writeable_text += str(event.unicode)
+                    except: pass
 
     #Rendern eben :)
     def on_render(self):
         self.display_surf.blit(self.image_surf,(0,0))
+        
+        for surface in self.menu_in_use.surfaces: # Alle anderen Oberflächen
+            image = pygame.transform.scale(searchbar_image, surface[0])
+            self.display_surf.blit(image,surface[1])
+            
         for button in self.menu_in_use.buttons: # button des Menüs anzeigen                         
             self.display_surf.blit(button.image_surf,(button.xpos,button.ypos))
+            
         for (myString,pos,size) in self.menu_in_use.texts: # Alle Texte anzeigen
             self.showText(myString,pos,size)
+            
         self.showText(self.menu_in_use.menuname, textsize = int(WINDOWh/20)) # Menuname oben anzeigen
+        
+        if self.menu_in_use.write_text_config != None: # Für Texteingaben im Spiel
+            text,pos,size,writey = self.menu_in_use.write_text_config
+            text = self.menu_in_use.writeable_text
+            self.showText(text,pos,size, writeable = True)
 
+        #Flip it!    
         pygame.display.flip()
-
-    def on_loop(self):
-        pass
             
     #Beende Spiel
     def endIt(self):
         pygame.mixer.music.stop()
         pygame.quit()
         sys.exit()
+
+    def button_clicked(self,button): # Was tun wenn Button geclickt
+        global server_IP
+        #Spielstart Singleplayer
+        
+        if(button.goto_menutitle == "Game_start"): # Singleplayer start simple (Beginning)
+          #  pygame.mixer.Sound(game_start_sound).play()
+            #game_start_sound.play()
+            time.sleep(1)
+
+
+            #In der Endversion soll das am besten in der Spiel-Datei stehen und nicht hier, zwecks Highscore anzeige
+            pygame.mixer.music.load(game_music)
+            pygame.mixer.music.play(-1, 0.0)
+
+            survival_time = time.time()
+            try:MASTER.main()
+            except: print("The Game crashed for some reason.... try again! :)")
+            finally:
+                survival_time = int(time.time() - survival_time)
+
+                get_Highscore(playername,survival_time)
+                    
+
+                pygame.mixer.music.stop()
+                
+                #self.game_over_sound.play()
+                time.sleep(1)
+                
+                return "Singleplayer_screen"
+
+        #Ende Spiel
+        
+        elif(button.goto_menutitle == "End"):
+            pygame.quit()
+            sys.exit()
+
+        #Mulitplayer Link in
+
+        elif(button.goto_menutitle == "Search"):
+            server_IP = self.menu_in_use.writeable_text
+            self.menu_in_use.surfaces.append(((buttonWidth*2,buttonHeight*2),(WINDOWw - buttonWidth,WINDOWh -  buttonHeight)))
+            #TODO
+            return self.menu_in_use.menuname
+
+
+        #Anderes Menu
+        
+            
+        else:
+            button.sound.play()
+            # Evtl. kurz verzögern
+            time.sleep(0.2)
+            return button.goto_menutitle # Nächster Menübildschirm
+        
+
 
 
     def mouseclick(self, clickX, clickY, is_clicked = False):
@@ -236,11 +284,10 @@ class Main:
                     button.image_surf = pygame.transform.scale(button.image_surf,(button.width,button.height)) # Geklickter Button
                     self.on_render()
                     
-                    new_menu = button.clicked()
+                    new_menu = self.button_clicked(button)
                     
                     button.image_surf = button.normal_surf#.convert()
                     if new_menu == "Highscore_screen":
-                        self.menus 
                         self.menu_in_use = Menu("Highscore")
                     else:
                         self.menu_in_use = self.menus[new_menu]
@@ -263,14 +310,19 @@ class Main:
             self.menu_in_use.curser_over_button = None
 
     
-    def showText(self,myString,textpos = (WINDOWw/2, 50), textsize = 26, waitingTime = 0):
+    def showText(self,myString,textpos = (WINDOWw/2, 50), textsize = 26, waitingTime = 0, writeable = False):
         if myString == gamename or myString == "Quit Confirm":
             pass
         else:
             thisPrint = pygame.font.Font('freesansbold.ttf', textsize).render(myString,True,(255,255,255))
             thisRect = thisPrint.get_rect()
-            thisRect.center = (textpos)
+            if writeable:
+                thisRect.x, thisRect.y = textpos
+            else:
+                thisRect.center = (textpos)
+                
             self.display_surf.blit(thisPrint,thisRect)
+                
             if(waitingTime != 0):
                 pygame.display.update()
                 pygame.time.wait(waitingTime)  
@@ -281,9 +333,13 @@ class Menu:
     def __init__(self,menuname):
         
         self.menuname = menuname
-        self.buttons = []
+
         
-        self.texts = []# Tripel mit String, Position und Größe 
+        self.buttons = []
+        self.surfaces = []  #2er Tupel von 2er Tupeln mit (Breite,Höhe) und (Xpos,Ypos)
+        self.texts = []# Tripel mit String, Position und Größe
+        self.write_text_config = None # 4er Tupel mit String, Position, Größe und Writeable auf True        
+        self.writeable_text = ""
 
         self.curser_over_button = None
 
@@ -336,11 +392,17 @@ class Menu:
                 self.texts.append(("Physiks and mechanics: Tom-Master",(WINDOWw/2,WINDOWh/2),20))
                 self.texts.append(("Menu and Multiplayer: General Funky",(WINDOWw/2,WINDOWh/2-50),20))
                 self.texts.append(("Supervision and advice: Clemens Schefel",(WINDOWw/2,WINDOWh/2+100),20))
-            elif self.menuname == "Open Server":
-                pass
+
+            elif self.menuname == "Open TCP-Server": # TODO
+                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"Open_Multi_screen"))
+                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos, "Link_In_screen"))
 
             elif self.menuname == "Enter Multiplayergame":
-                self.buttons.append(Button(buttonWidth*2,buttonHeight,firstButtonXpos,firstButtonYpos,"Search"))
+                self.surfaces.append( (   (buttonWidth*2 + buttonDistance,buttonHeight), (firstButtonXpos,firstButtonYpos)  ) )
+                self.texts.append(("IP-Address: ",(firstButtonXpos+ int(buttonWidth/2),firstButtonYpos + int(buttonHeight/2)),20))
+                self.write_text_config = (( "192.168.178.",(firstButtonXpos+140,firstButtonYpos + 25),22,True))
+                self.writeable_text =  "192.168.178."
+                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos + buttonDistance*2,"Search"))
             else:
                 pass
                 

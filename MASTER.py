@@ -466,4 +466,5 @@ def main():
                                 #pygame.quit()
                                 #sys.exit()
 
-cProfile.run("main()")
+if __name__ == "__main__":
+        cProfile.run("main()")

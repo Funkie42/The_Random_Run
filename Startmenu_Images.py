@@ -61,3 +61,9 @@ buttonClicked = pygame.image.load(PFAD + "Gui/Buttons/bl_yes_clicked.png")
 buttonImage = pygame.image.load(PFAD + "Gui/Buttons/bl_no_off.png")
 buttonCursorOver = pygame.image.load(PFAD + "Gui/Buttons/bl_no_on.png")
 buttonClicked = pygame.image.load(PFAD + "Gui/Buttons/bl_no_clicked.png")
+
+
+
+# Search Bar
+
+searchbar_image = pygame.image.load(PFAD + "Gui/ground.png")
