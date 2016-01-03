@@ -130,17 +130,18 @@ class Main:
         self.display_surf = pygame.display.set_mode((WINDOWw,WINDOWh))#,RESIZABLE)    # ,pygame.FULLSCREEN  für fullscreen (ehem. None)
         self.image_surf = pygame.image.load(PFAD + background_image).convert()# (ehem. None)
         self.image_surf = pygame.transform.scale(self.image_surf,(WINDOWw,WINDOWh))
-        self.menus = {"Start_screen": Menu(gamename),
-                      "Singleplayer_screen": Menu("Singleplayer"),
-                      "Multiplayer_screen":Menu("Multiplayer"),
+        self.menus = {"Start_screen": Menu(gamename,"Start_screen"),
+                      "Singleplayer_screen": Menu("Singleplayer","Singleplayer_screen"),
+                      "Multiplayer_screen":Menu("Multiplayer", "Multiplayer_screen"),
                       #"Highscore_screen": Menu("Highscore"), Egal, da Highscore immer neu generiert werden muss
-                      "Credits_screen": Menu("Credits"),
-                      "NotDone": Menu("Under Construction"),
-                      "Game_start": Menu("Singleplayer"),# Spiel starten, danach zurück zum singleplayer menu
-                      "Quit_screen": Menu("Quit Confirm"), # Bestätigen des Spielverlassens
-                      "End": Menu("End"),# Verlässt das Spiel
-                      "Open_Multi_screen": Menu ("Open TCP-Server"),
-                      "Link_In_screen": Menu("Enter Multiplayergame")} 
+                      "Credits_screen": Menu("Credits", "Credits_screen"),
+                      "NotDone": Menu("Under Construction","NotDone"),
+                      "Game_start": Menu("Singleplayer","Game_start"),# Spiel starten, danach zurück zum singleplayer menu
+                      "Quit_screen": Menu("Quit Confirm","Quit_screen"), # Bestätigen des Spielverlassens
+                      "End": Menu("End","End"),# Verlässt das Spiel
+                      "Open_Multi_screen": Menu ("Open TCP-Server","Open_Multi_screen"),
+                      "Link_In_screen": Menu("Enter Multiplayergame","Link_In_screen"),
+                      "Awaiting_Player_screen": Menu("Awaiting second player","Awaiting_Player_screen")} 
             
 
         self.menu_in_use = self.menus["Start_screen"] # Startmenu in Benutzung
@@ -256,17 +257,37 @@ class Main:
 
         elif(button.goto_menutitle == "Search"):
             server_IP = self.menu_in_use.writeable_text
-            self.menu_in_use.surfaces.append(((buttonWidth*2,buttonHeight*2),(WINDOWw - buttonWidth,WINDOWh -  buttonHeight)))
-            #TODO
-            return self.menu_in_use.menuname
+            load_surf = ((buttonWidth*2,buttonHeight*2),(int(WINDOWw/2) - buttonWidth,int(WINDOWh/2) -  buttonHeight))
 
+            image = pygame.transform.scale(searchbar_image, load_surf[0])
 
+            connection_text = "Connecting"
+            for dot in " ...":
+                connection_text += dot
+                self.display_surf.blit(image,load_surf[1])
+                self.showText(connection_text,(int(WINDOWw/2),int(WINDOWh/2)),30)
+                pygame.display.flip()
+                time.sleep(1)
+            
+            image = pygame.transform.scale(searchbar_image, load_surf[0])
+            self.display_surf.blit(image,load_surf[1])
+            self.showText("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30)
+            pygame.display.flip()
+
+            time.sleep(2)
+            
+            return self.menu_in_use.key_name
+
+        # Multiplayer Open Game
+
+        elif(button.goto_menutitle == "Start_Multiplayer"):
+            pass # TODO
+        
         #Anderes Menu
         
             
         else:
             button.sound.play()
-            # Evtl. kurz verzögern
             time.sleep(0.2)
             return button.goto_menutitle # Nächster Menübildschirm
         
@@ -288,7 +309,7 @@ class Main:
                     
                     button.image_surf = button.normal_surf#.convert()
                     if new_menu == "Highscore_screen":
-                        self.menu_in_use = Menu("Highscore")
+                        self.menu_in_use = Menu("Highscore","Highscore_screen")
                     else:
                         self.menu_in_use = self.menus[new_menu]
                 else:
@@ -330,10 +351,10 @@ class Main:
 
 class Menu:
 
-    def __init__(self,menuname):
+    def __init__(self,menuname, key_name):
         
         self.menuname = menuname
-
+        self.key_name = key_name
         
         self.buttons = []
         self.surfaces = []  #2er Tupel von 2er Tupeln mit (Breite,Höhe) und (Xpos,Ypos)
@@ -393,9 +414,9 @@ class Menu:
                 self.texts.append(("Menu and Multiplayer: General Funky",(WINDOWw/2,WINDOWh/2-50),20))
                 self.texts.append(("Supervision and advice: Clemens Schefel",(WINDOWw/2,WINDOWh/2+100),20))
 
-            elif self.menuname == "Open TCP-Server": # TODO
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"Open_Multi_screen"))
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos, "Link_In_screen"))
+            elif self.menuname == "Open TCP-Server": 
+                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"Awaiting_Player_screen"))
+                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos,"Awaiting_Player_screen"))
 
             elif self.menuname == "Enter Multiplayergame":
                 self.surfaces.append( (   (buttonWidth*2 + buttonDistance,buttonHeight), (firstButtonXpos,firstButtonYpos)  ) )
@@ -403,6 +424,12 @@ class Menu:
                 self.write_text_config = (( "192.168.178.",(firstButtonXpos+140,firstButtonYpos + 25),22,True))
                 self.writeable_text =  "192.168.178."
                 self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos + buttonDistance*2,"Search"))
+
+            elif self.menuname == "Awaiting second player":
+                self.texts.append(("Let a friend join in to start the randomness!",(WINDOWw/2,WINDOWh/2-50),30))
+                self.texts.append(("(If you have one...)",(WINDOWw/2,WINDOWh/2-25),10))
+                
+
             else:
                 pass
                 
@@ -414,6 +441,6 @@ class Menu:
 
 
     
-        
-start = Main()
-start.on_execute()
+if __name__ == "__main__":        
+    start = Main()
+    start.on_execute()
