@@ -5,6 +5,15 @@ from pygame.locals import *
 
 import MASTERmulit,Gameclient,Gameserver
 
+########    Automatisches Erkennen der eigenen IP-Adresse   ######
+import socket
+ip = ([l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0])
+# For Mulitplayer
+
+server_ip = ip
+client_ip = ip
+port = 42042
+
 
 WINDOWw = 800 #window width
 WINDOWh = 600 #window height
@@ -24,11 +33,7 @@ load_surf = ((buttonWidth*2,buttonHeight*2),
 gamename = "The Random Run"
 playername = "Player"
 
-# For Mulitplayer
 
-server_ip = "localhost"
-client_ip = "localhost"
-port = 42042
 
 #
 '''
@@ -485,8 +490,8 @@ class Menu:
             elif self.menuname == "Enter Multiplayergame":
                 self.surfaces.append( (   (buttonWidth*2 + buttonDistance,buttonHeight), (firstButtonXpos,firstButtonYpos)  ) )
                 self.texts.append(("IP-Address: ",(firstButtonXpos+ int(buttonWidth/2),firstButtonYpos + int(buttonHeight/2)),20))
-                self.write_text_config = (( "192.168.178.",(firstButtonXpos+140,firstButtonYpos + 25),22,True))
-                self.writeable_text =  "192.168.178."
+                self.write_text_config = (( ip,(firstButtonXpos+140,firstButtonYpos + 25),22,True))
+                self.writeable_text =  ip
                 self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos + buttonDistance*2,"Search"))
 
             elif self.menuname == "Awaiting second player":
