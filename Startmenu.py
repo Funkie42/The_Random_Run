@@ -1,4 +1,4 @@
-import pygame,time, sys#, MASTER
+import pygame,time, sys, MASTER
 from Startmenu_Images import *
 
 from pygame.locals import *

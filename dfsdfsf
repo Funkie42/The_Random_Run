@@ -1,0 +1,453 @@
+commit 95bb5d61c83ff9ebfc8416efb8bfee24f033882a
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sun Jan 3 20:28:30 2016 +0000
+
+    Multi jetzt vom Menu nutzbar, momentan nur auf dem selben PC, aber das kommt morgen
+
+commit 7f0adf00359bea46f8a7f268299cb746d5ad115b
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sun Jan 3 15:53:37 2016 +0000
+
+    Yay, Multiplayer geht fast perfekt
+
+commit 9e3aeec0580be8e93b50a3abaca9df0f6ffd5f9e
+Merge: 6e1ecea 0c59d4b
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sun Jan 3 10:15:35 2016 +0000
+
+    Test
+
+commit 6e1ecea752d7e3a81bbd5fe0fde7aa039066697e
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sun Jan 3 10:13:26 2016 +0000
+
+    auto dev server commit
+
+commit 0c59d4bef6acc0d1a71f3b23ae08f88949a170a2
+Author: Tom Müller <Tom Müller>
+Date:   Sun Jan 3 09:53:21 2016 +0100
+
+    klettern fct removed
+
+commit 3b2ca047a9c43d7856d44019864c8e66277cf5a0
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Jan 2 22:11:01 2016 +0000
+
+    Working on Multiplayer
+
+commit 85f8aaaf0ae76e675bcc44a3170e7f1e4068342f
+Merge: 21e812a d0e0053
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Jan 2 22:08:30 2016 +0000
+
+    auto dev server commit
+
+commit 21e812a8b62d8efcc0cb79970d2d82f0955ab11c
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Jan 2 22:02:20 2016 +0000
+
+    Working on Multiplayer
+
+commit d0e0053cb035cfc46bf2399ffd523b0637ab235b
+Merge: 8e67b61 84eab8d
+Author: Tom Müller <Tom Müller>
+Date:   Sat Jan 2 20:50:44 2016 +0100
+
+    update2
+
+commit 8e67b61b786e81628adf1e3cabe13d769c54a853
+Author: Tom Müller <Tom Müller>
+Date:   Sat Jan 2 20:48:18 2016 +0100
+
+    update
+
+commit 84eab8de589cf78e66c7ca795551f18cca616c8d
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Jan 2 15:08:41 2016 +0000
+
+    MASTER wieder
+
+commit a533ddde8193fb2fb6d5ed56e4113e2b6ae0a53b
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Jan 2 14:51:05 2016 +0000
+
+    Startmenu back on trask
+
+commit 793fcc32e887d1661fde759ab16d66c62863cbe0
+Author: Tom Müller <Tom Müller>
+Date:   Sat Jan 2 10:36:00 2016 +0100
+
+    kleine performanceverbesserungen
+
+commit a0a2fdd32bc8010aa45d6cb9da1488e62da12540
+Author: Tom Müller <Tom Müller>
+Date:   Fri Jan 1 20:14:15 2016 +0100
+
+    mit hintergrund
+
+commit e95274e53dd02bbb5ea41c0e5ad2c09943787951
+Author: Tom Müller <Tom Müller>
+Date:   Fri Jan 1 10:34:05 2016 +0100
+
+    erstes level halb
+
+commit f182a565df2844a339abfd00da568f7405161274
+Author: Tom Müller <Tom Müller>
+Date:   Wed Dec 30 20:02:57 2015 +0100
+
+    level halb fertig
+
+commit 9ac61bba08dc3008c464ff2ed059f2d3411c051f
+Author: Tom Müller <Tom Müller>
+Date:   Fri Dec 25 11:38:12 2015 +0100
+
+    updates zu gegnercollision
+
+commit 43fd1ff320d5d5a52c2f20f64a25cb34b6302ed7
+Author: Tom Müller <Tom Müller>
+Date:   Fri Dec 25 09:14:36 2015 +0100
+
+    neu
+
+commit dab5ffd3cec19c9e6254c843c1f690ff348fb5f6
+Author: Tom Müller <Tom Müller>
+Date:   Thu Dec 24 09:48:42 2015 +0100
+
+    updates
+
+commit 5fe82f4c2179ee17f80b9d6a439f589126fda12c
+Author: Tom Müller <Tom Müller>
+Date:   Wed Dec 23 21:15:25 2015 +0100
+
+    bessere spritesheeets
+
+commit f0c3fac27af866b2caa3a402a1a1116a09406f9b
+Author: Tom Müller <Tom Müller>
+Date:   Wed Dec 23 20:53:10 2015 +0100
+
+    speicherpunkte
+
+commit 0d174dc9a5a029129b27af2b4f4b00063153ddd3
+Author: Tom Müller <Tom Müller>
+Date:   Tue Dec 22 21:01:25 2015 +0100
+
+    up to date
+
+commit a66d274371f345ded9b60589f0cec6f5ac39659e
+Author: Tom Müller <Tom Müller>
+Date:   Tue Dec 22 20:12:23 2015 +0100
+
+    update
+
+commit 8209828f0a71514278c455c010c87155675f7c16
+Merge: 7b4c5ea ee13f55
+Author: Tom Müller <Tom Müller>
+Date:   Thu Dec 17 16:57:13 2015 +0100
+
+    so ab jetzt wird regelmäßig gepullt
+
+commit ee13f5583c50029f0181b0b725404f56dac561c4
+Merge: 0f2d47f eae3a2c
+Author: Philipp <Philipp@MacBook-Pro-2.fritz.box>
+Date:   Sat Dec 12 21:45:24 2015 +0100
+
+    Menü + Pymunk funzen (zumindest bei mir)
+
+commit eae3a2c7c1070938a7ac719f6aa9fe17d26157b7
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Dec 12 12:06:21 2015 +0000
+
+    MASTER.py angepasst
+
+commit b1587d153d43200307ba5276ee7448e45df18ec7
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Dec 12 11:08:50 2015 +0000
+
+    mehr zeug
+
+commit bfa401176c45422dd6897d14b7d9c4b621f448c9
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Dec 12 11:08:16 2015 +0000
+
+    mehr zeug
+
+commit 3cdd6e94940b8f0ae082da22aa242faec5eb6c7f
+Merge: 79e74e2 1d9658a
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Dec 12 11:02:51 2015 +0000
+
+    Merge branch 'master' of https://gitlab.cip.ifi.lmu.de/funkm/The_Random_Run
+
+commit 0f2d47f1ac684074090b265c770e3ee8dc76facc
+Author: Philipp <Philipp@MacBook-Pro-2.fritz.box>
+Date:   Sat Dec 12 03:51:02 2015 +0100
+
+    Initial version 2.1
+
+commit 6b31a6f4f7f10a9589bf6ca1d3c5d4cf3f74ada2
+Author: Philipp <Philipp@MacBook-Pro-2.fritz.box>
+Date:   Sat Dec 12 03:49:06 2015 +0100
+
+    Initial version 2.1
+
+commit 1d9658a4d796dc096850828871c8f3f5de1df794
+Author: Philipp <Philipp@MacBook-Pro-2.fritz.box>
+Date:   Sat Dec 12 03:47:11 2015 +0100
+
+    Initial version 2.0
+
+commit 79e74e2dd1e5a73dd8925f34c88a70d97f25cfed
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Dec 12 02:35:00 2015 +0000
+
+    start
+
+commit d90a353107778199afd283ecff06c21de2074f12
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Dec 12 02:34:06 2015 +0000
+
+    start
+
+commit f339eef6b7924061056036cd16f6121db5848a16
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Fri Dec 11 14:19:00 2015 +0000
+
+    Neue Master
+
+commit 1cc82d8a7f57a0df37aab0824e13dae711f681be
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Fri Dec 11 14:18:48 2015 +0000
+
+    Neue Master
+
+commit 7b4c5eaa66ff42cb7dc7a01b34a00d9778cc17ed
+Author: Tom Müller <Tom Müller>
+Date:   Sat Dec 5 23:48:32 2015 +0100
+
+    Ein paar bugfixes
+
+commit 61502db05fd8c86e24a27715d3aca1011ce00e41
+Author: Tom Müller <Tom Müller>
+Date:   Sat Dec 5 23:29:10 2015 +0100
+
+    Auf hoch ist schießen, frühe demoversion
+
+commit 1ce36ada5ac85960c25d11b7c9922152d812e639
+Author: Tom Müller <Tom Müller>
+Date:   Sat Dec 5 13:33:50 2015 +0100
+
+    noch sehr unvollständig und ohne gegner
+
+commit 23fd3766290a272b3d6541224c1432a983d898dd
+Merge: 2031319 e6a2b91
+Author: Tom Müller <Tom Müller>
+Date:   Sat Dec 5 11:44:08 2015 +0100
+
+    Merge branch 'master' of https://gitlab.cip.ifi.lmu.de/funkm/The_Random_Run
+
+commit 2031319a5abb865106d2e257d81adc0767562c4c
+Author: Tom Müller <Tom Müller>
+Date:   Sat Dec 5 11:29:19 2015 +0100
+
+    NEU
+
+commit e6a2b9182118bd15600add7e7bbe46ae4f61eeab
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Thu Dec 3 21:31:07 2015 +0100
+
+    cause
+
+commit ccdac5c245a6ac4814b2ac4a1a2218f98bcf11f8
+Author: Philipp <Philipp@dhcp-10-181-28-87.dynamic.eduroam.mwn.de>
+Date:   Thu Dec 3 17:41:34 2015 +0100
+
+    Pfad zu Buttons + Bauhaus 95
+
+commit 2da2b6feb58cd9a732712adee897e889f1d5933c
+Author: Philipp <Philipp@dhcp-10-181-28-87.dynamic.eduroam.mwn.de>
+Date:   Thu Dec 3 17:12:04 2015 +0100
+
+    hi
+
+commit 7284e1d4d35eedde811f76b8c6c96f2a90c717ca
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Mon Nov 30 22:00:13 2015 +0000
+
+    Background phil
+
+commit abc2a8488c5b57bd96975123d8789e7f7302c80b
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Mon Nov 30 18:25:46 2015 +0000
+
+    so, phils buttons(bis jetzt 2) implementiert
+
+commit 0af1440ee59725316cf334956f777813fcaf8b2e
+Merge: 34d1504 be3334d
+Author: Philipp <Philipp@MacBook-Pro.fritz.box>
+Date:   Mon Nov 30 12:18:52 2015 +0100
+
+    Single & Multiplayer button added
+
+commit 34d1504911bb6b7567fb34f7cac9d083e016f4b7
+Author: Philipp <Philipp@MacBook-Pro.fritz.box>
+Date:   Mon Nov 30 12:06:18 2015 +0100
+
+    Single & Multiplayer button
+
+commit caa2c9f28123d8a8e700b557ba3cb820e1da697a
+Merge: 6bd26a2 3bdc4ff
+Author: Philipp <Philipp@MacBook-Pro.fritz.box>
+Date:   Mon Nov 30 12:04:08 2015 +0100
+
+    Single & Multiplayer button
+
+commit be3334d4c5a8214c96ad7d91707d2e980e97cdd9
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sun Nov 29 16:31:16 2015 +0000
+
+    So, Singleplayer verknüfung fast perfekt, Tom, schau dass du pygame.init usw IN die mainmethode packst, dass man des spiel nochmal starten kann, sonst ist sofort 'gameOver'
+
+commit 0d99455fd6de0e5bd8f002b586098590bd9fc628
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sun Nov 29 14:11:10 2015 +0000
+
+    Hey, holts euch mal und drückt erst oben links und dann oben ;)
+
+commit 0cab507b78f3bfdf513f5465f1d241e943ad8ab5
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sun Nov 29 13:41:50 2015 +0000
+
+    So, jetzt unterschieden zw. normal, maus drauf und geklickt
+
+commit 9795e21c9f44c5906750d6e034aec1d9940ca960
+Merge: 0985d8b 1b90a57
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Nov 28 20:03:33 2015 +0000
+
+    Merge branch 'master' of https://gitlab.cip.ifi.lmu.de/funkm/The_Random_Run
+
+commit 0985d8b8aa533ae5aa6834053a99d59ce2148a81
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Nov 28 20:02:39 2015 +0000
+
+    So
+
+commit 8b52c906d37cd0772fe19746a84e00555450867a
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Nov 28 19:59:25 2015 +0000
+
+    Man kann jetzt durchs menü sich klicken, aber noch sieht man nicht was was ist^^
+
+commit 1b90a5742b75b0f45c5b32246ef7292e0c2e3b5b
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Nov 28 20:39:43 2015 +0100
+
+    no need
+
+commit e4a1edf746a5d3208594118c7518db02b120a21d
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Nov 28 19:38:04 2015 +0000
+
+    Man kann jetzt durchs menü sich klicken, aber noch sieht man nicht was was ist^^
+
+commit d9aba27711e2f0502af0d9efa0b3aa9142d02e15
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Nov 28 17:47:34 2015 +0000
+
+    So, beta steht, buttons anklickbar, tun noch wenig, aber mal austesten ;)
+
+commit 561566e1990538e50372bc37132444a13c3bbf0e
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Nov 28 17:47:02 2015 +0000
+
+    So, beta steht, buttons anklickbar, tun noch wenig, aber mal austesten ;)
+
+commit a33be879a8a1d49a11016cbedbbeaa11b9922694
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Nov 28 12:21:19 2015 +0000
+
+    jo
+
+commit c2c40f4d69f545f84dc1af595be644cfd3402d2c
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Sat Nov 28 12:17:58 2015 +0000
+
+    jo
+
+commit 2a9d1827049482934e8dfcd45b9d797a30ddbfc0
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Wed Nov 25 19:52:46 2015 +0000
+
+    Was bis jetzt da ist, nix gemacht seit 10 Tagen
+
+commit 3bdc4ffd1de0345e923410a717f5103e0ea39448
+Author: Tom Müller <Tom Müller>
+Date:   Mon Nov 23 23:24:03 2015 +0100
+
+    Neue Spieler Klasse, probiert sie aus!
+
+commit 5fc789da38461f99b653e0aea76ec01cb6156d36
+Author: Tom Müller <Tom Müller>
+Date:   Sun Nov 22 15:55:25 2015 +0100
+
+    Überarbeitete Spieler Klasse
+
+commit 6bd26a24a3abf9b12fb3e19dd2c4fa03f1c1465a
+Author: Philipp <Philipp@dhcp-10-181-26-3.dynamic.eduroam.mwn.de>
+Date:   Wed Nov 18 16:19:45 2015 +0100
+
+    Männchen angepasst
+
+commit 6ccdce5ba45358e3f56bc25f17dde2e129dde3c2
+Author: Tom Müller <Tom Müller>
+Date:   Mon Nov 16 21:12:41 2015 +0100
+
+    Update
+
+commit 7e4384fc598798fd284513c0d4f0babd7690ef5c
+Author: Tom Müller <Tom Müller>
+Date:   Mon Nov 16 20:42:56 2015 +0100
+
+    Updates zu Hindernis und rudimentärer Char-Controller, Erklärungen folgen ausführlich am Mittwoch
+
+commit 62463944c9336fa6c832458be5115a1cd835fa81
+Author: Tom Müller <Tom Müller>
+Date:   Sun Nov 15 14:45:07 2015 +0100
+
+    Neues Update zu Hindernis mit Spriteobj.
+
+commit e66cb4786c26ddbd437e73aa0d4458f893418451
+Author: Philipp <Philipp@MacBook-Pro.fritz.box>
+Date:   Sat Nov 14 21:33:23 2015 +0100
+
+    comments
+
+commit fa9236cd6d8c688d189866c876b02d478e9914fd
+Author: Tom Müller <Tom Müller>
+Date:   Fri Nov 13 21:46:39 2015 +0100
+
+    Erneutes Update Hindernis
+
+commit 80698cf5fcecbf7ebe1eab0e2b479abd2d7196c9
+Author: Tom Müller <Tom Müller>
+Date:   Fri Nov 13 19:19:25 2015 +0100
+
+    Update Hindernis mit platform classe
+
+commit 808b56be3b3d4fcd9ce3f83d1df4173ad46336ae
+Author: Tom Müller <Tom Müller>
+Date:   Fri Nov 13 18:49:07 2015 +0100
+
+    Update Hindernis mit blit
+
+commit 11c327b33e3b118a75635ed5f836905ee6655836
+Author: Tom Müller <Tom Müller>
+Date:   Thu Nov 12 19:20:12 2015 +0100
+
+    erste Version des Hindernis modules
+
+commit 20ef97ed206c2c5ee153af494f644a5561b90356
+Author: Marius Funk <funkm@cip.ifi.lmu.de>
+Date:   Thu Nov 12 13:24:19 2015 +0000
+
+    init

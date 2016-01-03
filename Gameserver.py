@@ -44,11 +44,9 @@ class ServerGame(MastermindServerTCP):
 if __name__ == "__main__":
     server = ServerGame()
     server.connect(server_ip,port)
-
     try:
         server.accepting_allow_wait_forever()
     except:
         pass
-
     server.disconnect_clients()
     server.disconnect()
