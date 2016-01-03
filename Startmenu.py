@@ -1,7 +1,9 @@
-import pygame,time, sys, MASTER
+import pygame,time, sys#, MASTER
 from Startmenu_Images import *
 
 from pygame.locals import *
+
+import MASTERmulit,Gameclient,Gameserver
 
 
 WINDOWw = 800 #window width
@@ -15,12 +17,18 @@ firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
 
+load_surf = ((buttonWidth*2,buttonHeight*2),
+             (int(WINDOWw/2) - buttonWidth,int(WINDOWh/2) -  buttonHeight))
+# Loading Surf while connecting in Multiplayer
+
 gamename = "The Random Run"
 playername = "Player"
 
 # For Mulitplayer
 
-server_IP = "localhost"
+server_ip = "localhost"
+client_ip = "localhost"
+port = 42042
 
 #
 '''
@@ -141,6 +149,7 @@ class Main:
                       "End": Menu("End","End"),# Verlässt das Spiel
                       "Open_Multi_screen": Menu ("Open TCP-Server","Open_Multi_screen"),
                       "Link_In_screen": Menu("Enter Multiplayergame","Link_In_screen"),
+                      "Open_game":Menu("Open_game","Open_game"),
                       "Awaiting_Player_screen": Menu("Awaiting second player","Awaiting_Player_screen")} 
             
 
@@ -219,7 +228,10 @@ class Main:
 
     def button_clicked(self,button): # Was tun wenn Button geclickt
         global server_IP
+
+        #######################################
         #Spielstart Singleplayer
+        #######################################
         
         if(button.goto_menutitle == "Game_start"): # Singleplayer start simple (Beginning)
           #  pygame.mixer.Sound(game_start_sound).play()
@@ -246,18 +258,59 @@ class Main:
                 time.sleep(1)
                 
                 return "Singleplayer_screen"
-
+        #########################
         #Ende Spiel
+        #########################
         
         elif(button.goto_menutitle == "End"):
             pygame.quit()
             sys.exit()
 
-        #Mulitplayer Link in
+        ###############################
+        # Multiplayer Open Game
+        ###############################
 
+        elif(button.goto_menutitle == "Open_game"):
+            try:
+                server = Gameserver.ServerGame()
+                server.connect(server_ip,port)
+
+                server.accepting_allow() ###############
+
+                client_ip = server_ip
+
+                Gameclient.create_Client(port,client_ip)
+
+                image = pygame.transform.scale(searchbar_image, load_surf[0])
+                self.display_surf.blit(image,load_surf[1])
+                self.showText("Starting Game",(int(WINDOWw/2),int(WINDOWh/2)),30)
+                pygame.display.flip()
+
+                time.sleep(2)
+                
+                MASTERmulit.start_up() #Start Game!
+             
+                Gameclient.client.disconnect()
+                server.disconnect_clients()
+                server.disconnect()    
+            except:
+                image = pygame.transform.scale(searchbar_image, load_surf[0])
+                self.display_surf.blit(image,load_surf[1])
+                self.showText("Something went wrong...",(int(WINDOWw/2),int(WINDOWh/2)),30)
+                pygame.display.flip()
+
+                time.sleep(2)
+            return "Open_Multi_screen"
+
+
+
+            
+        
+        ###############################
+        #Mulitplayer Link in
+        ###############################
         elif(button.goto_menutitle == "Search"):
-            server_IP = self.menu_in_use.writeable_text
-            load_surf = ((buttonWidth*2,buttonHeight*2),(int(WINDOWw/2) - buttonWidth,int(WINDOWh/2) -  buttonHeight))
+            client_ip = self.menu_in_use.writeable_text
 
             image = pygame.transform.scale(searchbar_image, load_surf[0])
 
@@ -267,24 +320,35 @@ class Main:
                 self.display_surf.blit(image,load_surf[1])
                 self.showText(connection_text,(int(WINDOWw/2),int(WINDOWh/2)),30)
                 pygame.display.flip()
-                time.sleep(1)
-            
-            image = pygame.transform.scale(searchbar_image, load_surf[0])
-            self.display_surf.blit(image,load_surf[1])
-            self.showText("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30)
-            pygame.display.flip()
+                time.sleep(0.5)
+            #####
+            #Multiplayer client aufrufen
+            try:  
+                Gameclient.create_Client(port,client_ip)
 
-            time.sleep(2)
-            
+                image = pygame.transform.scale(searchbar_image, load_surf[0])
+                self.display_surf.blit(image,load_surf[1])
+                self.showText("Starting Game",(int(WINDOWw/2),int(WINDOWh/2)),30)
+                pygame.display.flip()
+
+                time.sleep(2)
+                
+                MASTERmulit.start_up() #Start Game!
+             
+                Gameclient.client.disconnect()
+            except:
+                image = pygame.transform.scale(searchbar_image, load_surf[0])
+                self.display_surf.blit(image,load_surf[1])
+                self.showText("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30)
+                pygame.display.flip()
+                Gameclient.client.disconnect()
+                time.sleep(2)
+                
             return self.menu_in_use.key_name
 
-        # Multiplayer Open Game
-
-        elif(button.goto_menutitle == "Start_Multiplayer"):
-            pass # TODO
-        
+        ####################
         #Anderes Menu
-        
+        ####################
             
         else:
             button.sound.play()
@@ -415,7 +479,7 @@ class Menu:
                 self.texts.append(("Supervision and advice: Clemens Schefel",(WINDOWw/2,WINDOWh/2+100),20))
 
             elif self.menuname == "Open TCP-Server": 
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"Awaiting_Player_screen"))
+                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"Open_game"))
                 self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos,"Awaiting_Player_screen"))
 
             elif self.menuname == "Enter Multiplayergame":

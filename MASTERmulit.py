@@ -1,16 +1,16 @@
-import sys, pygame, pymunk, Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, cProfile
+import sys, pygame, pymunk, Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt#, cProfile
 from pygame.locals import*
 from copy import deepcopy
 
 #ALLES FÜR MULTIPLAYER
-
+#################
 #Client
 
 from Gameclient import *
 
 playing_Spieler = 0 # Zu setzen auf 1 bzw. 2
 
-
+###################
 class Spieler(pygame.sprite.Sprite):
         def __init__(self):
                 pygame.sprite.Sprite.__init__(self)
@@ -128,10 +128,10 @@ class Welt():
                 self.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(self.boeden[0], [man1]))
                 global current_speicherpunkt
                 current_speicherpunkt = self.speicherpunkte[0]
-                self.spieler1 = spieler1
+                self.spieler1 = spieler1 #####################
                 self.spieler2 = spieler2
                 self.spieler = None # Wird dann nach Connection Aufbau gesetzt
-                self.anderer_spieler = None
+                self.anderer_spieler = None #######################
 
                         
                 self.finish = False
@@ -210,6 +210,7 @@ class Welt():
                                         spieler.is_alive = True
                                 spieler.dash()
                                 spieler.body.reset_forces()
+                                
                         spieler.selfblit()
                         #print(spieler.spalte)
                         #pygame.draw.polygon(LEVELSURF, ((76, 45, 98)), spieler.shape.get_vertices())
@@ -218,8 +219,8 @@ class Welt():
 
 
 class Kugel(object):
-        def __init__(self, vec, x_pos = 0, y_pos = 0): ###################XPOS YPOS geändert für Multiplayer
-                object.__init__(self)
+        def __init__(self, vec, x_pos = 0, y_pos = 0, spielerdir = 0): ###################XPOS YPOS geändert für Multiplayer
+                object.__init__(self)                   #Spielerdir = 0 heißt eigener Player direction
                 self.vec = vec
                 self.body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, 10))
                 ###########################
@@ -227,7 +228,9 @@ class Kugel(object):
                         x_pos = current_level.spieler.body.position.x
                 if y_pos == 0:
                         y_pos = current_level.spieler.body.position.y
-                self.body.position = (x_pos +40 * current_level.spieler.direction,
+                if spielerdir == 0:
+                        spielerdir = current_level.spieler.direction
+                self.body.position = (x_pos +40 * spielerdir,
                                       y_pos - 40)
                 ##############################
                 self.shape = pymunk.Circle(self.body, 10)
@@ -497,17 +500,15 @@ def main():
                                 frame_counter += 1
                                 if (frame_counter % 1 == 0):  ##############Ändern verbessert Performance, sieht aber nicht soo aus
                                         frame_counter = 0
-                                        
                                         p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
                                                            (current_level.spieler.direction,current_level.spieler.state), #  Richtung in die er schaut und sprite_in_use
                                                            (current_level.spieler.body.position.x,current_level.spieler.body.position.y), # Positition des Spielers
                                                            ((current_level.spieler.direction,
                                                              new_kugel)))) # "Neue Kugel" (De facto alles um eine zu erstellen)
-
                                         if p2_data != None: # Sobald ein 2ter Spieler im Spiel ist
                                                 (p2_direction, p2_koords, p2_kugel) = p2_data
                                                 if p2_kugel[1]:
-                                                        Kugel((900 * p2_kugel[0], -75), p2_koords[0],p2_koords[1])
+                                                        Kugel((900 * p2_direction[0], -75), p2_koords[0],p2_koords[1],p2_direction[0])
 
                                                         #Anderen Spieler Daten setzten für Anzeige
                                                 current_level.anderer_spieler.state = p2_direction[1]
@@ -536,12 +537,16 @@ def main():
                                 #pygame.quit()
                                 #sys.exit()
 
+
 if __name__ == "__main__":
         try:
                 print("Client connecting on \""+client_ip+"\", port "+str(port)+" . . .")
-                client.connect(client_ip,port)
+                #client = MastermindClientTCP(client_timeout_connect,client_timeout_receive)
+                #client.connect(client_ip,port)
+                create_Client(42042,'localhost')#192.168.178.37')
                 print("Client connected!")
                 playing_Spieler = get_player_number()
+                #print(playing_Spieler)
                 if playing_Spieler == 1:
                         current_level.spieler = current_level.spieler1# Der Spieler den dieser PC steuert
                         current_level.anderer_spieler = current_level.spieler2
@@ -555,4 +560,15 @@ if __name__ == "__main__":
                 print("No server found! Please start Server and try again!")
                 pygame.quit()
                 sys.exit()
-    
+def start_up():
+                global playing_Spieler
+                playing_Spieler = get_player_number()
+                print(playing_Spieler)
+                if playing_Spieler == 1:
+                        current_level.spieler = current_level.spieler1# Der Spieler den dieser PC steuert
+                        current_level.anderer_spieler = current_level.spieler2
+                else:
+                        current_level.spieler = current_level.spieler2
+                        current_level.anderer_spieler = current_level.spieler1         
+                main()
+
