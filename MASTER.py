@@ -248,18 +248,19 @@ def hintergrund_blit():
 #COLLISIONHANDLER
 
 def touch(space, arbiter):
-        s.is_Grounded = True
-        s.double_jump_counter = 1
-        if current_level.spieler.body.velocity.x <= -50:
-                current_level.spieler.body.velocity.x += 25
-                current_level.spieler.moveSpeed = 0
-        elif current_level.spieler.body.velocity.x >= 50:
-                current_level.spieler.body.velocity.x -= 25
-                current_level.spieler.moveSpeed = 0
-        if -50 < current_level.spieler.body.velocity.x < 50:
-                current_level.spieler.body.velocity.x = 0
-                current_level.spieler.moveSpeed = 11
-        return True
+        if arbiter.contacts[0].normal.int_tuple[0] == 0:
+                s.is_Grounded = True
+                s.double_jump_counter = 1
+                if current_level.spieler.body.velocity.x <= -50:
+                        current_level.spieler.body.velocity.x += 25
+                        current_level.spieler.moveSpeed = 0
+                elif current_level.spieler.body.velocity.x >= 50:
+                        current_level.spieler.body.velocity.x -= 25
+                        current_level.spieler.moveSpeed = 0
+                if -50 < current_level.spieler.body.velocity.x < 50:
+                        current_level.spieler.body.velocity.x = 0
+                        current_level.spieler.moveSpeed = 11
+                return True
 
 def cänt_touch_dis(space, arbiter):
         s.is_Grounded = False
