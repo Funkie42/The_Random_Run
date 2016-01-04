@@ -119,18 +119,61 @@ class Button(pygame.Surface):
 
     def get_images(self):
         #First normal, then cursor over, then clicked
+        
+        if self.goto_menutitle == "Start_screen":# or self.goto_menutitle == "Game_start":
+            return back_button,back_button_cursor_over,back_button_clicked
+
+    #####################
+    #Startmenu Buttons
+    #####################
+            
         if self.goto_menutitle == "Singleplayer_screen":# or self.goto_menutitle == "Game_start":
             return singleplayer_button,singleplayer_button_cursor_over,singleplayer_button_clicked
-        
         elif self.goto_menutitle == "Multiplayer_screen":
             return multiplayer_button,multiplayer_button_cursor_over,multiplayer_button_clicked
         elif self.goto_menutitle == "Quit_screen":
             return quit_button,quit_button_cursor_over,quit_button_clicked
+        elif self.goto_menutitle == "Credits_screen":
+            return credits_button,credits_button_cursor_over,credits_button_clicked
+        elif self.goto_menutitle == "Highscore_screen":
+            return highscore_button,highscore_button_cursor_over, highscore_button_clicked
+
+    #####################
+    #Singleplayer Menu
+    #####################
+            
         elif self.goto_menutitle == "Game_start":
             return ng_button,ng_button_cursor_over,ng_button_clicked
-        elif self.goto_menutitle == "Start_screen":
-            return back_button,back_button_cursor_over,back_button_clicked
+        elif self.goto_menutitle == "Choose_lvl_screen":
+            return choose_lvl_button,choose_lvl_button_cursor_over,choose_lvl_button_clicked
+        elif self.goto_menutitle == "NotDone": # TODO
+            return load_button,load_button_cursor_over,load_button_clicked
+
+    ######################
+    #End Game Menu
+    ######################
         
+        elif self.goto_menutitle == "End":
+            return yes_button,yes_button_cursor_over,yes_button_clicked
+
+    ######################
+    #Multiplayer Menu
+    ######################
+    
+        elif self.goto_menutitle == "Link_In_screen":
+            return link_in_button,link_in_button_cursor_over,link_in_button_clicked
+        elif self.goto_menutitle == "Search":
+            return search_button,search_button_cursor_over,search_button_clicked
+        elif self.goto_menutitle == "Open_Multi_screen":
+            return open_screen_button,open_screen_button_cursor_over,open_screen_button_clicked
+        elif self.goto_menutitle == "Open_game": # Multiplayer normales Spiel
+            return host_normal_button,host_normal_button_cursor_over,host_normal_button_clicked
+        elif self.goto_menutitle == "Awaiting_Player_screen": # Multiplayer normales Spiel
+            return host_minigame_button,host_minigame_button_cursor_over,host_minigame_button_clicked        
+
+    ########
+    ##Other##
+    ########
         else:
             return (buttonImage,buttonCursorOver,buttonClicked)
             
@@ -145,6 +188,7 @@ class Main:
         self.image_surf = pygame.transform.scale(self.image_surf,(WINDOWw,WINDOWh))
         self.menus = {"Start_screen": Menu(gamename,"Start_screen"),
                       "Singleplayer_screen": Menu("Singleplayer","Singleplayer_screen"),
+                      "Choose_lvl_screen": Menu("Choose Level","Choose_lvl_screen"),
                       "Multiplayer_screen":Menu("Multiplayer", "Multiplayer_screen"),
                       #"Highscore_screen": Menu("Highscore"), Egal, da Highscore immer neu generiert werden muss
                       "Credits_screen": Menu("Credits", "Credits_screen"),
@@ -154,7 +198,7 @@ class Main:
                       "End": Menu("End","End"),# Verlässt das Spiel
                       "Open_Multi_screen": Menu ("Open TCP-Server","Open_Multi_screen"),
                       "Link_In_screen": Menu("Enter Multiplayergame","Link_In_screen"),
-                      "Open_game":Menu("Open_game","Open_game"),
+                      "Open_game":Menu("Open_game","Open_game"), # Öffnet Multiplayerspiel
                       "Awaiting_Player_screen": Menu("Awaiting second player","Awaiting_Player_screen")} 
             
 
@@ -452,8 +496,13 @@ class Menu:
         else:
             if self.menuname == "Singleplayer":
                 self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos,"Game_start")) # Spielstart
-                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos+ buttonHeight + buttonDistance,"NotDone"))
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos+ buttonHeight + buttonDistance,"Choose_lvl_screen"))
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance,firstButtonYpos+ buttonHeight + buttonDistance,"NotDone"))
+
+            if self.menuname == "Choose Level":
+                pass
+                ################################ TODO
+            
             if self.menuname == "Highscore":
                 #self.buttons.append(Button(int(buttonWidth/2),buttonHeight,firstButtonXpos,firstButtonYpos,"NotDone"))
                 place = 1
@@ -497,6 +546,8 @@ class Menu:
             elif self.menuname == "Awaiting second player":
                 self.texts.append(("Let a friend join in to start the randomness!",(WINDOWw/2,WINDOWh/2-50),30))
                 self.texts.append(("(If you have one...)",(WINDOWw/2,WINDOWh/2-25),10))
+
+                
                 
 
             else:
