@@ -1,4 +1,4 @@
-import pygame,time, sys, MASTER, MASTERmulit,Gameclient,Gameserver, Texts
+import pygame,time, sys, MASTER, MASTERmulit,Gameclient,Gameserver,Texts
 from Startmenu_Images import *
 from pygame.locals import *
 
@@ -28,9 +28,6 @@ buttonHeight = int(buttonWidth / 2)
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
-# Surf für Multiplayer oder eingaben etc
-text_surface = ((buttonWidth*2,buttonHeight*2),
-             (int(WINDOWw/2) - buttonWidth,int(WINDOWh/2) -  buttonHeight))
 
 
 
@@ -71,7 +68,7 @@ Sounds
 button_sound = "Sounds/click.wav"
 
 game_start_sound = None
-
+star_wars_sound = "Sounds/Startwars_intro.ogg"
 
 
 game_music = 'Sounds/tetris.mid'
@@ -277,8 +274,6 @@ class Menu:
                 
             self.buttons.append(Button(buttonWidth,int(buttonHeight),firstButtonXpos,WINDOWh - 100,"Start_screen"))
     
-
-
     
     
 class Main:
@@ -389,10 +384,11 @@ class Main:
             #game_start_sound.play()
             time.sleep(1)
 
+            self.game_intro()
 
+            
             #In der Endversion soll das am besten in der Spiel-Datei stehen und nicht hier, zwecks Highscore anzeige
-            pygame.mixer.music.load(game_music)
-            pygame.mixer.music.play(-1, 0.0)
+
 
             survival_time = time.time()
             try:MASTER.main()
@@ -425,17 +421,11 @@ class Main:
             try:
                 server = Gameserver.ServerGame()
                 server.connect(server_ip,port)
-
                 server.accepting_allow() ###############
-
                 client_ip = server_ip
-
                 Gameclient.create_Client(port,client_ip)
 
-                image = pygame.transform.scale(searchbar_image, text_surface[0])
-                self.display_surf.blit(image,text_surface[1])
-                self.showText("Starting Game",(int(WINDOWw/2),int(WINDOWh/2)),30)
-                pygame.display.flip()
+                self.blend_in_text("Starting Game",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
 
                 time.sleep(2)
                 
@@ -445,10 +435,7 @@ class Main:
                 server.disconnect_clients()
                 server.disconnect()    
             except:
-                image = pygame.transform.scale(searchbar_image, text_surface[0])
-                self.display_surf.blit(image,text_surface[1])
-                self.showText("Something went wrong...",(int(WINDOWw/2),int(WINDOWh/2)),30)
-                pygame.display.flip()
+                self.blend_in_text("Something went wrong...",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
 
                 time.sleep(2)
             return "Open_Multi_screen"
@@ -463,24 +450,18 @@ class Main:
         elif(button.goto_menutitle == "Search"):
             client_ip = self.menu_in_use.writeable_text
 
-            image = pygame.transform.scale(searchbar_image, text_surface[0])
-
             connection_text = "Connecting"
             for dot in " ...":
                 connection_text += dot
-                self.display_surf.blit(image,text_surface[1])
-                self.showText(connection_text,(int(WINDOWw/2),int(WINDOWh/2)),30)
-                pygame.display.flip()
+                self.blend_in_text(connection_text,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
                 time.sleep(0.5)
+                
             #####
             #Multiplayer client aufrufen
             try:  
                 Gameclient.create_Client(port,client_ip)
 
-                image = pygame.transform.scale(searchbar_image, text_surface[0])
-                self.display_surf.blit(image,text_surface[1])
-                self.showText("Starting Game",(int(WINDOWw/2),int(WINDOWh/2)),30)
-                pygame.display.flip()
+                self.blend_in_text("Starting Game",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
 
                 time.sleep(2)
                 
@@ -488,10 +469,7 @@ class Main:
              
                 Gameclient.client.disconnect()
             except:
-                image = pygame.transform.scale(searchbar_image, text_surface[0])
-                self.display_surf.blit(image,text_surface[1])
-                self.showText("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30)
-                pygame.display.flip()
+                self.blend_in_text("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
                 Gameclient.client.disconnect()
                 time.sleep(2)
                 
@@ -561,8 +539,57 @@ class Main:
                 
             if(waitingTime != 0):
                 pygame.display.update()
-                pygame.time.wait(waitingTime)  
+                pygame.time.wait(waitingTime)
+
+    def game_intro(self):
+        awesomeness = 0
+        pygame.mixer.music.load(game_music)
+        for text in Texts.Starwars_intro:
+            reached_max = False
+            alpha_value = 250
+            thisPrint = pygame.font.Font('freesansbold.ttf', 25).render(text,True,(255,255,255))
+            thisRect = thisPrint.get_rect()
+            thisRect.center = ((WINDOWw/2,WINDOWh/2))
+
+            alphaSurface = pygame.Surface((WINDOWw,WINDOWh))
+            alphaSurface.fill((0,0,0))
+            alphaSurface.set_alpha(alpha_value)
+
+
+            awesomeness +=1
+            if awesomeness == 2:
+                pygame.mixer.Sound(star_wars_sound).play()
+            elif awesomeness == 4:
+                pygame.mixer.music.play(-1, 0.0)
+            
+            while alpha_value < 255:
+                self.display_surf.fill((0,0,0))
+                self.display_surf.blit(thisPrint,thisRect)
+                alphaSurface.set_alpha(alpha_value)
+                self.display_surf.blit(alphaSurface,(0,0))
+                pygame.display.flip()
+                
+                if alpha_value <= 0:
+                    time.sleep(1)
+                    reached_max = True
+                if reached_max:
+                    alpha_value += 2
+                else:
+                    alpha_value -= 2
+
+                    
+    def blend_in_text(self,text,position = (int(WINDOWw/2),int(WINDOWh/2)), textsize = 25, feldgroeße = (buttonWidth*2,buttonHeight*2)): # Texteinblende mit Hintergrund
+        # feldgröße ist Breite und Höhe Tupel
+            text_surface = (feldgroeße,
+                (position[0] - int(feldgroeße[0]/2),position[1] - int(feldgroeße[1]/2)))
         
+            image = pygame.transform.scale(searchbar_image, text_surface[0])
+            self.display_surf.blit(image,text_surface[1])
+            self.showText(text,position,textsize)
+            pygame.display.flip()
+        
+
+
 
 
 
