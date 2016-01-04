@@ -121,4 +121,4 @@ no_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/bl_no_clicked.png")
 
 # Search Bar
 
-searchbar_image = pygame.image.load(PFAD + "Gui/ground.png")
+searchbar_image = pygame.image.load(PFAD + "Gui/fenster.png")
