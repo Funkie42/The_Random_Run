@@ -1,4 +1,4 @@
-import sys, pygame, pymunk, Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, cProfile
+import sys, pygame, pymunk, Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, cProfile, copy
 from pygame.locals import*
 from copy import deepcopy
 
@@ -52,10 +52,10 @@ class Spieler(pygame.sprite.Sprite):
 
         def state_update(self):
                 keys = pygame.key.get_pressed()
-                if self.direction == 1 and keys[K_LEFT] and not keys[K_RIGHT]:
+                if self.direction == 1 and keys[K_LEFT] and not keys[K_RIGHT] and self.moveSpeed != 0:
                         self.direction = -1
                         #self.rev_sprite_list()
-                elif self.direction == -1 and keys[K_RIGHT] and not keys[K_LEFT]:
+                elif self.direction == -1 and keys[K_RIGHT] and not keys[K_LEFT] and self.moveSpeed != 0:
                         self.direction = 1
                         #self.rev_sprite_list()
                 if self.is_Grounded and not (keys[K_RIGHT] or keys[K_LEFT]):
@@ -74,6 +74,7 @@ class Spieler(pygame.sprite.Sprite):
 
         def move(self):
             self.body.position.x += self.direction * self.moveSpeed
+            hintergrund_rect.left += 4 * self.direction
 
         def dash(self):
                 if self.dash_counter > 0:
@@ -112,14 +113,15 @@ class Spieler(pygame.sprite.Sprite):
 class Welt():
         def __init__(self, BACKGROUNDSURF, boeden, hindernisse, power_ups, speicherpunkte, spieler):
                 self.BACKGROUNDSURF = BACKGROUNDSURF
-                self.BACKGROUNDSURF = pygame.transform.scale(self.BACKGROUNDSURF, (DISPLAYSURF.get_width() + 20, DISPLAYSURF.get_height() + 30))
+                self.BACKGROUNDSURF = pygame.transform.scale(self.BACKGROUNDSURF, (int(LEVELSURF.get_width() * 2/3), DISPLAYSURF.get_height() + 25))
                 self.boeden = boeden
                 self.hindernisse = hindernisse
                 self.power_ups = power_ups
                 self.speicherpunkte = speicherpunkte
                 self.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(self.boeden[0], [man1]))
-                global current_speicherpunkt
+                global current_speicherpunkt, hintergrund_rect, backup_hintergrund_rect
                 current_speicherpunkt = self.speicherpunkte[0]
+                backup_hintergrund_rect = hintergrund_rect
                 self.spieler = spieler
                 self.finish = False
                 self.init = False
@@ -169,21 +171,21 @@ class Welt():
                         if rect.colliderect(i.rect):
                                 LEVELSURF.blit(i.sprite_list[i.sprite_iterator], i.rect)
 
+                global backup_hintergrund_rect
+                global hintergrund_rect
                 for i in self.speicherpunkte:
                          if rect.colliderect(i.rect):
                                 LEVELSURF.blit(i.sprite_list[i.sprite_iterator], i.rect)
                          if self.spieler.rect().colliderect(i.rect):
-                                 global current_speicherpunkt
                                  current_speicherpunkt = i
+                                 backup_hintergrund_rect.left = hintergrund_rect.left
                                  self.speicherpunkte.remove(i)
                                  space.remove(i.shape)
-                                 
-                                 
-                                 
-                        
+                                  
                 if self.spieler.body.position.y > LEVELSURF.get_height() - 200:
                         self.spieler.is_alive = False
                 if self.spieler.is_alive == False:
+                        hintergrund_rect.left = backup_hintergrund_rect.left
                         self.spieler.body.velocity.y = -50
                         self.spieler.body.position = (current_speicherpunkt.rect.left + 50, current_speicherpunkt.rect.top - 200)
                         self.spieler.is_alive = True
@@ -238,7 +240,7 @@ def camera_blit():
 
 def hintergrund_blit():
         try:
-                surf = current_levelBACKGROUNDSURF.subsurface(hintergrund_rect)
+                surf = current_level.BACKGROUNDSURF.subsurface(hintergrund_rect)
                 return surf         
         except:
                 hintergrund_rect.left = 0
@@ -269,12 +271,14 @@ def cänt_touch_dis(space, arbiter):
 
 def kugel_hits_gegner(space, arbiter):
         arbiter.shapes[0].body.velocity.y -= 400
-        arbiter.shapes[0].body.velocity.x += 150 * s.direction
+        arbiter.shapes[0].body.velocity.x += 150 * current_level.spieler.direction
+        arbiter.shapes[1].body.velocity.x = -150 * current_level.spieler.direction ##########################################
         return True
 
 def kugel_hits_fliegender_gegner(space, arbiter):
         space.add(arbiter.shapes[0].body)
         arbiter.shapes[0].collision_type = 3
+        arbiter.shapes[1].body.velocity.x = -150 * current_level.spieler.direction ########################################
         
 
 def player_hits_kugel(space, arbiter):
@@ -291,7 +295,6 @@ def player_jumps_gegner(space, arbiter):
         else:
                 current_level.spieler.body.velocity.x = -450 * current_level.spieler.direction
                 current_level.spieler.body.velocity.y = -750
-                pass
         return True
 
 def player_jumps_fliegender_gegner(space, arbiter):
@@ -353,7 +356,7 @@ fps = 25
 
 #KAMERARECTS
 rect = pygame.Rect(0,0,DISPLAYSURF.get_width(),DISPLAYSURF.get_height())
-hintergrund_rect =pygame.Rect(0,300,DISPLAYSURF.get_width()+ 50,DISPLAYSURF.get_height()+50)
+hintergrund_rect =pygame.Rect(0, 0, DISPLAYSURF.get_width() + 25, DISPLAYSURF.get_height() + 25)
 
 #SPIELERSPRITES
 man1 = pygame.image.load("Gui/man1.png")
@@ -417,8 +420,8 @@ w1 = Welt(pygame.image.load("Gui/mars_back.png"), [bl,bl1,bl2,bl3, bl4, bl5, bl5
 #SPIELER
 game = [w1]
 current_level = w1
+backup_hintergrund_rect = copy.deepcopy(hintergrund_rect)
 kugeln = []
-fillcounter = 0
 
 
 def main():
@@ -449,7 +452,7 @@ def main():
                                         current_level.spieler.move()
 
                                 #LEVELSURF.fill((65, 165, 200, 0.5))
-                                LEVELSURF.blit(current_level.BACKGROUNDSURF, (rect.left -10, rect.top -10))
+                                LEVELSURF.blit(hintergrund_blit(), (rect.left -10, rect.top -10))
                                 w.update()
                                 
                                 for i in kugeln:
@@ -462,6 +465,8 @@ def main():
                                 #print(current_level.spieler.body.velocity.x)
                                 #print(space.collision_bias)
                                 #print(fg2.rect.top)
+                                #print(current_level.spieler.direction)
+                                print(backup_hintergrund_rect)
                                 DISPLAYSURF.blit(camera_blit(), (0,0))
                                 pygame.display.flip()
                                 #pygame.quit()
