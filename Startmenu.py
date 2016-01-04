@@ -1,19 +1,21 @@
-import pygame,time, sys, MASTER
+import pygame,time, sys, MASTER, MASTERmulit,Gameclient,Gameserver
 from Startmenu_Images import *
-
 from pygame.locals import *
-
-import MASTERmulit,Gameclient,Gameserver
 
 ########    Automatisches Erkennen der eigenen IP-Adresse   ######
 import socket
-ip = ([l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0])
-# For Mulitplayer
+try:ip = ([l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0])
+except:
+    ip = 'localhost'
+    print = ('No Networt Connection')
+            
 
 server_ip = ip
 client_ip = ip
 port = 42042
 
+gamename = "The Random Run"
+playername = "Player"
 
 WINDOWw = 800 #window width
 WINDOWh = 600 #window height
@@ -26,12 +28,11 @@ firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
 
-load_surf = ((buttonWidth*2,buttonHeight*2),
+text_surface = ((buttonWidth*2,buttonHeight*2),
              (int(WINDOWw/2) - buttonWidth,int(WINDOWh/2) -  buttonHeight))
-# Loading Surf while connecting in Multiplayer
+# Surf für Multiplayer oder eingaben etc
 
-gamename = "The Random Run"
-playername = "Player"
+
 
 
 
@@ -50,13 +51,14 @@ highscore_list = default_highscore
 
 def get_Highscore(name,points):
     global highscore_list
-    
-    list_number = 0
-    while(points <= highscore_list[list_number][1]) & (len(highscore_list) >= (list_number-1)):
-        list_number += 1
-    if list_number < len(highscore_list):
-        highscore_list.insert(list_number,(name,points))
-        del(highscore_list[len(highscore_list)-1])
+    try:
+        list_number = 0
+        while(points <= highscore_list[list_number][1]) & (len(highscore_list) >= (list_number-1)):
+            list_number += 1
+        if list_number < len(highscore_list):
+            highscore_list.insert(list_number,(name,points))
+            del(highscore_list[len(highscore_list)-1])
+    except: pass
         
 
 #
@@ -90,6 +92,14 @@ Images:
 
 
 class Button(pygame.Surface):
+    '''##################################################################
+    Klasse der Knöpfe im Startmenu
+    - __init__(Breite, Höhe, X-Position, Y-Position, Key des Menüs, zu dem der Button führt)
+            Erstellt einen Button mit gesetzter Breite und Höhe an der (X,Y)-Position der zum genannten Menü führt
+    - get_images()
+            Nimmt die drei Bilder eines Buttons und weist sie anhand des Menü-Keys zu
+            (Normale Button, Button mit der Maus auf dem Button, Geklickter Button)
+    ##################################################################'''
     def __init__(self,width,height,xpos,ypos, menutitle):
         super().__init__((width,height))
         self.width = width
@@ -98,31 +108,22 @@ class Button(pygame.Surface):
         self.ypos = ypos
         self.goto_menutitle = menutitle
         
-        
+        #### Initiazing Images ####
         (normal,cursor_on,clicked) = self.get_images()
-        
-        self.image_surf = normal#.convert() # Aktuelles Bild
-        self.image_surf = pygame.transform.scale(self.image_surf,(self.width,self.height))
 
-        self.normal_surf = normal#.convert()
-        self.normal_surf = pygame.transform.scale(self.normal_surf,(self.width,self.height))
+        self.normal_surf = pygame.transform.scale(normal,(self.width,self.height))
+        self.cursor_on_surf = pygame.transform.scale(cursor_on,(self.width,self.height))
+        self.clicked_surf = pygame.transform.scale(clicked,(self.width,self.height))
+
+        self.image_surf = self.normal_surf # Aktuelles Bild
         
-        self.cursor_on_surf = cursor_on#.convert()
-        self.cursor_on_surf = pygame.transform.scale(self.cursor_on_surf,(self.width,self.height))
-        
-        self.clicked_surf = clicked#.convert()
-        self.clicked_surf = pygame.transform.scale(self.clicked_surf,(self.width,self.height))
-        
+
     
         self.sound = pygame.mixer.Sound(button_sound)
         #self.gameover_sound = pygame.mixer.Sound("Sounds/GtaVocals/Respect.wav")
 
     def get_images(self):
-        #First normal, then cursor over, then clicked
         
-        if self.goto_menutitle == "Start_screen":# or self.goto_menutitle == "Game_start":
-            return back_button,back_button_cursor_over,back_button_clicked
-
     #####################
     #Startmenu Buttons
     #####################
@@ -171,21 +172,28 @@ class Button(pygame.Surface):
         elif self.goto_menutitle == "Awaiting_Player_screen": # Multiplayer normales Spiel
             return host_minigame_button,host_minigame_button_cursor_over,host_minigame_button_clicked        
 
-    ########
-    ##Other##
-    ########
+    ##############
+    ##Other
+    ##############
+        
+        if self.goto_menutitle == "Start_screen":# or self.goto_menutitle == "Game_start":
+            return back_button,back_button_cursor_over,back_button_clicked
         else:
             return (buttonImage,buttonCursorOver,buttonClicked)
             
     
     
 class Main:
+    '''##################################################################
+
+    ##################################################################'''
     def __init__(self):
         pygame.init()
         self.running = True
-        self.display_surf = pygame.display.set_mode((WINDOWw,WINDOWh))#,RESIZABLE)    # ,pygame.FULLSCREEN  für fullscreen (ehem. None)
-        self.image_surf = pygame.image.load(PFAD + background_image).convert()# (ehem. None)
+        self.display_surf = pygame.display.set_mode((WINDOWw,WINDOWh))#,RESIZABLE)
+        self.image_surf = pygame.image.load(PFAD + background_image).convert()
         self.image_surf = pygame.transform.scale(self.image_surf,(WINDOWw,WINDOWh))
+
         self.menus = {"Start_screen": Menu(gamename,"Start_screen"),
                       "Singleplayer_screen": Menu("Singleplayer","Singleplayer_screen"),
                       "Choose_lvl_screen": Menu("Choose Level","Choose_lvl_screen"),
@@ -200,7 +208,6 @@ class Main:
                       "Link_In_screen": Menu("Enter Multiplayergame","Link_In_screen"),
                       "Open_game":Menu("Open_game","Open_game"), # Öffnet Multiplayerspiel
                       "Awaiting_Player_screen": Menu("Awaiting second player","Awaiting_Player_screen")} 
-            
 
         self.menu_in_use = self.menus["Start_screen"] # Startmenu in Benutzung
 
@@ -209,19 +216,17 @@ class Main:
         
         #pygame.mixer.music.load("/media/8C48-C703/sandman1.wav")
         # pygame.mixer.music.play(-1, 0.0)
-        # musik
-
-        
+        # musik    
         while(self.running):
             for event in pygame.event.get():
                 self.on_event(event)
-            #self.on_loop()
             self.on_render()
         self.endIt()
         
 
     #Alles, was man interaktiv machen kann
     def on_event(self, event):
+        
         if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
             self.running = False
             
@@ -232,20 +237,20 @@ class Main:
         elif event.type == MOUSEBUTTONUP: # Click-Ort
             (clickX,clickY) = event.pos
             self.mouseclick(clickX,clickY,True)
-        
+            
         elif (self.menu_in_use.write_text_config != None) & (event.type == KEYDOWN):
             if event.key == K_RETURN:
-                if self.menu_in_use.writeable_text != "":
-                    pass # TODO
+                if (self.menu_in_use.writeable_text != "") & (self.menu_in_use == self.menus["Link_In_screen"]):
+                    self.button_clicked(Button(1,1,1,1,"Search"))
             elif event.key == K_BACKSPACE:
                 if len(self.menu_in_use.writeable_text) > 0:
                     self.menu_in_use.writeable_text = self.menu_in_use.writeable_text[:-1]
             else:
-                if len(self.menu_in_use.writeable_text) < 19: # Maxlänge, damit es nicht aus der Box kommt
+                if len(self.menu_in_use.writeable_text) < 18: # Maxlänge, damit es nicht aus der Box kommt
                     try: self.menu_in_use.writeable_text += str(event.unicode)
                     except: pass
 
-    #Rendern eben :)
+
     def on_render(self):
         self.display_surf.blit(self.image_surf,(0,0))
         
@@ -266,7 +271,6 @@ class Main:
             text = self.menu_in_use.writeable_text
             self.showText(text,pos,size, writeable = True)
 
-        #Flip it!    
         pygame.display.flip()
             
     #Beende Spiel
@@ -301,7 +305,7 @@ class Main:
                 get_Highscore(playername,survival_time)
                     
 
-                pygame.mixer.music.stop()
+                #pygame.mixer.music.stop()
                 
                 #self.game_over_sound.play()
                 time.sleep(1)
@@ -330,8 +334,8 @@ class Main:
 
                 Gameclient.create_Client(port,client_ip)
 
-                image = pygame.transform.scale(searchbar_image, load_surf[0])
-                self.display_surf.blit(image,load_surf[1])
+                image = pygame.transform.scale(searchbar_image, text_surface[0])
+                self.display_surf.blit(image,text_surface[1])
                 self.showText("Starting Game",(int(WINDOWw/2),int(WINDOWh/2)),30)
                 pygame.display.flip()
 
@@ -343,8 +347,8 @@ class Main:
                 server.disconnect_clients()
                 server.disconnect()    
             except:
-                image = pygame.transform.scale(searchbar_image, load_surf[0])
-                self.display_surf.blit(image,load_surf[1])
+                image = pygame.transform.scale(searchbar_image, text_surface[0])
+                self.display_surf.blit(image,text_surface[1])
                 self.showText("Something went wrong...",(int(WINDOWw/2),int(WINDOWh/2)),30)
                 pygame.display.flip()
 
@@ -361,12 +365,12 @@ class Main:
         elif(button.goto_menutitle == "Search"):
             client_ip = self.menu_in_use.writeable_text
 
-            image = pygame.transform.scale(searchbar_image, load_surf[0])
+            image = pygame.transform.scale(searchbar_image, text_surface[0])
 
             connection_text = "Connecting"
             for dot in " ...":
                 connection_text += dot
-                self.display_surf.blit(image,load_surf[1])
+                self.display_surf.blit(image,text_surface[1])
                 self.showText(connection_text,(int(WINDOWw/2),int(WINDOWh/2)),30)
                 pygame.display.flip()
                 time.sleep(0.5)
@@ -375,8 +379,8 @@ class Main:
             try:  
                 Gameclient.create_Client(port,client_ip)
 
-                image = pygame.transform.scale(searchbar_image, load_surf[0])
-                self.display_surf.blit(image,load_surf[1])
+                image = pygame.transform.scale(searchbar_image, text_surface[0])
+                self.display_surf.blit(image,text_surface[1])
                 self.showText("Starting Game",(int(WINDOWw/2),int(WINDOWh/2)),30)
                 pygame.display.flip()
 
@@ -386,8 +390,8 @@ class Main:
              
                 Gameclient.client.disconnect()
             except:
-                image = pygame.transform.scale(searchbar_image, load_surf[0])
-                self.display_surf.blit(image,load_surf[1])
+                image = pygame.transform.scale(searchbar_image, text_surface[0])
+                self.display_surf.blit(image,text_surface[1])
                 self.showText("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30)
                 pygame.display.flip()
                 Gameclient.client.disconnect()
@@ -463,7 +467,9 @@ class Main:
         
 
 class Menu:
+    '''##################################################################
 
+    ##################################################################'''
     def __init__(self,menuname, key_name):
         
         self.menuname = menuname
@@ -500,8 +506,11 @@ class Menu:
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance,firstButtonYpos+ buttonHeight + buttonDistance,"NotDone"))
 
             if self.menuname == "Choose Level":
-                pass
-                ################################ TODO
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + int((buttonWidth + buttonDistance)/2),firstButtonYpos+ buttonHeight*2,"Load_single_game"))
+                self.surfaces.append( (   (buttonWidth*2 + buttonDistance,buttonHeight), (firstButtonXpos,firstButtonYpos)  ) )
+                self.texts.append(("Enter Levelcode: ",(firstButtonXpos+ int(buttonWidth/2+15),firstButtonYpos + int(buttonHeight/2)),20))
+                self.write_text_config = (( "",(firstButtonXpos+175,firstButtonYpos + 25),22,True))
+                ######### TODO #############
             
             if self.menuname == "Highscore":
                 #self.buttons.append(Button(int(buttonWidth/2),buttonHeight,firstButtonXpos,firstButtonYpos,"NotDone"))
@@ -546,9 +555,6 @@ class Menu:
             elif self.menuname == "Awaiting second player":
                 self.texts.append(("Let a friend join in to start the randomness!",(WINDOWw/2,WINDOWh/2-50),30))
                 self.texts.append(("(If you have one...)",(WINDOWw/2,WINDOWh/2-25),10))
-
-                
-                
 
             else:
                 pass
