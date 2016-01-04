@@ -563,7 +563,7 @@ if __name__ == "__main__":
 def start_up():
                 global playing_Spieler
                 playing_Spieler = get_player_number()
-                print(playing_Spieler)
+                #print(playing_Spieler)
                 if playing_Spieler == 1:
                         current_level.spieler = current_level.spieler1# Der Spieler den dieser PC steuert
                         current_level.anderer_spieler = current_level.spieler2

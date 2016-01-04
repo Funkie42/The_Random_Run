@@ -1,8 +1,9 @@
-import pygame,time, sys, MASTER, MASTERmulit,Gameclient,Gameserver
+import pygame,time, sys, MASTER, MASTERmulit,Gameclient,Gameserver, Texts
 from Startmenu_Images import *
 from pygame.locals import *
 
-########    Automatisches Erkennen der eigenen IP-Adresse   ######
+###############    Automatisches Erkennen der eigenen IP-Adresse   #############
+# Wenn es fehlschlägt (Kein Internet etc.) kann nur am selben Computer gespielt werden #
 import socket
 try:ip = ([l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0])
 except:
@@ -27,10 +28,10 @@ buttonHeight = int(buttonWidth / 2)
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
-
+# Surf für Multiplayer oder eingaben etc
 text_surface = ((buttonWidth*2,buttonHeight*2),
              (int(WINDOWw/2) - buttonWidth,int(WINDOWh/2) -  buttonHeight))
-# Surf für Multiplayer oder eingaben etc
+
 
 
 
@@ -181,6 +182,103 @@ class Button(pygame.Surface):
         else:
             return (buttonImage,buttonCursorOver,buttonClicked)
             
+class Menu:
+    '''##################################################################
+
+    ##################################################################'''
+    def __init__(self,menuname, key_name):
+        
+        self.menuname = menuname
+        self.key_name = key_name
+        
+        self.buttons = []
+        self.surfaces = []  #2er Tupel von 2er Tupeln mit (Breite,Höhe) und (Xpos,Ypos)
+        self.texts = []# Tripel mit String, Position und Größe
+        self.write_text_config = None # 4er Tupel mit String, Position, Größe und Writeable auf True        
+        self.writeable_text = ""
+
+        self.curser_over_button = None
+
+        self.fill_buttons()
+
+    def fill_buttons(self):
+        if self.menuname == gamename:
+            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos, "Singleplayer_screen"))
+            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos, "Multiplayer_screen"))
+            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos + buttonHeight + buttonDistance, "Highscore_screen"))
+            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos + buttonHeight + buttonDistance, "Credits_screen"))
+            
+            self.buttons.append(Button(int(buttonWidth/2),buttonHeight,WINDOWw/2-(buttonWidth/2/2),WINDOWh-(int(WINDOWh/4)), "Quit_screen")) # Quit game screen
+            
+        elif self.menuname == "Quit Confirm":
+                self.texts.append(("Are you sure? (Don't do it!)",(WINDOWw/2,WINDOWh/2-100),30))
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos+100, "End"))
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos+100, "Start_screen"))
+                                
+        else:
+            if self.menuname == "Singleplayer":
+                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos,"Game_start")) # Spielstart
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos+ buttonHeight + buttonDistance,"Choose_lvl_screen"))
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance,firstButtonYpos+ buttonHeight + buttonDistance,"NotDone"))
+
+            if self.menuname == "Choose Level":
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + int((buttonWidth + buttonDistance)/2),firstButtonYpos+ buttonHeight*2,"Load_single_game"))
+                self.surfaces.append( (   (buttonWidth*2 + buttonDistance,buttonHeight), (firstButtonXpos,firstButtonYpos)  ) )
+                self.texts.append(("Enter Levelcode: ",(firstButtonXpos+ int(buttonWidth/2+15),firstButtonYpos + int(buttonHeight/2)),20))
+                self.write_text_config = (( "",(firstButtonXpos+175,firstButtonYpos + 25),22,True))
+                ######### TODO #############
+            
+            if self.menuname == "Highscore":
+                #self.buttons.append(Button(int(buttonWidth/2),buttonHeight,firstButtonXpos,firstButtonYpos,"NotDone"))
+                place = 1
+                place_y_pos = WINDOWh/2-100
+                for (name,points) in highscore_list:
+
+                    if place == 1:
+                        textsize = 40
+                    else:
+                        textsize = 30 - place
+                    
+                    self.texts.append((str(place) + ".    " + name + ":   " + str(points),(WINDOWw/2,place_y_pos),textsize))
+                    place += 1
+                    place_y_pos += 50
+                
+
+                if highscore_list[0][0] == "Mister Man":
+                    self.texts.append(("GOAL: Beat Mister Man!",(WINDOWw/2,place_y_pos+30),30))
+                
+            elif self.menuname == "Multiplayer":
+                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"Open_Multi_screen"))
+                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos, "Link_In_screen"))
+
+            elif self.menuname == "Credits":
+                self.texts.append(("Graphical Design: The Phil",(WINDOWw/2,WINDOWh/2+50),20))
+                self.texts.append(("Physiks and mechanics: Tom-Master",(WINDOWw/2,WINDOWh/2),20))
+                self.texts.append(("Menu and Multiplayer: General Funky",(WINDOWw/2,WINDOWh/2-50),20))
+                self.texts.append(("Supervision and advice: Clemens Schefel",(WINDOWw/2,WINDOWh/2+100),20))
+
+            elif self.menuname == "Open TCP-Server": 
+                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"Open_game"))
+                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos,"Awaiting_Player_screen"))
+
+            elif self.menuname == "Enter Multiplayergame":
+                self.surfaces.append( (   (buttonWidth*2 + buttonDistance,buttonHeight), (firstButtonXpos,firstButtonYpos)  ) )
+                self.texts.append(("IP-Address: ",(firstButtonXpos+ int(buttonWidth/2),firstButtonYpos + int(buttonHeight/2)),20))
+                self.write_text_config = (( ip,(firstButtonXpos+140,firstButtonYpos + 25),22,True))
+                self.writeable_text =  ip
+                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos + buttonDistance*2,"Search"))
+
+            elif self.menuname == "Awaiting second player":
+                self.texts.append(("Let a friend join in to start the randomness!",(WINDOWw/2,WINDOWh/2-50),30))
+                self.texts.append(("(If you have one...)",(WINDOWw/2,WINDOWh/2-25),10))
+
+            else:
+                pass
+                
+            self.buttons.append(Button(buttonWidth,int(buttonHeight),firstButtonXpos,WINDOWh - 100,"Start_screen"))
+    
+
+
     
     
 class Main:
@@ -465,103 +563,6 @@ class Main:
                 pygame.display.update()
                 pygame.time.wait(waitingTime)  
         
-
-class Menu:
-    '''##################################################################
-
-    ##################################################################'''
-    def __init__(self,menuname, key_name):
-        
-        self.menuname = menuname
-        self.key_name = key_name
-        
-        self.buttons = []
-        self.surfaces = []  #2er Tupel von 2er Tupeln mit (Breite,Höhe) und (Xpos,Ypos)
-        self.texts = []# Tripel mit String, Position und Größe
-        self.write_text_config = None # 4er Tupel mit String, Position, Größe und Writeable auf True        
-        self.writeable_text = ""
-
-        self.curser_over_button = None
-
-        self.fill_buttons()
-
-    def fill_buttons(self):
-        if self.menuname == gamename:
-            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos, "Singleplayer_screen"))
-            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos, "Multiplayer_screen"))
-            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos + buttonHeight + buttonDistance, "Highscore_screen"))
-            self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos + buttonHeight + buttonDistance, "Credits_screen"))
-            
-            self.buttons.append(Button(int(buttonWidth/2),buttonHeight,WINDOWw/2-(buttonWidth/2/2),WINDOWh-(int(WINDOWh/4)), "Quit_screen")) # Quit game screen
-            
-        elif self.menuname == "Quit Confirm":
-                self.texts.append(("Are you sure? (Don't do it!)",(WINDOWw/2,WINDOWh/2-100),30))
-                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos+100, "End"))
-                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos+100, "Start_screen"))
-                                
-        else:
-            if self.menuname == "Singleplayer":
-                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos,"Game_start")) # Spielstart
-                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos+ buttonHeight + buttonDistance,"Choose_lvl_screen"))
-                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance,firstButtonYpos+ buttonHeight + buttonDistance,"NotDone"))
-
-            if self.menuname == "Choose Level":
-                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + int((buttonWidth + buttonDistance)/2),firstButtonYpos+ buttonHeight*2,"Load_single_game"))
-                self.surfaces.append( (   (buttonWidth*2 + buttonDistance,buttonHeight), (firstButtonXpos,firstButtonYpos)  ) )
-                self.texts.append(("Enter Levelcode: ",(firstButtonXpos+ int(buttonWidth/2+15),firstButtonYpos + int(buttonHeight/2)),20))
-                self.write_text_config = (( "",(firstButtonXpos+175,firstButtonYpos + 25),22,True))
-                ######### TODO #############
-            
-            if self.menuname == "Highscore":
-                #self.buttons.append(Button(int(buttonWidth/2),buttonHeight,firstButtonXpos,firstButtonYpos,"NotDone"))
-                place = 1
-                place_y_pos = WINDOWh/2-100
-                for (name,points) in highscore_list:
-
-                    if place == 1:
-                        textsize = 40
-                    else:
-                        textsize = 30 - place
-                    
-                    self.texts.append((str(place) + ".    " + name + ":   " + str(points),(WINDOWw/2,place_y_pos),textsize))
-                    place += 1
-                    place_y_pos += 50
-                
-
-                if highscore_list[0][0] == "Mister Man":
-                    self.texts.append(("GOAL: Beat Mister Man!",(WINDOWw/2,place_y_pos+30),30))
-                
-            elif self.menuname == "Multiplayer":
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"Open_Multi_screen"))
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos, "Link_In_screen"))
-
-            elif self.menuname == "Credits":
-                self.texts.append(("Graphical Design: The Phil",(WINDOWw/2,WINDOWh/2+50),20))
-                self.texts.append(("Physiks and mechanics: Tom-Master",(WINDOWw/2,WINDOWh/2),20))
-                self.texts.append(("Menu and Multiplayer: General Funky",(WINDOWw/2,WINDOWh/2-50),20))
-                self.texts.append(("Supervision and advice: Clemens Schefel",(WINDOWw/2,WINDOWh/2+100),20))
-
-            elif self.menuname == "Open TCP-Server": 
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"Open_game"))
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos,"Awaiting_Player_screen"))
-
-            elif self.menuname == "Enter Multiplayergame":
-                self.surfaces.append( (   (buttonWidth*2 + buttonDistance,buttonHeight), (firstButtonXpos,firstButtonYpos)  ) )
-                self.texts.append(("IP-Address: ",(firstButtonXpos+ int(buttonWidth/2),firstButtonYpos + int(buttonHeight/2)),20))
-                self.write_text_config = (( ip,(firstButtonXpos+140,firstButtonYpos + 25),22,True))
-                self.writeable_text =  ip
-                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos + buttonDistance*2,"Search"))
-
-            elif self.menuname == "Awaiting second player":
-                self.texts.append(("Let a friend join in to start the randomness!",(WINDOWw/2,WINDOWh/2-50),30))
-                self.texts.append(("(If you have one...)",(WINDOWw/2,WINDOWh/2-25),10))
-
-            else:
-                pass
-                
-            self.buttons.append(Button(buttonWidth,int(buttonHeight),firstButtonXpos,WINDOWh - 100,"Start_screen"))
-    
-
 
 
 
