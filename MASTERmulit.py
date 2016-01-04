@@ -499,7 +499,7 @@ def main():
 
                                 frame_counter += 1
                                 if (frame_counter % 1 == 0):  ##############Ändern verbessert Performance, sieht aber nicht soo aus
-                                        frame_counter = 0
+                                        
                                         p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
                                                            (current_level.spieler.direction,current_level.spieler.state), #  Richtung in die er schaut und sprite_in_use
                                                            (current_level.spieler.body.position.x,current_level.spieler.body.position.y), # Positition des Spielers
@@ -515,6 +515,10 @@ def main():
                                                 current_level.anderer_spieler.body.position.x = p2_koords[0]
                                                 current_level.anderer_spieler.body.position.y = p2_koords[1]
                                                 current_level.anderer_spieler.direction = p2_direction[0]
+
+                                if frame_counter%10 == 0:
+                                        frame_counter = 0
+                                        stuff_data = send_data((-42,playing_Spieler,1,1))
                                 
 #################################################################
 

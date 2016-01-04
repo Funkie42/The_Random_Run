@@ -1,4 +1,4 @@
-import pygame,time, sys, MASTER, MASTERmulit,Gameclient,Gameserver,Texts
+import pygame,time, sys, MASTER, MASTERmulit,Gameclient,Gameserver,Texts, random
 from Startmenu_Images import *
 from pygame.locals import *
 
@@ -544,7 +544,10 @@ class Main:
     def game_intro(self):
         awesomeness = 0
         pygame.mixer.music.load(game_music)
-        for text in Texts.Starwars_intro:
+
+        introtext = random.choice(Texts.intro_texts)
+        
+        for text in introtext:
             reached_max = False
             alpha_value = 250
             thisPrint = pygame.font.Font('freesansbold.ttf', 25).render(text,True,(255,255,255))
@@ -555,27 +558,50 @@ class Main:
             alphaSurface.fill((0,0,0))
             alphaSurface.set_alpha(alpha_value)
 
-
+            ###
             awesomeness +=1
-            if awesomeness == 2:
-                pygame.mixer.Sound(star_wars_sound).play()
-            elif awesomeness == 4:
-                pygame.mixer.music.play(-1, 0.0)
+            self.do_the_awesome(awesomeness,introtext, 1)
+            ###
+        
             
             while alpha_value < 255:
                 self.display_surf.fill((0,0,0))
                 self.display_surf.blit(thisPrint,thisRect)
                 alphaSurface.set_alpha(alpha_value)
                 self.display_surf.blit(alphaSurface,(0,0))
+                if awesomeness == 1 and introtext != Texts.starwars_intro:
+                    self.showText("Press 'Space' to skip", textsize = 13)
                 pygame.display.flip()
+
+                for event in pygame.event.get():
+                    if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
+                        self.endIt()
+                    if event.type == KEYUP and event.key == K_SPACE:
+                        return
                 
                 if alpha_value <= 0:
-                    time.sleep(1)
+                    time.sleep(0.1)
                     reached_max = True
+                    ###
+                    self.do_the_awesome(awesomeness,introtext, 2)
+                    ###
                 if reached_max:
-                    alpha_value += 2
+                    alpha_value += 3
                 else:
-                    alpha_value -= 2
+                    alpha_value -= 3
+
+    def do_the_awesome(self,awesome,introtext, playtime): # Playtime (1 oder 2) wann es gemacht werden soll
+        if playtime == 1:
+            if introtext == Texts.normal_intro:
+                if awesome == 1:
+                    pygame.mixer.music.play(-1, 0.0)
+        else:
+            if introtext == Texts.starwars_intro:
+                if awesome == 1:
+                    time.sleep(1)
+                    pygame.mixer.Sound(star_wars_sound).play()
+                if awesome == 3:
+                    pygame.mixer.music.play(-1, 0.0)
 
                     
     def blend_in_text(self,text,position = (int(WINDOWw/2),int(WINDOWh/2)), textsize = 25, feldgroeße = (buttonWidth*2,buttonHeight*2)): # Texteinblende mit Hintergrund
