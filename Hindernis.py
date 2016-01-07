@@ -43,6 +43,9 @@ class Gegner(Hindernis):
 
     def init(self, space):
         space.add(self.body, self.shape)
+
+    def remove(self, space):
+        space.remove(self.body, self.shape)
         
     def update(self):
         if self.rect.right >= self.block.rect.right:
@@ -81,6 +84,9 @@ class FliegenderGegner(Hindernis):
 
     def init(self, space):
         space.add(self.shape)
+
+    def remove(self, space):
+        space.remove(self.shape)
 
     def course(self):
         if self.waagrecht:

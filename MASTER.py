@@ -111,13 +111,14 @@ class Spieler(pygame.sprite.Sprite):
 
 #WELT/LEVELKLASSE
 class Welt():
-        def __init__(self, BACKGROUNDSURF, boeden, hindernisse, power_ups, speicherpunkte, spieler):
+        def __init__(self, BACKGROUNDSURF, boeden, hindernisse, power_ups, speicherpunkte, portal, spieler):
                 self.BACKGROUNDSURF = BACKGROUNDSURF
                 self.BACKGROUNDSURF = pygame.transform.scale(self.BACKGROUNDSURF, (int(LEVELSURF.get_width() * 2/3), DISPLAYSURF.get_height() + 25))
                 self.boeden = boeden
                 self.hindernisse = hindernisse
                 self.power_ups = power_ups
                 self.speicherpunkte = speicherpunkte
+                self.portal = portal
                 self.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(self.boeden[0], [man1]))
                 global current_speicherpunkt, hintergrund_rect, backup_hintergrund_rect
                 current_speicherpunkt = self.speicherpunkte[0]
@@ -125,6 +126,8 @@ class Welt():
                 self.spieler = spieler
                 self.finish = False
                 self.init = False
+
+        def addToSpace(self):
                 for i in self.boeden:
                         space.add(i.shape)
                 for i in self.hindernisse:
@@ -133,13 +136,25 @@ class Welt():
                         space.add(i.body, i.shape)
                 for i in self.speicherpunkte:
                         space.add(i.shape)
-               
+                space.add(self.portal.shape)
 
+        def removeFromSpace(self):
+                for i in self.boeden:
+                        space.remove(i.shape)
+                for i in self.hindernisse:
+                        i.remove(space)
+                for i in self.power_ups:
+                        space.remove(i.body, i.shape)
+                for i in self.speicherpunkte:
+                        space.remove(i.shape)
+                space.remove(self.portal.shape)
+               
         def update(self):
                 global current_speicherpunkt
                 if not self.init:
                         self.spieler.body.position.x = current_speicherpunkt.rect.left + 50
                         self.spieler.body.position.y = current_speicherpunkt.rect.top - 200
+                        self.addToSpace()
                         self.init = True
                         
                 self.spieler.state_update()
@@ -181,6 +196,9 @@ class Welt():
                                  backup_hintergrund_rect.left = hintergrund_rect.left
                                  self.speicherpunkte.remove(i)
                                  space.remove(i.shape)
+
+                if rect.colliderect(self.portal.rect):
+                                LEVELSURF.blit(self.portal.sprite_list[self.portal.sprite_iterator], self.portal.rect)
                                   
                 if self.spieler.body.position.y > LEVELSURF.get_height() - 200:
                         self.spieler.is_alive = False
@@ -321,6 +339,12 @@ def kugel_hits_highjump(space, arbiter):
         arbiter.shapes[1].body.position.x += 20 * s.direction
         arbiter.shapes[0].group = 2
         return True
+
+def player_hits_portal(space, arbiter):
+        global current_level
+        current_level.removeFromSpace()
+        current_level = Welt( pygame.image.load("Gui/wald.jpg"), [bla, blb, blc, bld, ble, blf], [], [], [], [], s)
+        return True
         
 
 # UNIVERSELLE OPTIONEN
@@ -338,10 +362,12 @@ current_speicherpunkt = False
 # 4 = Kugel
 # 5 = Highjump
 # 6 = fliegender Gegner
+# 7 = Portal
 
 #SPRITEGROUPS
 # 1 = Kugel
 # 2 = Highjump
+
 space.add_collision_handler(1,2,post_solve=touch, separate=cänt_touch_dis)
 space.add_collision_handler(3,4, begin=kugel_hits_gegner)
 space.add_collision_handler(6,4, begin=kugel_hits_fliegender_gegner)
@@ -350,6 +376,7 @@ space.add_collision_handler(1,3, begin=player_jumps_gegner)
 space.add_collision_handler(1,6, begin=player_jumps_fliegender_gegner)
 space.add_collision_handler(1,5, post_solve=player_jumps_highjump)
 space.add_collision_handler(4,5, begin=kugel_hits_highjump)
+space.add_collision_handler(1,7, begin=player_hits_portal)
 space.gravity = (0, 1500)
 clock = pygame.time.Clock()
 fps = 25
@@ -369,7 +396,7 @@ mars = pygame.image.load("Gui/ground.png")
 
 #SPIELER
 s = Spieler()
-#1200 2300 2900
+
 #LEVEL1
 bl = Boden.Block(pygame.Rect(0,2000,1200,50), mars)
 bl1 = Boden.Block(pygame.Rect(1700,2000,1200,50), mars)
@@ -411,14 +438,25 @@ hj = Power_Ups.High_Jump(bl5, [man1])
 
 sp = Speicherpunkt.Speicherpunkt(bl9_2, [man1])
 
+p = Speicherpunkt.Portal(bl13, [man1])
 
-w1 = Welt(pygame.image.load("Gui/mars_back.png"), [bl,bl1,bl2,bl3, bl4, bl5, bl5_2, bl6, bl6_2, bl6_3, bl6_4, bl7, bl8, bl9,bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18], [g,g1,g2,g3, g4, g5, fg, fg1, fg2], [hj], [sp], s)
+
+w1 = Welt(pygame.image.load("Gui/mars_back.png"), [bl,bl1,bl2,bl3, bl4, bl5, bl5_2, bl6, bl6_2, bl6_3, bl6_4, bl7, bl8, bl9,bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18], [g,g1,g2,g3, g4, g5, fg, fg1, fg2], [hj], [sp], p, s)
 
 #LEVEL2
-#w2 = Welt( pygame.image.load("Gui/wald.jpg"), [], [], [], [], s, 500, 1500)
+
+bla = Boden.Block(pygame.Rect(0,2000,1200,50), mars)
+blb = Boden.Block(pygame.Rect(1700,2000,1200,50), mars)
+blc = Boden.Block(pygame.Rect(2900,1700,750, 50), mars)
+bld = Boden.Block(pygame.Rect(3650,1700,50, 800), mars)
+ble = Boden.Block(pygame.Rect(3650, 2400,1450, 50), mars)
+blf = Boden.Block(pygame.Rect(4400,2000,100, 50), mars)
+
+w2 = Welt( pygame.image.load("Gui/wald.jpg"), [bla, blb, blc, bld, ble, blf], [], [], [], [], s)
+
 
 #SPIELER
-game = [w1]
+game = [w1, w2]
 current_level = w1
 backup_hintergrund_rect = copy.deepcopy(hintergrund_rect)
 kugeln = []
@@ -427,7 +465,6 @@ kugeln = []
 def main():
         while True:
                 for w in game:
-                        current_level = w
                         while not w.finish:
                                 for event in pygame.event.get():
                                         if event.type == QUIT:
@@ -436,22 +473,20 @@ def main():
                                         elif event.type == KEYDOWN:
                                                 if event.key == K_SPACE:
                                                         if s.is_Grounded:
-                                                                s.jump()
+                                                                w.spieler.jump()
                                                         else:
                                                                 if s.double_jump_counter > 0:
-                                                                        current_level.spieler.jump()
-                                                                        current_level.spieler.double_jump_counter -= 1
+                                                                        w.spieler.jump()
+                                                                        w.spieler.double_jump_counter -= 1
                                                 if event.key == K_UP:
                                                         k = Kugel((900 * s.direction, -75))
                                                 if event.key == K_d:
-                                                        if not current_level.spieler.is_Grounded:
-                                                                current_level.spieler.dash_counter += 5
+                                                        if not w.spieler.is_Grounded:
+                                                                w.spieler.dash_counter += 5
                                                                 
                                 keys = pygame.key.get_pressed()
                                 if keys[K_RIGHT] or keys[K_LEFT]:
-                                        current_level.spieler.move()
-
-                                #LEVELSURF.fill((65, 165, 200, 0.5))
+                                        w.spieler.move()
                                 LEVELSURF.blit(hintergrund_blit(), (rect.left -10, rect.top -10))
                                 w.update()
                                 
@@ -466,7 +501,7 @@ def main():
                                 #print(space.collision_bias)
                                 #print(fg2.rect.top)
                                 #print(current_level.spieler.direction)
-                                print(backup_hintergrund_rect)
+                                #print(backup_hintergrund_rect)
                                 DISPLAYSURF.blit(camera_blit(), (0,0))
                                 pygame.display.flip()
                                 #pygame.quit()
