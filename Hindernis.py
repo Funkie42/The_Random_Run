@@ -75,7 +75,7 @@ class FliegenderGegner(Hindernis):
             self.rect.top = topOrleft
             self.rect.left = self.anfang + 1
         else:
-            self.top = self.anfang + 1
+            self.rect.top = self.anfang + 1
             self.rect.left = topOrleft
         #self.body = pymunk.Body()
         self.body.position = self.rect.center

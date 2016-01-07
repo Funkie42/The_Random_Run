@@ -436,7 +436,7 @@ g5 = Hindernis.Gegner(bl12, 10, woman, 5)
 
 fg = Hindernis.FliegenderGegner(5350, 5800, 1600, 2, woman, 5)
 fg1 = Hindernis.FliegenderGegner(4700, 5100, 3100, 5, woman, 5)
-fg2 = Hindernis.FliegenderGegner(2100, 2200, 100, 10, woman, 5, False)
+fg2 = Hindernis.FliegenderGegner(2100, 2200, 100, 2, woman, 5, False)
 
 hj = Power_Ups.High_Jump(bl5, [man1])
 
