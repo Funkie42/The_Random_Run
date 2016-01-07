@@ -344,10 +344,12 @@ def kugel_hits_highjump(space, arbiter):
         arbiter.shapes[0].group = 2
         return True
 
-def player_hits_portal(space, arbiter):
+def player_hits_portal(space, arbiter): ############################################## AHSJKLDHSALKDHASLKJDHLKASJDHALSKJDHL
         global current_level
+        #current_level.removeFromSpace()
         current_level.removeFromSpace()
-        current_level = Welt( pygame.image.load("Gui/wald.jpg"), [bla, blb, blc, bld, ble, blf], [], [], [], [], s)
+        current_level.finish = True
+        current_level = game[game.index(current_level) + 1]
         return True
         
 
@@ -397,6 +399,8 @@ woman = SpriteSheet.SpriteSheet("Gui/player.png")
 
 #GELÄNDESPRITES
 mars = pygame.image.load("Gui/ground.png")
+rinde = pygame.image.load("Gui/Rinde.jpg")
+rinde = pygame.transform.scale(rinde, (100, 100))
 
 #SPIELER
 s = Spieler()
@@ -449,14 +453,16 @@ w1 = Welt(pygame.image.load("Gui/mars_back.png"), [bl,bl1,bl2,bl3, bl4, bl5, bl5
 
 #LEVEL2
 
-bla = Boden.Block(pygame.Rect(0,2000,1200,50), mars)
-blb = Boden.Block(pygame.Rect(1700,2000,1200,50), mars)
-blc = Boden.Block(pygame.Rect(2900,1700,750, 50), mars)
-bld = Boden.Block(pygame.Rect(3650,1700,50, 800), mars)
-ble = Boden.Block(pygame.Rect(3650, 2400,1450, 50), mars)
-blf = Boden.Block(pygame.Rect(4400,2000,100, 50), mars)
+bla = Boden.Block(pygame.Rect(100,2200,700 ,50), rinde)
+blb = Boden.Block(pygame.Rect(1700,2000,1200,50), rinde)
+blc = Boden.Block(pygame.Rect(2900,1700,750, 50), rinde)
+bld = Boden.Block(pygame.Rect(3650,1700,50, 800), rinde)
+ble = Boden.Block(pygame.Rect(3650, 2400,1450, 50), rinde)
+blf = Boden.Block(pygame.Rect(4400,2000,100, 50), rinde)
 
-w2 = Welt( pygame.image.load("Gui/wald.jpg"), [bla, blb, blc, bld, ble, blf], [], [], [], [], s)
+p2 = Speicherpunkt.Portal(ble, [man1])
+
+w2 = Welt( pygame.image.load("Gui/wald.jpg"), [bla, blb, blc, bld, ble, blf], [], [], [], p2, s) #########################asghdjkasdjashkdjaslkdja
 
 
 #SPIELER
@@ -506,6 +512,7 @@ def main():
                                 #print(fg2.rect.top)
                                 #print(current_level.spieler.direction)
                                 #print(backup_hintergrund_rect)
+                                #print(current_level.init)
                                 DISPLAYSURF.blit(camera_blit(), (0,0))
                                 pygame.display.flip()
                                 #pygame.quit()
