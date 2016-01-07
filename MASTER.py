@@ -2,6 +2,10 @@ import sys, pygame, pymunk, Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpu
 from pygame.locals import*
 from copy import deepcopy
 
+from Gameclient import *
+
+playing_Spieler = 0
+Multiplayer = False
 
 class Spieler(pygame.sprite.Sprite):
         def __init__(self):
@@ -171,8 +175,8 @@ class Welt():
                                 self.hindernisse.remove(i)
                                 space.remove(i.body, i.shape)
                         if rect.colliderect(i.center_rect()):
-                                i.update()
                                 LEVELSURF.blit(i.current_sprite(), i.center_rect())
+                        i.update()
                                 #pygame.draw.polygon(LEVELSURF, ((34,66,34)), i.shape.get_vertices())
                                 #pygame.draw.circle(LEVELSURF, ((4,5,6)), (int(i.body.position.x), int(i.body.position.y)), 10)
                                 
@@ -506,6 +510,8 @@ def main():
                                 pygame.display.flip()
                                 #pygame.quit()
                                 #sys.exit()
-
-if __name__ == "__main__":
-        cProfile.run("main()")
+if Multiplayer:
+        pass
+else:
+        if __name__ == "__main__":
+                cProfile.run("main()")
