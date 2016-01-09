@@ -1,4 +1,5 @@
 import pygame,time, sys, MASTER, MASTERmulit,Gameclient,Gameserver,Texts, random
+import fileinput # Für Highscore
 from Startmenu_Images import *
 from pygame.locals import *
 
@@ -40,12 +41,23 @@ Highscores
 '''
 #
 
+
+
 highscore_list = [] # Erster Platz ist die Nummer 0
 #Max_size ist so 5?!
 
-default_highscore = [("Mister Man",999),("Mister Man",500),("Mister Man",420),("Mister Man",42),("Mister Man",1)] #  Tupel mit Name und Punkten
 
-highscore_list = default_highscore
+test = []
+with open('Highscore.txt','r') as f:
+    for line in f:
+        if line[-1] == "\n"[-1]:
+            line = line[:-1]
+        test.append(line)
+for i in range(0,len(test)):
+    if i % 2 == 0:
+        highscore_list.append((test[i],test[i+1]))
+    
+    
 
 def get_Highscore(name,points):
     global highscore_list
@@ -56,8 +68,23 @@ def get_Highscore(name,points):
         if list_number < len(highscore_list):
             highscore_list.insert(list_number,(name,points))
             del(highscore_list[len(highscore_list)-1])
+        with open('Highscore.txt','w') as file:
+            for entry in highscore_list:
+                file.write(entry[0] + "\n")
+                file.write(str(entry[1]) + "\n")
     except: pass
-        
+
+def reset_Highscore():
+    global highscore_list
+    highscore_list = [("Mister Man",999),("Mister Man",500),("Mister Man",420),("Mister Man",42),("Mister Man",1)]#  Tupel mit Name und Punkten
+    with open('Highscore.txt','w') as file:
+        for entry in highscore_list:
+            file.write(entry[0] + "\n")
+            file.write(str(entry[1]) + "\n")
+            
+            
+    
+    
 
 #
 '''
@@ -136,6 +163,8 @@ class Button(pygame.Surface):
             return credits_button,credits_button_cursor_over,credits_button_clicked
         elif self.goto_menutitle == "Highscore_screen":
             return highscore_button,highscore_button_cursor_over, highscore_button_clicked
+        elif self.goto_menutitle == "Reset_highscore":
+            return reset_button,reset_button_cursor_over,reset_button_clicked
 
     #####################
     #Singleplayer Menu
@@ -240,9 +269,11 @@ class Menu:
                     place += 1
                     place_y_pos += 50
                 
-
+                self.buttons.append(Button(int(buttonWidth/2),int(buttonHeight/2),WINDOWw -320,WINDOWh - 182,"Reset_highscore"))
+                
                 if highscore_list[0][0] == "Mister Man":
                     self.texts.append(("GOAL: Beat Mister Man!",(WINDOWw/2,place_y_pos+30),30))
+                    
                 
             elif self.menuname == "Multiplayer":
                 self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos,"Open_Multi_screen"))
@@ -375,43 +406,33 @@ class Main:
     def button_clicked(self,button): # Was tun wenn Button geclickt
         global server_IP
 
-        #######################################
+        #####################################################################################################################################################
         #Spielstart Singleplayer
-        #######################################
+        #####################################################################################################################################################
         
         if(button.goto_menutitle == "Game_start"): # Singleplayer start simple (Beginning)
           #  pygame.mixer.Sound(game_start_sound).play()
             #game_start_sound.play()
-            time.sleep(1)
-
-            self.game_intro()
-
-            
-            #In der Endversion soll das am besten in der Spiel-Datei stehen und nicht hier, zwecks Highscore anzeige
-
-
-            survival_time = time.time()
-            try:MASTER.main()
-            except: print("The Game crashed for some reason.... try again! :)")
-            finally:
-                survival_time = int(time.time() - survival_time)
-
-                get_Highscore(playername,survival_time)
-                    
-
-                #pygame.mixer.music.stop()
-                
-                #self.game_over_sound.play()
                 time.sleep(1)
                 
-                return "Singleplayer_screen"
-        #########################
-        #Ende Spiel
-        #########################
-        
-        elif(button.goto_menutitle == "End"):
-            pygame.quit()
-            sys.exit()
+                self.interlevel_scene(0)
+                score_info = MASTER.on_execute(False) # (Continue Bool, Punktzahl, bonustime)
+                finished_level_number = 1
+                self.level_finished(score_info,finished_level_number)
+                continue_game = score_info[0]
+                self.interlevel_scene(finished_level_number)
+                
+                while continue_game:
+                    finished_level_number += 1
+                    score_info = MASTER.main()
+                    self.level_finished(score_info,finished_level_number)
+                    self.interlevel_scene(finished_level_number)
+                    
+                highscore = score_info[1]
+                get_Highscore(playername,highscore)
+                time.sleep(1)
+                
+                return "Singleplayer_screen"            
 
         ###############################
         # Multiplayer Open Game
@@ -429,7 +450,16 @@ class Main:
 
                 time.sleep(2)
                 
-                MASTERmulit.start_up() #Start Game!
+                MASTERmulit.on_execute(True) #Start Game!
+                finished_level_number = 1
+                self.level_finished(score_info,finished_level_number)
+                continue_game = score_info[0]
+                while continue_game:
+                    finished_level_number += 1
+                    score_info = MASTER.main()
+                    self.level_finished(score_info,finished_level_number)
+                highscore = score_info[1]
+                get_Highscore(playername,highscore)
              
                 Gameclient.client.disconnect()
                 server.disconnect_clients()
@@ -438,11 +468,7 @@ class Main:
                 self.blend_in_text("Something went wrong...",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
 
                 time.sleep(2)
-            return "Open_Multi_screen"
-
-
-
-            
+            return "Open_Multi_screen"         
         
         ###############################
         #Mulitplayer Link in
@@ -465,7 +491,16 @@ class Main:
 
                 time.sleep(2)
                 
-                MASTERmulit.start_up() #Start Game!
+                MASTERmulit.on_execute(True) #Start Game!
+                finished_level_number = 1
+                self.level_finished(score_info,finished_level_number)
+                continue_game = score_info[0]
+                while continue_game:
+                    finished_level_number += 1
+                    score_info = MASTER.main()
+                    self.level_finished(score_info,finished_level_number)
+                highscore = score_info[1]
+                get_Highscore(playername,highscore)
              
                 Gameclient.client.disconnect()
             except:
@@ -475,6 +510,22 @@ class Main:
                 
             return self.menu_in_use.key_name
 
+
+        #########################
+        #Reset Highscore
+        #########################
+
+        elif(button.goto_menutitle == "Reset_highscore"):
+            reset_Highscore()
+            return "Highscore_screen"
+        #########################
+        #Ende Spiel
+        #########################
+        
+        elif(button.goto_menutitle == "End"):
+            pygame.quit()
+            sys.exit()
+            
         ####################
         #Anderes Menu
         ####################
@@ -494,13 +545,13 @@ class Main:
         for button in self.menu_in_use.buttons: # Test, Zeiger auf Button? Geklickt?
             if ((clickX > button.xpos) & (clickX < (button.xpos+button.width))) & ((clickY > button.ypos) & (clickY < button.ypos+button.height)):
                 if is_clicked:
-                    button.image_surf = button.clicked_surf#.convert()
+                    button.image_surf = button.clicked_surf
                     button.image_surf = pygame.transform.scale(button.image_surf,(button.width,button.height)) # Geklickter Button
                     self.on_render()
                     
                     new_menu = self.button_clicked(button)
                     
-                    button.image_surf = button.normal_surf#.convert()
+                    button.image_surf = button.normal_surf
                     if new_menu == "Highscore_screen":
                         self.menu_in_use = Menu("Highscore","Highscore_screen")
                     else:
@@ -508,7 +559,7 @@ class Main:
                 else:
                     self.set_back_button_image() # Behebt Bug des Aufgedecktbleibens
                     
-                    button.image_surf = button.cursor_on_surf#.convert()
+                    button.image_surf = button.cursor_on_surf
                     self.menu_in_use.curser_over_button = button
 
                 button.image_surf = pygame.transform.scale(button.image_surf,(button.width,button.height))
@@ -518,7 +569,7 @@ class Main:
 
     def set_back_button_image(self): # Auslagerung auf Methode, da sonst 2mal der Code verwendet wird (oder auftreten eines Bugs)
         if  self.menu_in_use.curser_over_button != None:
-            self.menu_in_use.curser_over_button.image_surf = self.menu_in_use.curser_over_button.normal_surf#.convert()
+            self.menu_in_use.curser_over_button.image_surf = self.menu_in_use.curser_over_button.normal_surf
             self.menu_in_use.curser_over_button.image_surf = pygame.transform.scale(self.menu_in_use.curser_over_button.image_surf,
                                                                                     (self.menu_in_use.curser_over_button.width,self.menu_in_use.curser_over_button.height))
             self.menu_in_use.curser_over_button = None
@@ -541,16 +592,22 @@ class Main:
                 pygame.display.update()
                 pygame.time.wait(waitingTime)
 
-    def game_intro(self):
+    def interlevel_scene(self, level = 0):
         awesomeness = 0
         pygame.mixer.music.load(game_music)
 
-        introtext = random.choice(Texts.intro_texts)
+        if level == 0:
+            leveltext = random.choice(Texts.intro_texts)
+        if level == 1:
+            leveltext = random.choice(Texts.level_1_texts)
+        if level == 2:
+            leveltext = random.choice(Texts.level_2_texts)
         
-        for text in introtext:
+        
+        for line in leveltext:
             reached_max = False
             alpha_value = 250
-            thisPrint = pygame.font.Font('freesansbold.ttf', 25).render(text,True,(255,255,255))
+            thisPrint = pygame.font.Font('freesansbold.ttf', 25).render(line,True,(255,255,255))
             thisRect = thisPrint.get_rect()
             thisRect.center = ((WINDOWw/2,WINDOWh/2))
 
@@ -560,7 +617,7 @@ class Main:
 
             ###
             awesomeness +=1
-            self.do_the_awesome(awesomeness,introtext, 1)
+            self.do_interlevel_effects(awesomeness,leveltext, 1,level)
             ###
         
             
@@ -569,7 +626,7 @@ class Main:
                 self.display_surf.blit(thisPrint,thisRect)
                 alphaSurface.set_alpha(alpha_value)
                 self.display_surf.blit(alphaSurface,(0,0))
-                if awesomeness == 1 and introtext != Texts.starwars_intro:
+                if awesomeness == 1 and leveltext != Texts.starwars_intro:
                     self.showText("Press 'Space' to skip", textsize = 13)
                 pygame.display.flip()
 
@@ -583,25 +640,30 @@ class Main:
                     time.sleep(0.1)
                     reached_max = True
                     ###
-                    self.do_the_awesome(awesomeness,introtext, 2)
+                    self.do_interlevel_effects(awesomeness,leveltext, 2,level)
                     ###
                 if reached_max:
                     alpha_value += 3
                 else:
                     alpha_value -= 3
 
-    def do_the_awesome(self,awesome,introtext, playtime): # Playtime (1 oder 2) wann es gemacht werden soll
-        if playtime == 1:
-            if introtext == Texts.normal_intro:
-                if awesome == 1:
-                    pygame.mixer.music.play(-1, 0.0)
-        else:
-            if introtext == Texts.starwars_intro:
-                if awesome == 1:
-                    time.sleep(1)
-                    pygame.mixer.Sound(star_wars_sound).play()
-                if awesome == 3:
-                    pygame.mixer.music.play(-1, 0.0)
+    def do_interlevel_effects(self,awesome,leveltext, playtime,level): # Playtime (1 oder 2) wann es gemacht werden soll
+        if level == 0:
+            if playtime == 1:
+                if leveltext == Texts.normal_intro:
+                    if awesome == 1:
+                        pygame.mixer.music.play(-1, 0.0)
+            else:
+                if leveltext == Texts.starwars_intro:
+                    if awesome == 1:
+                        time.sleep(1)
+                        pygame.mixer.Sound(star_wars_sound).play()
+                    if awesome == 3:
+                        pygame.mixer.music.play(-1, 0.0)
+        if level == 1:
+            pass
+        if level == 2:
+            pass
 
                     
     def blend_in_text(self,text,position = (int(WINDOWw/2),int(WINDOWh/2)), textsize = 25, feldgroeße = (buttonWidth*2,buttonHeight*2)): # Texteinblende mit Hintergrund
@@ -613,7 +675,25 @@ class Main:
             self.display_surf.blit(image,text_surface[1])
             self.showText(text,position,textsize)
             pygame.display.flip()
-        
+
+    def level_finished(self,score_info,finished_level_number):
+                        level_end_string = "Congratulations! You've cleared Level " + str(finished_level_number) + "!"
+                        self.display_surf.fill((0,0,0))
+                        self.showText(level_end_string, (int(WINDOWw/2),int(WINDOWh/2)))
+                        pygame.display.flip()
+                        time.sleep(2)
+                        
+                        score_shown = score_info[1]
+                        bonus_shown = score_info[2]
+                        for i in range(0,score_info[2]):
+                            self.display_surf.fill((0,0,0))
+                            score_shown += 1
+                            bonus_shown -= 1
+                            self.showText("Level  " + str(finished_level_number) + ":",(int(WINDOWw/2),int(WINDOWh/2) -200),60)
+                            self.showText("Bonustime: " + str(bonus_shown),(int(WINDOWw/2),int(WINDOWh/2)-50),30)
+                            self.showText("Score: " + str(score_shown),(int(WINDOWw/2),int(WINDOWh/2)),50)
+                            pygame.display.flip()
+                        time.sleep(2)
 
 
 

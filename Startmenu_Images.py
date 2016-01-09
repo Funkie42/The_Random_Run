@@ -16,6 +16,10 @@ back_button = pygame.image.load(PFAD + "Gui/Buttons/bl_back_off.png")
 back_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/bl_back_on.png")
 back_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/bl_back_clicked.png")
 
+#Rest Highscore Button
+reset_button = pygame.image.load(PFAD + "Gui/Buttons/reset_off.png")
+reset_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/reset_on.png")
+reset_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/reset_clicked.png")
 
 ####################
 #Main Menu#

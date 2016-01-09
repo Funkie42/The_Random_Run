@@ -1,11 +1,14 @@
-import sys, pygame, pymunk, Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, cProfile, copy
+import sys, pygame, pymunk, time
+import Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, cProfile, copy
 from pygame.locals import*
 from copy import deepcopy
 
 from Gameclient import *
 
 playing_Spieler = 0 # Zu setzen auf 1 bzw. 2
-multiplayer = True
+multiplayer = False
+survival_time = 0
+score = 0
 
 class Spieler(pygame.sprite.Sprite):
         def __init__(self):
@@ -83,7 +86,7 @@ class Spieler(pygame.sprite.Sprite):
         def dash(self):
                 if self.dash_counter > 0:
                         self.body.position.x += 60 * self.direction
-                        self.dash_counter -= 1
+                        ###################################self.dash_counter -= 1
 
         def selfblit(self):
                 #if self.sprite_iterator >= len(self.sprite_list[self.state]):
@@ -506,10 +509,16 @@ kugeln = []
 
 
 def main():
+        global score
         while True:
+                start_time = time.time()
+                pause_time = 0
+                bonustime = 300
                 frame_counter = 0
+                
                 for w in game:
                         while not w.finish:
+                                
                                 #################################
                                 new_kugel = False
                                 #################################
@@ -518,6 +527,10 @@ def main():
                                                 pygame.quit()
                                                 sys.exit()
                                         elif event.type == KEYDOWN:
+                                                if event.key == K_q: # Für Beenden und zurück zum startmenü
+                                                        return (False,score)
+                                                if event.key == K_p and not multiplayer: #Pause TODO
+                                                        pass
                                                 if event.key == K_SPACE:
                                                         if w.spieler.is_Grounded:
                                                                 w.spieler.jump()
@@ -579,57 +592,81 @@ def main():
                                         
                                 space.step(1/35)
                                 clock.tick(25)
-                                #print(len(space.bodies))
-                                #print(current_speicherpunkt)
-                                #print(current_level.spieler.body.velocity.x)
-                                #print(space.collision_bias)
-                                #print(fg2.rect.top)
-                                #print(current_level.spieler.direction)
-                                #print(backup_hintergrund_rect)
-                                #print(current_level.init)
                                 DISPLAYSURF.blit(camera_blit(), (0,0))
+
+                                ### Highscoreanzeige ###
+                                if bonustime > 0:
+                                        bonustime = 300 - int(time.time() - start_time - pause_time)
+                                else:
+                                        bonustime = 0
+                                score_string = "Bonustime: " + str(bonustime) + "     Score: " + str(score)
+                                thisPrint = pygame.font.Font('freesansbold.ttf', 20).render(score_string,True,(255,255,255))
+                                thisRect = thisPrint.get_rect()
+                                thisRect.center = ((150,40))
+                                DISPLAYSURF.blit(thisPrint,thisRect)                                
+
+                                
                                 pygame.display.flip()
                                 
                                 #pygame.quit()
                                 #sys.exit()
-if multiplayer:
-        if __name__ == "__main__":
-                try:
-                        print("Client connecting on \""+client_ip+"\", port "+str(port)+" . . .")
-                        create_Client(42042,'localhost')#192.168.178.37')
-                        print("Client connected!")
+                                if w.finish and __name__ != "__main__":
+                                        old_score = score
+                                        score += bonustime
+                                        return True, old_score,bonustime
+                                
+                                
+
+def on_execute(multi_True = False): # Multiplayer starten oder Singleplayer (bei False singleplayer)
+        global multiplayer,survival_time,playing_Spieler
+        multiplayer = multi_True
+        #Für Highscore#
+        survival_time = time.time()
+        
+        if multiplayer:
+                if __name__ == "__main__":
+                        try:
+                                print("Client connecting on \""+client_ip+"\", port "+str(port)+" . . .")
+                                create_Client(42042,'localhost')#192.168.178.37')
+                                print("Client connected!")
+                                playing_Spieler = get_player_number()
+                                #print(playing_Spieler)
+                                for w in game:
+                                        if playing_Spieler == 1:
+                                                w.spieler = current_level.spieler1# Der Spieler den dieser PC steuert
+                                                w.anderer_spieler = current_level.spieler2
+                                        else:
+                                                w.spieler = current_level.spieler2
+                                                w.anderer_spieler = current_level.spieler1
+                                main()
+                                client.disconnect()
+                                print("Client disconnected!")
+                        except MastermindError:
+                                print("No server found! Please start Server and try again!")
+                                pygame.quit()
+                                sys.exit()
+                else: # Start aus dem Menü heraus
                         playing_Spieler = get_player_number()
                         print(playing_Spieler)
                         for w in game:
                                 if playing_Spieler == 1:
-                                        w.spieler = current_level.spieler1# Der Spieler den dieser PC steuert
-                                        w.anderer_spieler = current_level.spieler2
+                                                w.spieler = current_level.spieler1# Der Spieler den dieser PC steuert
+                                                w.anderer_spieler = current_level.spieler2
                                 else:
-                                        w.spieler = current_level.spieler2
-                                        w.anderer_spieler = current_level.spieler1
+                                                w.spieler = current_level.spieler2
+                                                w.anderer_spieler = current_level.spieler1         
                         main()
-                        client.disconnect()
-                        print("Client disconnected!")
-                except MastermindError:
-                        print("No server found! Please start Server and try again!")
-                        pygame.quit()
-                        sys.exit()
-else:
-        if __name__ == "__main__":
+        else:
                 for w in game:
                         w.spieler = w.spieler1
-                cProfile.run("main()")
+                        
+                if __name__ == "__main__":
+                        cProfile.run("main()")
+                else: # Singelplayerstart aus dem Menü heraus
+                         f = main()
+                         return f
 
-def start_up():
-                global playing_Spieler
-                playing_Spieler = get_player_number()
-                print(playing_Spieler)
-                for w in game:
-                        if playing_Spieler == 1:
-                                        w.spieler = current_level.spieler1# Der Spieler den dieser PC steuert
-                                        w.anderer_spieler = current_level.spieler2
-                        else:
-                                        w.spieler = current_level.spieler2
-                                        w.anderer_spieler = current_level.spieler1         
-                main()
 
+
+if __name__ == "__main__":
+        on_execute(multiplayer)
