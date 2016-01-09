@@ -214,9 +214,9 @@ class Menu:
                                 
         else:
             if self.menuname == "Singleplayer":
-                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos,"Game_start")) # Spielstart
-                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos+ buttonHeight + buttonDistance,"Choose_lvl_screen"))
-                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance,firstButtonYpos+ buttonHeight + buttonDistance,"NotDone"))
+                self.buttons.append(Button(buttonWidth*2,buttonHeight,firstButtonXpos + buttonDistance,firstButtonYpos - int(buttonDistance/2),"Game_start")) # Spielstart
+                self.buttons.append(Button(buttonWidth*2,buttonHeight,firstButtonXpos + buttonDistance, firstButtonYpos +buttonHeight+ int(buttonDistance/2) - int(buttonDistance/2),"Choose_lvl_screen"))
+                self.buttons.append(Button(buttonWidth*2,buttonHeight,firstButtonXpos + buttonDistance, firstButtonYpos +2*(buttonHeight+ int(buttonDistance/2)) - int(buttonDistance/2),"NotDone"))
 
             if self.menuname == "Choose Level":
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + int((buttonWidth + buttonDistance)/2),firstButtonYpos+ buttonHeight*2,"Load_single_game"))
@@ -245,8 +245,8 @@ class Menu:
                     self.texts.append(("GOAL: Beat Mister Man!",(WINDOWw/2,place_y_pos+30),30))
                 
             elif self.menuname == "Multiplayer":
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"Open_Multi_screen"))
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos, "Link_In_screen"))
+                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos,"Open_Multi_screen"))
+                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos, firstButtonYpos +buttonHeight+ int(buttonDistance/2), "Link_In_screen"))
 
             elif self.menuname == "Credits":
                 self.texts.append(("Graphical Design: The Phil",(WINDOWw/2,WINDOWh/2+50),20))
@@ -255,8 +255,8 @@ class Menu:
                 self.texts.append(("Supervision and advice: Clemens Schefel",(WINDOWw/2,WINDOWh/2+100),20))
 
             elif self.menuname == "Open TCP-Server": 
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos,firstButtonYpos,"Open_game"))
-                self.buttons.append(Button(buttonWidth,buttonHeight*2,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos,"Awaiting_Player_screen"))
+                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos,"Open_game"))
+                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos, firstButtonYpos +buttonHeight+ int(buttonDistance/2),"Awaiting_Player_screen"))
 
             elif self.menuname == "Enter Multiplayergame":
                 self.surfaces.append( (   (buttonWidth*2 + buttonDistance,buttonHeight), (firstButtonXpos,firstButtonYpos)  ) )

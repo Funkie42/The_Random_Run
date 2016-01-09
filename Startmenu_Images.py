@@ -52,52 +52,52 @@ highscore_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/bl_high_clicked
 #####################
 
 #Load Button
-load_button = pygame.image.load(PFAD + "Gui/Buttons/red_load_off.png")
-load_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/red_load_on.png")
-load_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/red_load_clicked.png")
+load_button = pygame.image.load(PFAD + "Gui/Buttons/load_off.png")
+load_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/load_on.png")
+load_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/load_clicked.png")
 
 #New Game Button
-ng_button = pygame.image.load(PFAD + "Gui/Buttons/red_ng_off.png")
-ng_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/red_ng_on.png")
-ng_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/red_ng_clicked.png")
+ng_button = pygame.image.load(PFAD + "Gui/Buttons/new_game_off.png")
+ng_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/new_game_on.png")
+ng_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/new_game_clicked.png")
 
 #Choose Level Buttn
 
-choose_lvl_button = pygame.image.load(PFAD + "Gui/Buttons/red_choose_off.png")
-choose_lvl_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/red_choose_on.png")
-choose_lvl_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/red_choose_clicked.png")
+choose_lvl_button = pygame.image.load(PFAD + "Gui/Buttons/choose_lvl_off.png")
+choose_lvl_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/choose_lvl_on.png")
+choose_lvl_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/choose_lvl_clicked.png")
 
 ######################
 #Multiplayer Menu
 ######################
 
 # Link In Button
-link_in_button = pygame.image.load(PFAD + "Gui/Buttons/blue_link_off.png")
-link_in_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/blue_link_on.png")
-link_in_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/blue_link_clicked.png")
+link_in_button = pygame.image.load(PFAD + "Gui/Buttons/link_in_off.png")
+link_in_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/link_in_on.png")
+link_in_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/link_in_clicked.png")
 
 #Open Server Button
-open_screen_button = pygame.image.load(PFAD + "Gui/Buttons/red_open_off.png")
-open_screen_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/red_open_on.png")
-open_screen_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/red_open_clicked.png")
+open_screen_button = pygame.image.load(PFAD + "Gui/Buttons/open_game_off.png")
+open_screen_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/open_game_on.png")
+open_screen_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/open_game_clicked.png")
 
 #Try Connecting Button
 #search_button = pygame.image.load(PFAD + "Gui/Buttons/bl_search_off.png") 
 #search_button_cursor_over  = pygame.image.load(PFAD + "Gui/Buttons/bl_search_on.png")
 #search_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/bl_search_clicked.png")
-search_button = pygame.image.load(PFAD + "Gui/Buttons/blue_connect_off.png") 
-search_button_cursor_over  = pygame.image.load(PFAD + "Gui/Buttons/blue_connect_on.png")
-search_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/blue_connect_clicked.png")
+search_button = pygame.image.load(PFAD + "Gui/Buttons/connect_off.png") 
+search_button_cursor_over  = pygame.image.load(PFAD + "Gui/Buttons/connect_on.png")
+search_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/connect_clicked.png")
 
 #Open a normal game Button
-host_normal_button = pygame.image.load(PFAD + "Gui/Buttons/red_normalgame_off.png") 
-host_normal_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/red_normalgame_on.png")
-host_normal_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/red_normalgame_clicked.png") 
+host_normal_button = pygame.image.load(PFAD + "Gui/Buttons/ng_off.png") 
+host_normal_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/ng_on.png")
+host_normal_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/ng_clicked.png") 
 
 #Open a minigame Button
-host_minigame_button = pygame.image.load(PFAD + "Gui/Buttons/red_mini_off.png")
-host_minigame_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/red_mini_on.png")
-host_minigame_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/red_mini_clicked.png") 
+host_minigame_button = pygame.image.load(PFAD + "Gui/Buttons/mg_off.png")
+host_minigame_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/mg_on.png")
+host_minigame_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/mg_clicked.png") 
 
 ######################
 #End Game Menu
