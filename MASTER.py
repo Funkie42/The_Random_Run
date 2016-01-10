@@ -498,11 +498,61 @@ blf = Boden.Block(pygame.Rect(4400,2000,100, 50), rinde)
 
 p2 = Speicherpunkt.Portal(ble, [man1])
 
-w2 = Welt( pygame.image.load("Gui/wald.jpg"), [bla, blb, blc, bld, ble, blf], [], [], [], p2, s, s2) #########################asghdjkasdjashkdjaslkdja
+w2 = Welt( pygame.image.load("Gui/wald.jpg"), [bla, blb, blc, bld, ble, blf], [], [], [], p2, s, s2) 
+
+#LEVEL3
+###########Blöcke###################
+# Inhalt der Tupel:   ( left,   top,    width,  height)
+blockkoordinaten = [(50,2000,350,80),
+                    (500,3000,100,50),
+                    (0,1500,50,580),
+                    (0,1400,750,100),
+                    (200,1250,50,50), #[4]
+                    (300,650,200,50),
+                    (850,650,400,50)] 
+leveldesign_block = rinde
+w3_bl = []
+for blockkoord in blockkoordinaten:
+    w3_bl.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
+                                              blockkoord[2],blockkoord[3]), leveldesign_block))
+###########Gegner###################
+gegner_in_lvl = []
+#Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse)
+boden_gegner = [(w3_bl[0],5,woman,5),
+                (w3_bl[1],2,woman,1),
+                (w3_bl[6],8,woman,5)] # TODO
+#Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse, Waagrecht oder nicht (Bool, standart true))
+flug_gegner = [(400,600,2250,3,woman,5,True),
+                (400,600,2500,3,woman,5,True),
+                (400,600,2500,3,woman,5,True)] 
+
+for gegner in boden_gegner:
+    gegner_in_lvl.append(Hindernis.Gegner(gegner[0],gegner[1],gegner[2],gegner[3]))
+for gegner in flug_gegner:
+    gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6]))
+#############Power_Ups###############
+powerups_in_lvl = [Power_Ups.High_Jump(w3_bl[4], [man1])]
+#############Speicherpunkte############
+speichpt_in_lvl = []
+
+w3_bild = pygame.image.load("Gui/wald.jpg")
+w3 = Welt(w3_bild, w3_bl, gegner_in_lvl,powerups_in_lvl,speichpt_in_lvl,p2,s,s2)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #SPIELER
-game = [w1, w2]
+game = [w1, w2,w3]
 current_level = w1
 backup_hintergrund_rect = copy.deepcopy(hintergrund_rect)
 kugeln = []
@@ -517,11 +567,12 @@ def main():
                 frame_counter = 0
                 
                 for w in game:
-                        while not w.finish:
-                                
-                                #################################
+                        while not w.finish and w == current_level:
                                 new_kugel = False
-                                #################################
+#################################
+                                #Event Getter
+#################################
+                                
                                 for event in pygame.event.get():
                                         if event.type == QUIT or  (event.type == KEYUP and event.key == K_ESCAPE):
                                                 pygame.quit()
