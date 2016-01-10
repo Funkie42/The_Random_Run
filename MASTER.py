@@ -126,7 +126,7 @@ class Welt():
                 self.power_ups = power_ups
                 self.speicherpunkte = speicherpunkte
                 self.portal = portal
-                self.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(self.boeden[0], [man1]))
+                self.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(self.boeden[0], [waypoint_sprite]))
                 global current_speicherpunkt, hintergrund_rect, backup_hintergrund_rect
                 current_speicherpunkt = self.speicherpunkte[0]
                 backup_hintergrund_rect = hintergrund_rect
@@ -431,6 +431,11 @@ mars = pygame.image.load("Gui/ground.png")
 rinde = pygame.image.load("Gui/Rinde.jpg")
 rinde = pygame.transform.scale(rinde, (100, 100))
 
+#POWERUPSPRITES
+
+highjump_sprite = pygame.image.load("Gui/pad.png")
+waypoint_sprite = pygame.image.load("Gui/wp.png")
+
 #SPIELER
 s = Spieler()
 #########
@@ -474,9 +479,9 @@ fg = Hindernis.FliegenderGegner(5350, 5800, 1600, 2, woman, 5)
 fg1 = Hindernis.FliegenderGegner(4700, 5100, 3100, 5, woman, 5)
 fg2 = Hindernis.FliegenderGegner(2100, 2200, 100, 2, woman, 5, False)
 
-hj = Power_Ups.High_Jump(bl5, [man1])
+hj = Power_Ups.High_Jump(bl5, [highjump_sprite])
 
-sp = Speicherpunkt.Speicherpunkt(bl9_2, [man1])
+sp = Speicherpunkt.Speicherpunkt(bl9_2, [waypoint_sprite])
 
 p = Speicherpunkt.Portal(bl13, [man1])
 
@@ -531,7 +536,7 @@ for gegner in boden_gegner:
 for gegner in flug_gegner:
     gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6]))
 #############Power_Ups###############
-powerups_in_lvl = [Power_Ups.High_Jump(w3_bl[4], [man1])]
+powerups_in_lvl = [Power_Ups.High_Jump(w3_bl[4], [highjump_sprite])]
 #############Speicherpunkte############
 speichpt_in_lvl = []
 
