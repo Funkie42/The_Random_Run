@@ -3,8 +3,9 @@ from pygame.locals import*
 
 
 class Hindernis():
-    def __init__(self, sprite, moveSpeed, mass):
+    def __init__(self, sprite, moveSpeed, mass, feuerrate):
         self.moveSpeed = moveSpeed
+        self.feuerrate = feuerrate
         self.sprite_iterator = 0
         self.sprite = sprite
         self.reihe = 0
@@ -15,6 +16,7 @@ class Hindernis():
         self.mass = mass
         self.sprite_counter = 5
         self.body = pymunk.Body(self.mass, pymunk.inf)
+        self.kugel_counter = 0
         
     def center_rect(self):
         x = self.rect
@@ -27,11 +29,9 @@ class Hindernis():
         else:
             return pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/7 , self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7, self.sprite.sprite_sheet.get_height()/3), True, False)
 
-
-
 class Gegner(Hindernis):
-    def __init__(self, block, moveSpeed, sprite, mass):
-        Hindernis.__init__(self,sprite, moveSpeed, mass)
+    def __init__(self, block, moveSpeed, sprite, mass, feuerrate): #########!!!!!!!!!!!!!!!
+        Hindernis.__init__(self,sprite, moveSpeed, mass, feuerrate)
         self.block = block
         self.rect.left = self.block.rect.left + 1
         self.rect.top = self.block.rect.top - self.current_sprite().get_height()
@@ -46,8 +46,23 @@ class Gegner(Hindernis):
 
     def remove(self, space):
         space.remove(self.body, self.shape)
+
+    def engage(self, x): #####!!!!!!!!!!
+        self.body.velocity.y = -250
+        self.moveSpeed += 3
+        if x > self.body.position.x:
+            self.body.velocity.x = 200
+            self.direction = 1
+        else:
+            self.body.velocity.x = -200
+            self.direction = -1
         
     def update(self):
+        if self.kugel_counter < self.feuerrate:
+            self.kugel_counter += 1
+        else:
+            self.kugel_counter = 0
+        
         if self.rect.right >= self.block.rect.right:
             self.direction = -1
         if self.rect.left <= self.block.rect.left:
@@ -66,8 +81,8 @@ class Gegner(Hindernis):
                                 self.sprite_iterator += 1
 
 class FliegenderGegner(Hindernis):
-    def __init__(self, anfang, ende, topOrleft, moveSpeed, sprite, mass, waagrecht=True):
-        Hindernis.__init__(self, sprite, moveSpeed, mass)
+    def __init__(self, anfang, ende, topOrleft, moveSpeed, sprite, mass, feuerrate, waagrecht=True): ##!!!!
+        Hindernis.__init__(self, sprite, moveSpeed, mass, feuerrate) ####!!!!!!
         self.anfang = anfang
         self.ende = ende
         self.waagrecht = waagrecht
@@ -81,6 +96,7 @@ class FliegenderGegner(Hindernis):
         self.body.position = self.rect.center
         self.shape = pymunk.Poly.create_box(self.body, (self.current_sprite().get_width(), self.current_sprite().get_height()))
         self.shape.collision_type = 6
+        self.shape.sprite_group = 2 #########!!!!!!!!!!!
 
     def init(self, space):
         space.add(self.shape)
@@ -94,7 +110,15 @@ class FliegenderGegner(Hindernis):
         else:
             self.body.position.y += self.moveSpeed * self.direction
 
+    def engage(self, x): #####!!!!!!!!!!
+        self.moveSpeed += 3
+
     def update(self):
+        if self.kugel_counter < self.feuerrate: ###############!!!!!!!!!!!!!!!!!!!!!!!
+            self.kugel_counter += 1
+        else:
+            self.kugel_counter = 0
+            
         if self.waagrecht:
             if self.rect.right >= self.ende:
                 self.direction = -1
