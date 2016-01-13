@@ -117,11 +117,12 @@ class Spieler(pygame.sprite.Sprite):
 
 #WELT/LEVELKLASSE
 class Welt():
-        def __init__(self, BACKGROUNDSURF, boeden, hindernisse, power_ups, speicherpunkte, portal, spieler1, spieler2):
+        def __init__(self, BACKGROUNDSURF, boeden, hindernisse, power_ups, steine, speicherpunkte, portal, spieler1, spieler2):
                 self.BACKGROUNDSURF = BACKGROUNDSURF
                 self.BACKGROUNDSURF = pygame.transform.scale(self.BACKGROUNDSURF, (int(LEVELSURF.get_width() * 2/3), DISPLAYSURF.get_height() + 25))
                 self.boeden = boeden
                 self.hindernisse = hindernisse
+                self.steine = steine
                 self.power_ups = power_ups
                 self.speicherpunkte = speicherpunkte
                 self.portal = portal
@@ -142,6 +143,8 @@ class Welt():
         def addToSpace(self):
                 for i in self.boeden:
                         space.add(i.shape)
+                for i in self.steine:
+                        space.add(i.body, i.shape)
                 for i in self.hindernisse:
                         i.init(space)
                 for i in self.power_ups:
@@ -153,6 +156,8 @@ class Welt():
         def removeFromSpace(self):
                 for i in self.boeden:
                         space.remove(i.shape)
+                for i in self.steine:
+                        space.remove(i.body, i.shape)
                 for i in self.hindernisse:
                         i.remove(space)
                 for i in self.power_ups:
@@ -173,6 +178,14 @@ class Welt():
                                 LEVELSURF.blit(i.surf, (i.center_rect()))
                                 #pygame.draw.polygon(LEVELSURF, ((34,66,34)), i.shape.get_vertices())
                                # pygame.draw.circle(LEVELSURF, ((4,5,6)), (int(i.body.position.x), int(i.body.position.y)), 10)
+
+                for i in self.steine:
+                        if i.body.position.y > LEVELSURF.get_height() - 200 and i in self.steine: #####!!!!!!!!!!!!!!!!!!!
+                                self.steine.remove(i)
+                                space.remove(i.body, i.shape)
+                        if rect.colliderect(i.center_rect()):
+                                #LEVELSURF.blit(i.sprite, i.center_rect())
+                                 pygame.draw.circle(LEVELSURF, ((149,159,169)), (int(i.body.position.x), int(i.body.position.y)), 40)
                                
                 for i in self.hindernisse:
                         if i.body.position.y > LEVELSURF.get_height() - 200 and i in self.hindernisse: #evtl zu updaten
@@ -389,6 +402,21 @@ def player_hits_portal(space, arbiter):
         current_level = game[game.index(current_level) + 1]
         current_speicherpunkt = current_level.speicherpunkte[0]
         return True
+
+def player_stands_stein(space, arbiter): #####!!!!!!!
+        current_level.spieler.is_Grounded = True
+        keys = pygame.key.get_pressed()
+        if keys[K_w]:
+                arbiter.shapes[1].body.apply_impulse((0, -1000), (0, 25))
+        elif keys[K_d]:
+                arbiter.shapes[1].body.apply_impulse((100, -250), (-25, -0))
+        elif keys[K_a]:
+                arbiter.shapes[1].body.apply_impulse((-100, -250), (25, 0))
+        elif keys[K_s]:
+                arbiter.shapes[1].body.apply_impulse((0, 100), (0, -25))
+        else:
+                pymunk.Body.update_velocity(arbiter.shapes[1].body, ((0, 0)), 0.9, 1/35)
+        return True
         
 
 # UNIVERSELLE OPTIONEN
@@ -421,6 +449,7 @@ space.add_collision_handler(1,6, begin=player_jumps_fliegender_gegner)
 space.add_collision_handler(1,5, post_solve=player_jumps_highjump)
 space.add_collision_handler(4,5, begin=kugel_hits_highjump)
 space.add_collision_handler(1,7, begin=player_hits_portal)
+space.add_collision_handler(1,8, post_solve=player_stands_stein)
 space.gravity = (0, 1500)
 clock = pygame.time.Clock()
 fps = 25
@@ -501,7 +530,7 @@ p = Speicherpunkt.Portal(bl13, [portal2_sprite])
 
 w1 = Welt(pygame.image.load("Gui/mars_back.png"),
           [bl,bl1,bl2,bl3, bl4, bl5, bl5_2, bl6, bl6_2, bl6_3, bl6_4, bl7, bl8, bl9,bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18],
-          [g,g1,g2,g3, g4, g5, fg, fg1, fg2], [hj], [sp], p, s, s2)
+          [g,g1,g2,g3, g4, g5, fg, fg1, fg2], [hj], [], [sp], p, s, s2)
 
 
 
@@ -516,7 +545,7 @@ blf = Boden.Block(pygame.Rect(4400,2000,100, 50), rinde)
 
 p2 = Speicherpunkt.Portal(ble, [portal2_sprite])
 
-w2 = Welt( pygame.image.load("Gui/wald.jpg"), [bla, blb, blc, bld, ble, blf], [], [], [], p2, s, s2) 
+w2 = Welt( pygame.image.load("Gui/wald.jpg"), [bla, blb, blc, bld, ble, blf], [], [], [], [], p2, s, s2) 
 
 #LEVEL3
 ###########Blöcke###################
@@ -545,16 +574,16 @@ flug_gegner = [(400,600,2250,3,woman,5,0,True),
                 (400,600,2500,3,woman,5,0,True)] 
 
 for gegner in boden_gegner:
-    gegner_in_lvl.append(Hindernis.Gegner(gegner[0],gegner[1],gegner[2],gegner[3]))
+    gegner_in_lvl.append(Hindernis.Gegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4]))
 for gegner in flug_gegner:
-    gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6]))
+    gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6],gegner[7]))
 #############Power_Ups###############
 powerups_in_lvl = [Power_Ups.High_Jump(w3_bl[4], [highjump_sprite])]
 #############Speicherpunkte############
 speichpt_in_lvl = []
 
 w3_bild = pygame.image.load("Gui/wald.jpg")
-w3 = Welt(w3_bild, w3_bl, gegner_in_lvl,powerups_in_lvl,speichpt_in_lvl,p2,s,s2)
+w3 = Welt(w3_bild, w3_bl, gegner_in_lvl,powerups_in_lvl, [], speichpt_in_lvl,p2,s,s2)
 
 
 
