@@ -4,7 +4,7 @@ Mister Man
 500
 Mister Man
 420
+Player
+420
 Mister Man
-42
-Mister Man
-1
+420

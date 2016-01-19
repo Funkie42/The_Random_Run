@@ -397,8 +397,9 @@ def player_hits_portal(space, arbiter):
         #current_level.removeFromSpace()
         current_level.removeFromSpace()
         current_level.finish = True
-        current_level = game[game.index(current_level) + 1]
-        current_speicherpunkt = current_level.speicherpunkte[0]
+        if game.index(current_level) + 1 < len(game):
+                current_level = game[game.index(current_level) + 1]
+                current_speicherpunkt = current_level.speicherpunkte[0]
         return True
 
 def player_stands_stein(space, arbiter):
@@ -453,7 +454,7 @@ space.add_collision_handler(1,7, begin=player_hits_portal)
 space.add_collision_handler(1,8, post_solve=player_stands_stein)
 space.gravity = (0, 1500)
 clock = pygame.time.Clock()
-fps = 25
+fps = 30
 
 #KAMERARECTS
 rect = pygame.Rect(0,0,DISPLAYSURF.get_width(),DISPLAYSURF.get_height())
@@ -466,14 +467,14 @@ man1 = pygame.transform.scale(man1,(80,100))
 woman = SpriteSheet.SpriteSheet("Gui/player.png")
 
 #GELÄNDESPRITES
-mars = pygame.image.load("Gui/ground.png")
+mars = pygame.image.load("Gui/ground.png").convert()
 rinde = pygame.image.load("Gui/Rinde.jpg")
 rinde = pygame.transform.scale(rinde, (100, 100))
 
 #POWERUPSPRITES
 
 highjump_sprite = pygame.image.load("Gui/pad.png")
-highjump_sprite = pygame.transform.scale(highjump_sprite,(30,30))
+highjump_sprite = pygame.transform.scale(highjump_sprite,(70,30))
 waypoint_sprite = pygame.image.load("Gui/wp.png")
 waypoint_sprite = pygame.transform.scale(waypoint_sprite,(130,130))
 portal1_sprite =pygame.image.load("Gui/portal1.png")
@@ -533,7 +534,7 @@ sp = Speicherpunkt.Speicherpunkt(bl9_2, [waypoint_sprite])
 p = Speicherpunkt.Portal(bl13, [portal2_sprite])
 
 
-w1 = Welt(pygame.image.load("Gui/mars_back.png").convert(),
+w1 = Welt(pygame.image.load("Gui/mars_back2.jpg").convert(),
           [bl,bl1,bl2,bl3, bl4, bl5, bl5_2, bl6, bl6_2, bl6_3, bl6_4, bl7, bl8, bl9,bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18],
           [g2,g3, g4, g5, fg, fg1, fg2], [hj], [Boden.Stein(bl1,turbine_sprite)], [sp], p, s, s2)
 
@@ -550,7 +551,7 @@ blf = Boden.Block(pygame.Rect(4400,2000,100, 50), rinde)
 
 p2 = Speicherpunkt.Portal(ble, [portal2_sprite])
 
-w2 = Welt( pygame.image.load("Gui/wald.jpg").convert(), [bla, blb, blc, bld, ble, blf], [], [], [], [], p2, s, s2) 
+w2 = Welt( pygame.image.load("Gui/bg2.jpg").convert(), [bla, blb, blc, bld, ble, blf], [], [], [], [], p2, s, s2) 
 
 #LEVEL3
 ###########Blöcke###################
@@ -587,7 +588,7 @@ powerups_in_lvl = [Power_Ups.High_Jump(w3_bl[4], [highjump_sprite])]
 #############Speicherpunkte############
 speichpt_in_lvl = []
 
-w3_bild = pygame.image.load("Gui/wald.jpg").convert()
+w3_bild = pygame.image.load("Gui/bg3.jpg").convert()
 w3 = Welt(w3_bild, w3_bl, gegner_in_lvl,powerups_in_lvl, [], speichpt_in_lvl,p2,s,s2)
 
 
@@ -604,21 +605,19 @@ w3 = Welt(w3_bild, w3_bl, gegner_in_lvl,powerups_in_lvl, [], speichpt_in_lvl,p2,
 
 
 #SPIELER
-game = [w1, w2,w3]
-current_level = w1
+game = [w1,w2,w3]
+current_level = w3
 backup_hintergrund_rect = copy.deepcopy(hintergrund_rect)
 kugeln = []
 
 
 def main():
         global score
-        while True:
-                start_time = time.time()
-                pause_time = 0
-                bonustime = 300
-                frame_counter = 0
-                
-                for w in game:
+        start_time = time.time()
+        pause_time = 0
+        bonustime = 300
+        frame_counter = 0       
+        for w in game:
                         while not w.finish and w == current_level:
                                 new_kugel = False
 #################################
@@ -727,7 +726,10 @@ def main():
                                 if w.finish and __name__ != "__main__":
                                         old_score = score
                                         score += bonustime
-                                        return True, old_score,bonustime
+                                        if game.index(current_level) + 1 < len(game):
+                                                return True, old_score,bonustime
+                                        else:
+                                                return False, old_score,bonustime
                                 
                                 
 

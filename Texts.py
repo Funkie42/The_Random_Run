@@ -45,7 +45,30 @@ level_1_texts = [normal_level_1]
 #Level 2 finished Text
 #########################
 
-normal_level_2 = ["Cookie",
-                    "Every Day"]
+normal_level_2 = ["Finally you reach the Portal",
+                    "This time, thick smoke starts surrounding you",
+                  "Laughter in your head",
+                  "'He has him, he's got my best friend!'",
+                  "You scream as you fall hard on the cold ground"]
 
 level_2_texts = [normal_level_2]
+
+##########################
+#Level 3 finished Text
+##########################
+normal_level_3 = ["Leaving the vulcano, you calm down",
+                  "'I'm gonna kill him... KILL HIM' you think",
+                  "Travalling through the portal, you see a teddy",
+                  "You immediatly see, it's not yours",
+                  "It starts talking...",
+                  "'Go home, you can't save him from Dr. Ka-Kowarui's claws!'",
+                  "You push him aside, 'what does he know? he's just a teddy!"]
+level_3_texts = [normal_level_3]
+
+##########################
+#Level 4 finished Text
+##########################
+
+normal_level_4 = []
+
+level_4_texts = [normal_level_4]

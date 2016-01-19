@@ -63,7 +63,7 @@ def get_Highscore(name,points):
     global highscore_list
     try:
         list_number = 0
-        while(points <= highscore_list[list_number][1]) & (len(highscore_list) >= (list_number-1)):
+        while (len(highscore_list) > list_number) & (points <= int(highscore_list[list_number][1])):
             list_number += 1
         if list_number < len(highscore_list):
             highscore_list.insert(list_number,(name,points))
@@ -426,13 +426,21 @@ class Main:
                     finished_level_number += 1
                     score_info = MASTER.main()
                     self.level_finished(score_info,finished_level_number)
-                    self.interlevel_scene(finished_level_number)
+                    if self.interlevel_scene(finished_level_number) == False:
+                        continue_game = False
                     
-                highscore = score_info[1]
+                highscore = score_info[1] + score_info[2]
                 get_Highscore(playername,highscore)
+
+                self.display_surf.fill((0,0,0))
+                self.blend_in_text("Congratulations!",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
                 time.sleep(1)
+                self.blend_in_text("You finished..",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+                time.sleep(1)
+                self.blend_in_text("The Random Run!",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+                time.sleep(3)
                 
-                return "Singleplayer_screen"            
+                return "Credits_screen"            
 
         ###############################
         # Multiplayer Open Game
@@ -598,10 +606,14 @@ class Main:
 
         if level == 0:
             leveltext = random.choice(Texts.intro_texts)
-        if level == 1:
+        elif level == 1:
             leveltext = random.choice(Texts.level_1_texts)
-        if level == 2:
+        elif level == 2:
             leveltext = random.choice(Texts.level_2_texts)
+        elif level == 3:
+            leveltext = random.choice(Texts.level_3_texts)
+        else:
+            return False
         
         
         for line in leveltext:
@@ -685,14 +697,22 @@ class Main:
                         
                         score_shown = score_info[1]
                         bonus_shown = score_info[2]
-                        for i in range(0,score_info[2]):
+                        for i in range(0,int(score_info[2]/2)):
+                            self.display_surf.fill((0,0,0))
+                            score_shown += 2
+                            bonus_shown -= 2
+                            self.showText("Level  " + str(finished_level_number) + ":",(int(WINDOWw/2),int(WINDOWh/2) -200),60)
+                            self.showText("Bonustime: " + str(bonus_shown),(int(WINDOWw/2),int(WINDOWh/2)-50),30)
+                            self.showText("Score: " + str(score_shown),(int(WINDOWw/2),int(WINDOWh/2)),50)
+                            pygame.display.flip()
+                        if (score_info[2] % 2) == 1:
                             self.display_surf.fill((0,0,0))
                             score_shown += 1
                             bonus_shown -= 1
                             self.showText("Level  " + str(finished_level_number) + ":",(int(WINDOWw/2),int(WINDOWh/2) -200),60)
                             self.showText("Bonustime: " + str(bonus_shown),(int(WINDOWw/2),int(WINDOWh/2)-50),30)
                             self.showText("Score: " + str(score_shown),(int(WINDOWw/2),int(WINDOWh/2)),50)
-                            pygame.display.flip()
+                            pygame.display.flip()                            
                         time.sleep(2)
 
 
