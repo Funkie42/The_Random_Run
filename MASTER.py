@@ -7,6 +7,7 @@ from Gameclient import *
 
 playing_Spieler = 0 # Zu setzen auf 1 bzw. 2
 multiplayer = False
+multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 
@@ -131,10 +132,7 @@ class Welt():
                 current_speicherpunkt = self.speicherpunkte[0]
                 #backup_hintergrund_rect = hintergrund_rect
                 self.spieler1 = spieler1 #####################
-                if multiplayer:
-                        self.spieler2 = spieler2
-                else:
-                        self.spieler2 = None
+                self.spieler2 = spieler2
                 self.spieler = None # Wird dann nach Connection Aufbau gesetzt
                 self.anderer_spieler = None #######################
                 self.finish = False
@@ -184,8 +182,8 @@ class Welt():
                                 self.steine.remove(i)
                                 space.remove(i.body, i.shape)
                         if rect.colliderect(i.center_rect()):
-                                #LEVELSURF.blit(i.sprite, i.center_rect())
-                                 pygame.draw.circle(LEVELSURF, ((149,159,169)), (int(i.body.position.x), int(i.body.position.y)), 40)
+                                LEVELSURF.blit(i.sprite, i.center_rect())
+                                 #pygame.draw.circle(LEVELSURF, ((149,159,169)), (int(i.body.position.x), int(i.body.position.y)), 40)
                                
                 for i in self.hindernisse:
                         if i.body.position.y > LEVELSURF.get_height() - 200 and i in self.hindernisse: #evtl zu updaten
@@ -403,11 +401,14 @@ def player_hits_portal(space, arbiter):
         current_speicherpunkt = current_level.speicherpunkte[0]
         return True
 
-def player_stands_stein(space, arbiter): #####!!!!!!!
+def player_stands_stein(space, arbiter):
+        
         current_level.spieler.is_Grounded = True
         keys = pygame.key.get_pressed()
         if keys[K_w]:
+                #print("depp bitte, danke")
                 arbiter.shapes[1].body.apply_impulse((0, -1000), (0, 25))
+                pymunk.Body.update_velocity(arbiter.shapes[1].body, ((5000,5000)), 0.9, 1/35)
         elif keys[K_d]:
                 arbiter.shapes[1].body.apply_impulse((100, -250), (-25, -0))
         elif keys[K_a]:
@@ -472,11 +473,15 @@ rinde = pygame.transform.scale(rinde, (100, 100))
 #POWERUPSPRITES
 
 highjump_sprite = pygame.image.load("Gui/pad.png")
+highjump_sprite = pygame.transform.scale(highjump_sprite,(30,30))
 waypoint_sprite = pygame.image.load("Gui/wp.png")
+waypoint_sprite = pygame.transform.scale(waypoint_sprite,(130,130))
 portal1_sprite =pygame.image.load("Gui/portal1.png")
 portal1_sprite = pygame.transform.scale(portal1_sprite,(130,130))
 portal2_sprite = pygame.image.load("Gui/portal2.png")
 portal2_sprite = pygame.transform.scale(portal2_sprite,(130,130))
+turbine_sprite = pygame.image.load("Gui/turbine.png")
+turbine_sprite = pygame.transform.scale(turbine_sprite,(130,130))
 
 #SPIELER
 s = Spieler()
@@ -510,8 +515,8 @@ bl16 = Boden.Block(pygame.Rect(5200,3100,50, 50), mars)
 bl17 = Boden.Block(pygame.Rect(4200,3100,250, 50), mars)
 bl18 = Boden.Block(pygame.Rect(4200,3500, 250, 50), mars)
 
-g = Hindernis.Gegner(bl2, 5, woman, 5,30)
-g1 = Hindernis.Gegner(bl1, 5, woman, 5,45)
+#g = Hindernis.Gegner(bl2, 5, woman, 5,30)
+#g1 = Hindernis.Gegner(bl1, 5, woman, 5,45)
 g2 = Hindernis.Gegner(bl4, 5, woman, 5,20)
 g3 = Hindernis.Gegner(bl5_2, 1, woman, 5,43)
 g4 = Hindernis.Gegner(bl7, 1, woman, 5,42)
@@ -528,9 +533,9 @@ sp = Speicherpunkt.Speicherpunkt(bl9_2, [waypoint_sprite])
 p = Speicherpunkt.Portal(bl13, [portal2_sprite])
 
 
-w1 = Welt(pygame.image.load("Gui/mars_back.png"),
+w1 = Welt(pygame.image.load("Gui/mars_back.png").convert(),
           [bl,bl1,bl2,bl3, bl4, bl5, bl5_2, bl6, bl6_2, bl6_3, bl6_4, bl7, bl8, bl9,bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18],
-          [g,g1,g2,g3, g4, g5, fg, fg1, fg2], [hj], [], [sp], p, s, s2)
+          [g2,g3, g4, g5, fg, fg1, fg2], [hj], [Boden.Stein(bl1,turbine_sprite)], [sp], p, s, s2)
 
 
 
@@ -545,7 +550,7 @@ blf = Boden.Block(pygame.Rect(4400,2000,100, 50), rinde)
 
 p2 = Speicherpunkt.Portal(ble, [portal2_sprite])
 
-w2 = Welt( pygame.image.load("Gui/wald.jpg"), [bla, blb, blc, bld, ble, blf], [], [], [], [], p2, s, s2) 
+w2 = Welt( pygame.image.load("Gui/wald.jpg").convert(), [bla, blb, blc, bld, ble, blf], [], [], [], [], p2, s, s2) 
 
 #LEVEL3
 ###########Blöcke###################
@@ -582,7 +587,7 @@ powerups_in_lvl = [Power_Ups.High_Jump(w3_bl[4], [highjump_sprite])]
 #############Speicherpunkte############
 speichpt_in_lvl = []
 
-w3_bild = pygame.image.load("Gui/wald.jpg")
+w3_bild = pygame.image.load("Gui/wald.jpg").convert()
 w3 = Welt(w3_bild, w3_bl, gegner_in_lvl,powerups_in_lvl, [], speichpt_in_lvl,p2,s,s2)
 
 
@@ -600,7 +605,7 @@ w3 = Welt(w3_bild, w3_bl, gegner_in_lvl,powerups_in_lvl, [], speichpt_in_lvl,p2,
 
 #SPIELER
 game = [w1, w2,w3]
-current_level = w3
+current_level = w1
 backup_hintergrund_rect = copy.deepcopy(hintergrund_rect)
 kugeln = []
 
@@ -641,7 +646,7 @@ def main():
                                                 if event.key == K_d:
                                                         if not w.spieler.is_Grounded:
                                                                 w.spieler.dash_counter += 5
-                                                                
+                                frame_counter += 1                               
                                 keys = pygame.key.get_pressed()
                                 if keys[K_RIGHT] or keys[K_LEFT]:
                                         w.spieler.move()
@@ -652,37 +657,48 @@ def main():
                                 #Mulitplayer Datenaustausch#
 #################################################################
                                 if multiplayer:
-                                        frame_counter += 1
+                                        
                                         if (frame_counter % 1 == 0):  ##############Ändern verbessert Performance, sieht aber nicht soo aus
-                                                
-                                                p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
-                                                                   (current_level.spieler.direction,current_level.spieler.state), #  Richtung in die er schaut und sprite_in_use
-                                                                   (current_level.spieler.body.position.x,current_level.spieler.body.position.y), # Positition des Spielers
-                                                                   ((current_level.spieler.direction,
-                                                                     new_kugel)))) # "Neue Kugel" (De facto alles um eine zu erstellen)
-                                                if p2_data != None: # Sobald ein 2ter Spieler im Spiel ist
+                                                if not multiplayer_ghostmode:
+                                                        p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
+                                                                           (current_level.spieler.direction,current_level.spieler.state), #  Richtung in die er schaut und sprite_in_use
+                                                                           (current_level.spieler.body.position.x,current_level.spieler.body.position.y), # Positition des Spielers
+                                                                           ((current_level.spieler.direction,
+                                                                             new_kugel)))) # "Neue Kugel" (De facto alles um eine zu erstellen)
+                                                        if p2_data != None: # Sobald ein 2ter Spieler im Spiel ist
+                                                                (p2_direction, p2_koords, p2_kugel) = p2_data
+                                                                if p2_kugel[1]:
+                                                                        Kugel((900 * p2_direction[0], -75), p2_koords[0],p2_koords[1],p2_direction[0])
+
+                                                                        #Anderen Spieler Daten setzten für Anzeige
+                                                                current_level.anderer_spieler.state = p2_direction[1]
+                                                                current_level.anderer_spieler.body.position.x = p2_koords[0]
+                                                                current_level.anderer_spieler.body.position.y = p2_koords[1]
+                                                                current_level.anderer_spieler.direction = p2_direction[0]
+                                                else: # Ghostmode
+                                                        p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
+                                                                           (current_level.spieler.direction,current_level.spieler.state), #  Richtung in die er schaut und sprite_in_use
+                                                                           (current_level.spieler.body.position.x,current_level.spieler.body.position.y),())) # Positition des Spielers
+                                                        if p2_data != None: # Sobald ein 2ter Spieler im Spiel ist
+                                                                (p2_direction, p2_koords,_) = p2_data
+                                                                
+                                                                current_level.anderer_spieler.state = p2_direction[1]
+                                                                current_level.anderer_spieler.body.position.x = p2_koords[0]
+                                                                current_level.anderer_spieler.body.position.y = p2_koords[1]
+                                                                current_level.anderer_spieler.direction = p2_direction[0]
                                                         
-                                                        (p2_direction, p2_koords, p2_kugel) = p2_data
-                                                        if p2_kugel[1]:
-                                                                Kugel((900 * p2_direction[0], -75), p2_koords[0],p2_koords[1],p2_direction[0])
+                                else:
+                                        current_level.spieler2 = None
 
-                                                                #Anderen Spieler Daten setzten für Anzeige
-                                                        current_level.anderer_spieler.state = p2_direction[1]
-                                                        current_level.anderer_spieler.body.position.x = p2_koords[0]
-                                                        current_level.anderer_spieler.body.position.y = p2_koords[1]
-                                                        current_level.anderer_spieler.direction = p2_direction[0]
-                                                        print (p2_direction)
-                                                        
-
-                                        if frame_counter%10 == 0:
-
-                                                frame_counter = 0
-                                                stuff_data = send_data((-42,playing_Spieler,1,1))
+                                       # if frame_counter%10 == 0:
+#
+  #                                              frame_counter = 0
+    #                                            stuff_data = send_data((-42,playing_Spieler,1,1))
                                 
 #################################################################
                                 
-                                
-                                LEVELSURF.blit(hintergrund_blit(), (rect.left -10, rect.top -10))
+                                if (frame_counter % 1 == 0):
+                                        LEVELSURF.blit(hintergrund_blit(),(rect.left -10, rect.top -10))
                                 w.update()
                                 
                                 for i in kugeln:
@@ -745,14 +761,27 @@ def on_execute(multi_True = False): # Multiplayer starten oder Singleplayer (bei
                                 sys.exit()
                 else: # Start aus dem Menü heraus
                         playing_Spieler = get_player_number()
-                        print(playing_Spieler)
                         for w in game:
                                 if playing_Spieler == 1:
                                                 w.spieler = current_level.spieler1# Der Spieler den dieser PC steuert
                                                 w.anderer_spieler = current_level.spieler2
+                                                if multiplayer_ghostmode:
+                                                        w.anderer_spieler.shape.collision_type = 0
+                                                awaiting_snd_player = True
+                                                while awaiting_snd_player:
+                                                        p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
+                                                                           (current_level.spieler.direction,current_level.spieler.state), #  Richtung in die er schaut und sprite_in_use
+                                                                           (current_level.spieler.body.position.x,current_level.spieler.body.position.y), # Positition des Spielers
+                                                                           ()))
+                                                        pygame.display.flip()
+                                                        if p2_data != None:
+                                                                awaiting_snd_player = False
+                                                                            
                                 else:
                                                 w.spieler = current_level.spieler2
-                                                w.anderer_spieler = current_level.spieler1         
+                                                w.anderer_spieler = current_level.spieler1
+                                                if multiplayer_ghostmode:
+                                                        w.anderer_spieler.shape.collision_type = 0
                         main()
         else:
                 for w in game:

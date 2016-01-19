@@ -1,4 +1,4 @@
-import pygame,time, sys, MASTER, MASTERmulit,Gameclient,Gameserver,Texts, random
+import pygame,time, sys, MASTER, Gameclient,Gameserver,Texts, random#MASTERmulit,
 import fileinput # Für Highscore
 from Startmenu_Images import *
 from pygame.locals import *
@@ -439,18 +439,18 @@ class Main:
         ###############################
 
         elif(button.goto_menutitle == "Open_game"):
-            try:
+            #try:
                 server = Gameserver.ServerGame()
                 server.connect(server_ip,port)
                 server.accepting_allow() ###############
                 client_ip = server_ip
                 Gameclient.create_Client(port,client_ip)
 
-                self.blend_in_text("Starting Game",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+                self.blend_in_text("Awaiting 2nd Player",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
 
                 time.sleep(2)
                 
-                MASTERmulit.on_execute(True) #Start Game!
+                MASTER.on_execute(True) #Start Game!
                 finished_level_number = 1
                 self.level_finished(score_info,finished_level_number)
                 continue_game = score_info[0]
@@ -464,11 +464,11 @@ class Main:
                 Gameclient.client.disconnect()
                 server.disconnect_clients()
                 server.disconnect()    
-            except:
-                self.blend_in_text("Something went wrong...",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
-
-                time.sleep(2)
-            return "Open_Multi_screen"         
+           #except:
+             #   self.blend_in_text("Something went wrong...",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
+#
+  #              time.sleep(2)'''
+    #            return "Open_Multi_screen"         
         
         ###############################
         #Mulitplayer Link in
@@ -484,14 +484,14 @@ class Main:
                 
             #####
             #Multiplayer client aufrufen
-            try:  
+            #try:  
                 Gameclient.create_Client(port,client_ip)
 
                 self.blend_in_text("Starting Game",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
 
                 time.sleep(2)
                 
-                MASTERmulit.on_execute(True) #Start Game!
+                MASTER.on_execute(True) #Start Game!
                 finished_level_number = 1
                 self.level_finished(score_info,finished_level_number)
                 continue_game = score_info[0]
@@ -503,12 +503,12 @@ class Main:
                 get_Highscore(playername,highscore)
              
                 Gameclient.client.disconnect()
-            except:
-                self.blend_in_text("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
-                Gameclient.client.disconnect()
-                time.sleep(2)
+            #except:
+              #  self.blend_in_text("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+                #Gameclient.client.disconnect()
+                #time.sleep(2)'''
                 
-            return self.menu_in_use.key_name
+                return self.menu_in_use.key_name
 
 
         #########################
