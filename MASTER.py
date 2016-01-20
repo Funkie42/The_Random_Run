@@ -412,9 +412,7 @@ def player_stands_stein(space, arbiter):
         current_level.spieler.onStein = True
         keys = pygame.key.get_pressed()
         if keys[K_w]:
-                #print("depp bitte, danke")
                 arbiter.shapes[1].body.apply_impulse((0, -1000), (0, 25))
-                pymunk.Body.update_velocity(arbiter.shapes[1].body, ((5000,5000)), 0.9, 1/35)
         elif keys[K_d]:
                 arbiter.shapes[1].body.apply_impulse((100, -250), (-25, -0))
         elif keys[K_a]:
@@ -721,6 +719,7 @@ def main():
                                 DISPLAYSURF.blit(camera_blit(), (0,0))
 
                                 ### Highscoreanzeige ###
+                                '''
                                 if bonustime > 0:
                                         bonustime = 300 - int(time.time() - start_time - pause_time)
                                 else:
@@ -729,7 +728,9 @@ def main():
                                 thisPrint = pygame.font.Font('freesansbold.ttf', 20).render(score_string,True,(255,255,255))
                                 thisRect = thisPrint.get_rect()
                                 thisRect.center = ((150,40))
-                                DISPLAYSURF.blit(thisPrint,thisRect)                                
+                                DISPLAYSURF.blit(thisPrint,thisRect)
+
+                                '''
 
                                 
                                 pygame.display.flip()
