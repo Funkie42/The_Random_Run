@@ -42,6 +42,7 @@ class Spieler(pygame.sprite.Sprite):
                 self.double_jump_counter = 1
 
                 self.is_Grounded = False
+                self.onStein = False
                 self.is_alive = True
 
         def rect(self):
@@ -178,12 +179,14 @@ class Welt():
                                # pygame.draw.circle(LEVELSURF, ((4,5,6)), (int(i.body.position.x), int(i.body.position.y)), 10)
 
                 for i in self.steine:
-                        if i.body.position.y > LEVELSURF.get_height() - 200 and i in self.steine: #####!!!!!!!!!!!!!!!!!!!
-                                self.steine.remove(i)
-                                space.remove(i.body, i.shape)
+                        if i.body.position.y > LEVELSURF.get_height() - 200 and i in self.steine: 
+                                i.respawn()
                         if rect.colliderect(i.center_rect()):
-                                LEVELSURF.blit(i.sprite, i.center_rect())
-                                 #pygame.draw.circle(LEVELSURF, ((149,159,169)), (int(i.body.position.x), int(i.body.position.y)), 40)
+                                if self.spieler.onStein: 
+                                        i.update()
+                                else:
+                                        i.reihe = 0
+                                LEVELSURF.blit(i.current_sprite(),i.center_rect())
                                
                 for i in self.hindernisse:
                         if i.body.position.y > LEVELSURF.get_height() - 200 and i in self.hindernisse: #evtl zu updaten
@@ -191,7 +194,7 @@ class Welt():
                                 space.remove(i.body, i.shape)
                         if rect.colliderect(i.center_rect()):
                                 LEVELSURF.blit(i.current_sprite(), i.center_rect())
-                                random_int = random.randint(0,200)
+                                random_int = random.randint(0,400)
                                 if random_int == 100:
                                         i.engage(self.spieler.body.position.x)
                                 if i.kugel_counter == i.feuerrate:
@@ -233,8 +236,8 @@ class Welt():
                 if self.anderer_spieler != None and multiplayer:
                         alle_spieler.append(self.anderer_spieler)
                 if not self.init:
-                        self.spieler.body.position.x = current_speicherpunkt.rect.left 
-                        self.spieler.body.position.y = current_speicherpunkt.rect.top - 250
+                        self.spieler.body.position.x = self.speicherpunkte[0].rect.left
+                        self.spieler.body.position.y = self.speicherpunkte[0].rect.top - 250
                         self.addToSpace()
                         self.init = True
                 for spieler in alle_spieler:
@@ -245,10 +248,11 @@ class Welt():
                                 if spieler.body.position.y > LEVELSURF.get_height() - 200:
                                         spieler.is_alive = False
                                 if spieler.is_alive == False:
-                                        hintergrund_rect.left = backup_hintergrund_rect.left
+                                        spieler.body.velocity.x = 0
+                                        #hintergrund_rect.left = backup_hintergrund_rect.left
                                         spieler.body.velocity.y = -50
                                         spieler.body.position = (current_speicherpunkt.rect.left + 50, current_speicherpunkt.rect.top - 200)
-                                        spieler.moveSpeed
+                                        #spieler.moveSpeed
                                         spieler.is_alive = True
                                 spieler.dash()
                                 spieler.body.reset_forces()
@@ -399,12 +403,13 @@ def player_hits_portal(space, arbiter):
         current_level.finish = True
         if game.index(current_level) + 1 < len(game):
                 current_level = game[game.index(current_level) + 1]
-                current_speicherpunkt = current_level.speicherpunkte[0]
+                #current_speicherpunkt = current_level.speicherpunkte[0]
         return True
 
 def player_stands_stein(space, arbiter):
-        
         current_level.spieler.is_Grounded = True
+        current_level.spieler.body.velocity.x = 0
+        current_level.spieler.onStein = True
         keys = pygame.key.get_pressed()
         if keys[K_w]:
                 #print("depp bitte, danke")
@@ -419,6 +424,9 @@ def player_stands_stein(space, arbiter):
         else:
                 pymunk.Body.update_velocity(arbiter.shapes[1].body, ((0, 0)), 0.9, 1/35)
         return True
+
+def player_leaves_stein(space, arbiter):
+        current_level.spieler.onStein = False
         
 
 # UNIVERSELLE OPTIONEN
@@ -451,7 +459,7 @@ space.add_collision_handler(1,6, begin=player_jumps_fliegender_gegner)
 space.add_collision_handler(1,5, post_solve=player_jumps_highjump)
 space.add_collision_handler(4,5, begin=kugel_hits_highjump)
 space.add_collision_handler(1,7, begin=player_hits_portal)
-space.add_collision_handler(1,8, post_solve=player_stands_stein)
+space.add_collision_handler(1,8, post_solve=player_stands_stein, separate=player_leaves_stein)
 space.gravity = (0, 1500)
 clock = pygame.time.Clock()
 fps = 30
@@ -481,8 +489,7 @@ portal1_sprite =pygame.image.load("Gui/portal1.png")
 portal1_sprite = pygame.transform.scale(portal1_sprite,(130,130))
 portal2_sprite = pygame.image.load("Gui/portal2.png")
 portal2_sprite = pygame.transform.scale(portal2_sprite,(130,130))
-turbine_sprite = pygame.image.load("Gui/turbine.png")
-turbine_sprite = pygame.transform.scale(turbine_sprite,(130,130))
+turbine_sprite = SpriteSheet.SpriteSheet("Gui/turbine_sprite.png")
 
 #SPIELER
 s = Spieler()
@@ -491,53 +498,58 @@ s2 = Spieler()
 #########
 
 #LEVEL1
-bl = Boden.Block(pygame.Rect(0,2000,1200,50), mars)
-bl1 = Boden.Block(pygame.Rect(1700,2000,1200,50), mars)
-bl2 = Boden.Block(pygame.Rect(2900,1700,750, 50), mars)
-bl3 = Boden.Block(pygame.Rect(3650,1700,50, 800), mars)
-bl4 = Boden.Block(pygame.Rect(3650, 2400,1450, 50), mars)
-bl5 = Boden.Block(pygame.Rect(4400,2000,100, 50), mars)
-bl5_2 = Boden.Block(pygame.Rect(4500,2000,550, 50), mars)
-bl6 = Boden.Block(pygame.Rect(5100,2250,200, 200), mars)
-bl6_2 = Boden.Block(pygame.Rect(5300,1700,50, 750), mars)
-bl6_3 = Boden.Block(pygame.Rect(5100,1700,200, 50), mars)
-bl6_4 = Boden.Block(pygame.Rect(5100,1450,50, 250), mars)
-bl7 = Boden.Block(pygame.Rect(4550,1450,700, 50), mars)
-bl8 = Boden.Block(pygame.Rect(4350,1300,50, 750), mars)
-bl9 = Boden.Block(pygame.Rect(5450,1450,300, 50), mars)
-bl9_2 = Boden.Block(pygame.Rect(5750,1450,400, 50), mars)
-bl10 = Boden.Block(pygame.Rect(5950,1000,50, 450), mars)
-bl11 = Boden.Block(pygame.Rect(5600,1800,400, 50), mars)
-bl12 = Boden.Block(pygame.Rect(5700,2100,300, 50), mars)
-bl13 = Boden.Block(pygame.Rect(5800,2400,200, 50), mars)
-bl14 = Boden.Block(pygame.Rect(5800,2700,50, 50), mars)
-bl15 = Boden.Block(pygame.Rect(5500,2900,50, 50), mars)
-bl16 = Boden.Block(pygame.Rect(5200,3100,50, 50), mars)
-bl17 = Boden.Block(pygame.Rect(4200,3100,250, 50), mars)
-bl18 = Boden.Block(pygame.Rect(4200,3500, 250, 50), mars)
-
-#g = Hindernis.Gegner(bl2, 5, woman, 5,30)
-#g1 = Hindernis.Gegner(bl1, 5, woman, 5,45)
-g2 = Hindernis.Gegner(bl4, 5, woman, 5,20)
-g3 = Hindernis.Gegner(bl5_2, 1, woman, 5,43)
-g4 = Hindernis.Gegner(bl7, 1, woman, 5,42)
-g5 = Hindernis.Gegner(bl12, 10, woman, 5,12)
-
-fg = Hindernis.FliegenderGegner(5350, 5800, 1600, 2, woman, 5,23)
-fg1 = Hindernis.FliegenderGegner(4700, 5100, 3100, 5, woman, 5,23)
-fg2 = Hindernis.FliegenderGegner(2100, 2200, 100, 2, woman, 5,23, False)
-
-hj = Power_Ups.High_Jump(bl5, [highjump_sprite])
-
-sp = Speicherpunkt.Speicherpunkt(bl9_2, [waypoint_sprite])
-
-p = Speicherpunkt.Portal(bl13, [portal2_sprite])
+bl0 = Boden.Block(pygame.Rect(50, 3000, 300, 50), mars)
+bl1 = Boden.Block(pygame.Rect(550, 3000, 300, 50), mars)
+bl2 = Boden.Block(pygame.Rect(950, 2850, 300, 50), mars)
+bl3 = Boden.Block(pygame.Rect(1250, 2850, 50, 450), mars)
+bl4 = Boden.Block(pygame.Rect(1550, 2400, 50, 650), mars)
+bl5 = Boden.Block(pygame.Rect(1300, 3250, 800, 50), mars)
+bl6 = Boden.Block(pygame.Rect(1600, 3000, 350, 50), mars)
+bl7 = Boden.Block(pygame.Rect(2100, 2600, 50, 700), mars)
+bl8 = Boden.Block(pygame.Rect(1750, 2550, 300, 50), mars)
+bl9 = Boden.Block(pygame.Rect(2350, 2550, 150, 50), mars)
+bl9_2 = Boden.Block(pygame.Rect(2500, 2550, 150, 50), mars)
+bl10 = Boden.Block(pygame.Rect(2650, 2100, 50, 1100), mars)
+bl11 = Boden.Block(pygame.Rect(2450, 2750, 200, 50), mars)
+bl12 = Boden.Block(pygame.Rect(2550, 2950, 100, 50), mars)
+bl13 = Boden.Block(pygame.Rect(2600, 3150, 50, 50), mars)
+bl14 = Boden.Block(pygame.Rect(2500, 3350, 50, 50), mars)
+bl15 = Boden.Block(pygame.Rect(2400, 3550, 50, 50), mars)
+bl16 = Boden.Block(pygame.Rect(2500, 3750, 50, 50), mars)
+bl17 = Boden.Block(pygame.Rect(2200, 3950, 250, 50), mars)
+bl18 = Boden.Block(pygame.Rect(1500, 3950, 50, 50), mars)
+bl19 = Boden.Block(pygame.Rect(600, 3950, 250, 50), mars)
+bl19_2 = Boden.Block(pygame.Rect(400, 4200, 50, 50), mars)
+bl20 = Boden.Block(pygame.Rect(2700, 2950, 100, 50), mars)
+bl21 = Boden.Block(pygame.Rect(2700, 2950, 150, 50), mars)
+bl22 = Boden.Block(pygame.Rect(2700, 2700, 100, 50), mars)
 
 
-w1 = Welt(pygame.image.load("Gui/mars_back2.jpg").convert(),
-          [bl,bl1,bl2,bl3, bl4, bl5, bl5_2, bl6, bl6_2, bl6_3, bl6_4, bl7, bl8, bl9,bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18],
-          [g2,g3, g4, g5, fg, fg1, fg2], [hj], [Boden.Stein(bl1,turbine_sprite)], [sp], p, s, s2)
+g0 = Hindernis.Gegner(bl2, 3, woman, 50, 100)
+g1 = Hindernis.Gegner(bl5, 3, woman, 100, 100)
+g2 = Hindernis.Gegner(bl8, 3, woman, 1, 100)
+g3 = Hindernis.Gegner(bl11, 3, woman, 10, 100)
+fg0 = Hindernis.FliegenderGegner(1600, 2100, 3850, 4, woman, 10, 100)
+fg1 = Hindernis.FliegenderGegner(900, 1450, 3850, 6, woman, 10, 100)
+fg2 = Hindernis.FliegenderGegner(4100, 4500, 1000, 6, woman, 10, 100, False)
+fg3 = Hindernis.FliegenderGegner(4100, 4500, 1500, 6, woman, 10, 100, False)
+fg4 = Hindernis.FliegenderGegner(4100, 4500, 200, 6, woman, 10, 100, False)
 
+
+hj1 = Power_Ups.High_Jump(bl6, [highjump_sprite])
+hj2 = Power_Ups.High_Jump(bl22, [highjump_sprite])
+
+sp1 = Speicherpunkt.Speicherpunkt(bl9_2, [waypoint_sprite])
+sp2 = Speicherpunkt.Speicherpunkt(bl19, [waypoint_sprite])
+sp3 = Speicherpunkt.Speicherpunkt(bl21, [waypoint_sprite])
+
+st = Boden.Stein(bl19_2, turbine_sprite)
+
+p1 = Speicherpunkt.Portal(bl9, [portal2_sprite])
+
+w1 = Welt(pygame.image.load("Gui/mars_back2.png").convert(),
+          [bl0, bl1, bl2, bl3, bl4, bl5, bl6, bl7, bl8, bl9, bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18, bl19,bl20, bl21, bl22],
+          [g0, g1, g2, g3, fg0, fg1, fg2, fg3, fg4], [hj1, hj2], [st], [sp1, sp2, sp3], p1, s, s2)
 
 
 #LEVEL2
@@ -793,7 +805,7 @@ def on_execute(multi_True = False): # Multiplayer starten oder Singleplayer (bei
                         w.spieler = w.spieler1
                         
                 if __name__ == "__main__":
-                        cProfile.run("main()")
+                        main()
                 else: # Singelplayerstart aus dem Menü heraus
                          f = main()
                          return f
