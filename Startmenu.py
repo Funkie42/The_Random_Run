@@ -418,16 +418,14 @@ class Main:
                 self.interlevel_scene(0)
                 score_info = MASTER.on_execute(False) # (Continue Bool, Punktzahl, bonustime)
                 finished_level_number = 1
-                self.level_finished(score_info,finished_level_number)
                 continue_game = score_info[0]
-                self.interlevel_scene(finished_level_number)
-                
                 while continue_game:
+                    self.level_finished(score_info,finished_level_number)
+                    self.interlevel_scene(finished_level_number)
                     finished_level_number += 1
                     score_info = MASTER.main()
-                    self.level_finished(score_info,finished_level_number)
-                    if self.interlevel_scene(finished_level_number) == False:
-                        continue_game = False
+                    continue_game = score_info[0]
+
                     
                 highscore = score_info[1] + score_info[2]
                 get_Highscore(playername,highscore)
@@ -619,9 +617,13 @@ class Main:
         for line in leveltext:
             reached_max = False
             alpha_value = 250
-            thisPrint = pygame.font.Font('freesansbold.ttf', 25).render(line,True,(255,255,255))
+            thisPrint = pygame.font.Font('freesansbold.ttf', 25).render(line[0],True,(255,255,255))
             thisRect = thisPrint.get_rect()
-            thisRect.center = ((WINDOWw/2,WINDOWh/2))
+            thisRect.center = ((WINDOWw/2,WINDOWh/2-80))
+            if line[1] != None:
+                image_surf = pygame.image.load(line[1])
+                image_surf = pygame.transform.scale(image_surf,(200,200))
+                
 
             alphaSurface = pygame.Surface((WINDOWw,WINDOWh))
             alphaSurface.fill((0,0,0))
@@ -636,6 +638,8 @@ class Main:
             while alpha_value < 255:
                 self.display_surf.fill((0,0,0))
                 self.display_surf.blit(thisPrint,thisRect)
+                if line[1] != None:
+                    self.display_surf.blit(image_surf,(int(WINDOWw/2)-100,int(WINDOWh/2)))
                 alphaSurface.set_alpha(alpha_value)
                 self.display_surf.blit(alphaSurface,(0,0))
                 if awesomeness == 1 and leveltext != Texts.starwars_intro:

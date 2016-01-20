@@ -571,8 +571,7 @@ for blockkoord in blockkoordinaten:
 ###########Gegner###################
 gegner_in_lvl = []
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
-boden_gegner = [(w3_bl[0],5,woman,5,0),
-                (w3_bl[1],2,woman,1,0),
+boden_gegner = [(w3_bl[1],2,woman,1,0),
                 (w3_bl[6],8,woman,5,0)] # TODO
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
 flug_gegner = [(400,600,2250,3,woman,5,0,True),
@@ -601,12 +600,14 @@ w3 = Welt(w3_bild, w3_bl, gegner_in_lvl,powerups_in_lvl, [], speichpt_in_lvl,p2,
 
 
 
+wend = Welt(w3_bild, w3_bl, gegner_in_lvl,powerups_in_lvl, [], speichpt_in_lvl,p2,s,s2)
+
 
 
 
 #SPIELER
-game = [w1,w2,w3]
-current_level = w3
+game = [w1,w2,w3,wend]
+current_level = w1
 backup_hintergrund_rect = copy.deepcopy(hintergrund_rect)
 kugeln = []
 
@@ -720,10 +721,12 @@ def main():
 
                                 
                                 pygame.display.flip()
-                                
+                                #print(game.index(current_level))
                                 #pygame.quit()
                                 #sys.exit()
                                 if w.finish and __name__ != "__main__":
+                                        print(game.index(current_level))
+                                        print(game.index(current_level) + 1 < len(game))
                                         old_score = score
                                         score += bonustime
                                         if game.index(current_level) + 1 < len(game):
