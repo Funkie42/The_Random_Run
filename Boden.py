@@ -34,7 +34,7 @@ class Stein(Boden):
                         self.direction = 1
                         self.sprite = sprite
                         self.sprite_iterator = 0
-                        self.reihe = 0
+                        self.reihe = 1
                         self.rect = self.current_sprite().get_rect()
                         self.body = pymunk.Body(100, pymunk.inf)
                         self.body.position = (self.x, self.y)
@@ -44,7 +44,10 @@ class Stein(Boden):
                         self.sprite_counter = 0
 
                 def slow_space(self, body, gravity, damping, dt):
-                        gravity = (0, -500)
+                        gravity = (0, 0)
+                        damping = 0.5
+                        if body.velocity.x >= 300:
+                                body.velocity.x = 0
 
                 def respawn(self):
                         self.body.position = (self.x, self.y)
@@ -53,9 +56,9 @@ class Stein(Boden):
 
                 def current_sprite(self):
                         if self.direction == 1:
-                            return self.sprite.get_image(0 , self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width(), self.sprite.sprite_sheet.get_height()/3)
+                            return self.sprite.get_image(0 , self.reihe * self.sprite.sprite_sheet.get_height()/4, self.sprite.sprite_sheet.get_width(), self.sprite.sprite_sheet.get_height()/4)
                         else:
-                            return pygame.transform.flip(self.sprite.get_image(0 , self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width(), self.sprite.sprite_sheet.get_height()/3), True, False)
+                            return pygame.transform.flip(self.sprite.get_image(0 , self.reihe * self.sprite.sprite_sheet.get_height()/4, self.sprite.sprite_sheet.get_width(), self.sprite.sprite_sheet.get_height()/4), True, False)
 
                 def center_rect(self):
                         x = self.rect
@@ -76,10 +79,10 @@ class Stein(Boden):
                                         self.sprite_iterator += 1
                                         self.sprite_counter = 0
                                         if self.sprite_iterator >= 1:
-                                                if self.reihe < 2:
+                                                if self.reihe < 3:
                                                         self.reihe += 1
                                                 else:
-                                                        self.reihe = 0
+                                                        self.reihe = 1
                                         else:
                                                 self.sprite_iterator += 1
                                                                                 
