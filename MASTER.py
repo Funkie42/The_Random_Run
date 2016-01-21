@@ -411,20 +411,40 @@ def player_stands_stein(space, arbiter):
         current_level.spieler.body.velocity.x = 0
         current_level.spieler.onStein = True
         keys = pygame.key.get_pressed()
+       
         if keys[K_w]:
-                pymunk.Body.apply_impulse(arbiter.shapes[1].body, (0, -800))
+                arbiter.shapes[1].body.velocity.y -= 100
         elif keys[K_d]:
-                arbiter.shapes[1].body.apply_impulse((100, -250), (-25, -0))
+                arbiter.shapes[1].body.velocity.x += 100
         elif keys[K_a]:
-                arbiter.shapes[1].body.apply_impulse((-100, -250), (25, 0))
+                arbiter.shapes[1].body.velocity.x -= 100
         elif keys[K_s]:
-                arbiter.shapes[1].body.apply_impulse((0, 100), (0, -25))
+                arbiter.shapes[1].body.velocity.y += 100
         else:
-                pymunk.Body.update_velocity(arbiter.shapes[1].body, ((0, 0)), 0.9, 1/35)
+                #pymunk.Body.update_velocity(arbiter.shapes[1].body, ((5000, -2000)), 0.9, 1/35)
+                #rint(arbiter.shapes[1].body.velocity_func)
+                pass
+               
         return True
 
 def player_leaves_stein(space, arbiter):
         current_level.spieler.onStein = False
+
+def fly_right(body, gravity, damping, dt):
+        body.velocity.x = 100
+        damping = 0.5
+
+def fly_left(body, gravity, damping, dt):
+        body.velocity.x = -100
+        damping = 0.5
+
+def fly_down(body, gravity, damping, dt):
+        body.velocity.y = 100
+        damping = 0.5
+
+def fly_up(body, gravity, damping, dt):
+        body.velocity.y = -100
+        damping = 0.5
 
         
 

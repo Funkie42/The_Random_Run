@@ -644,6 +644,7 @@ class Main:
                 self.display_surf.blit(alphaSurface,(0,0))
                 if awesomeness == 1 and leveltext != Texts.starwars_intro:
                     self.showText("Press 'Space' to skip", textsize = 13)
+                    self.showText("Press 'Return' to view next slide",textsize = 13, textpos = (int(WINDOWw/2),WINDOWh-50))
                 pygame.display.flip()
 
                 for event in pygame.event.get():
@@ -651,7 +652,8 @@ class Main:
                         self.endIt()
                     if event.type == KEYUP and event.key == K_SPACE:
                         return
-                
+                    if event.type == KEYUP and event.key == K_RETURN:
+                        alpha_value = 260
                 if alpha_value <= 0:
                     time.sleep(0.1)
                     reached_max = True
@@ -659,7 +661,8 @@ class Main:
                     self.do_interlevel_effects(awesomeness,leveltext, 2,level)
                     ###
                 if reached_max:
-                    alpha_value += 3
+                    if Texts.starwars_intro == leveltext:
+                        alpha_value += 3
                 else:
                     alpha_value -= 3
 

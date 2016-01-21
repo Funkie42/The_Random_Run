@@ -44,7 +44,7 @@ class Stein(Boden):
                         self.sprite_counter = 0
 
                 def slow_space(self, body, gravity, damping, dt):
-                        gravity = (0, -500)
+                        body.velocity = body.velocity.normalized() +10
 
                 def respawn(self):
                         self.body.position = (self.x, self.y)
