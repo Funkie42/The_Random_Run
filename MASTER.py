@@ -36,7 +36,7 @@ class Spieler(pygame.sprite.Sprite):
                 self.body = pymunk.Body(self.mass, pymunk.inf)
                 self.shape = pymunk.Poly.create_box(self.body, (self.current_sprite().get_width(), self.current_sprite().get_height()))
                 space.add(self.body, self.shape)
-                self.shape.collision_type = 1 # To change for ghostmode to 0 
+                self.shape.collision_type = 1 # To change for ghostmode to 0
 
                 self.dash_counter = 0
                 self.double_jump_counter = 1
@@ -267,7 +267,7 @@ class Kugel(object):
         def __init__(self, vec, x_pos = 0, y_pos = 0, spielerdir = 0): ###################XPOS YPOS geändert für Multiplayer
                 object.__init__(self)                   #Spielerdir = 0 heißt eigener Player direction
                 self.vec = vec
-                self.body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, 10))
+                self.body = pymunk.Body(1, pymunk.moment_for_circle(1, 10, 10))
                 ###########################
                 if x_pos == 0:
                         x_pos = current_level.spieler.body.position.x
@@ -280,7 +280,8 @@ class Kugel(object):
                 ##############################
                 self.shape = pymunk.Circle(self.body, 10)
                 space.add(self.body, self.shape)
-                self.body.apply_impulse(vec)
+                self.body.velocity.x = vec[0]
+                self.body.velocity.y = vec[1]
                 kugeln.append(self)
                 self.shape.collision_type = 4
                 self.shape.elasticy = 1
@@ -413,15 +414,15 @@ def player_stands_stein(space, arbiter):
         keys = pygame.key.get_pressed()
        
         if keys[K_w]:
-                arbiter.shapes[1].body.velocity.y -= 100
+                arbiter.shapes[1].body.velocity.y -= 10
         elif keys[K_d]:
-                arbiter.shapes[1].body.velocity.x += 100
+                arbiter.shapes[1].body.velocity.x += 1
         elif keys[K_a]:
-                arbiter.shapes[1].body.velocity.x -= 100
+                arbiter.shapes[1].body.velocity.x -= 1
         elif keys[K_s]:
-                arbiter.shapes[1].body.velocity.y += 100
+                arbiter.shapes[1].body.velocity.y += 1
         else:
-                #pymunk.Body.update_velocity(arbiter.shapes[1].body, ((5000, -2000)), 0.9, 1/35)
+                pymunk.Body.update_velocity(arbiter.shapes[1].body, ((0, -2000)), 0.9, 1/35)
                 #rint(arbiter.shapes[1].body.velocity_func)
                 pass
                
@@ -454,7 +455,7 @@ DISPLAYSURF = pygame.display.set_mode((800, 600))
 LEVELSURF = pygame.Surface((6000, 8000))
 current_speicherpunkt = False
 space = pymunk.Space()
-space.collision_bias = 0.00001
+space.collision_bias = 0.0000001
 current_speicherpunkt = False
 #COLLISIONTYPES:
 # 1 = SPIELER
