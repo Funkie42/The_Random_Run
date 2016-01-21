@@ -12,7 +12,7 @@ class Hindernis():
         self.spalte = 0
         self.direction = 1
         self.rect = self.current_sprite().get_rect()
-        
+        self.hitpoints = 10
         self.mass = mass
         self.sprite_counter = 5
         self.body = pymunk.Body(self.mass, pymunk.inf)

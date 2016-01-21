@@ -2,7 +2,6 @@ import sys, pygame, pymunk, time, random
 import Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, cProfile, copy
 from pygame.locals import*
 from copy import deepcopy
-
 from Gameclient import *
 
 playing_Spieler = 0 # Zu setzen auf 1 bzw. 2
@@ -108,12 +107,8 @@ class Spieler(pygame.sprite.Sprite):
                                 self.sprite_iterator += 1
                 elif self.state == 2:
                         self.reihe = 0
-                        self.spalte = 0
-                                        
-
-                        
+                        self.spalte = 0   
                 LEVELSURF.blit(self.current_sprite(), self.rect())
-                #self.sprite_iterator += 1
               
 
 
@@ -129,13 +124,13 @@ class Welt():
                 self.speicherpunkte = speicherpunkte
                 self.portal = portal
                 self.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(self.boeden[0], [waypoint_sprite]))
-                global current_speicherpunkt, hintergrund_rect#, backup_hintergrund_rect
+                global current_speicherpunkt, hintergrund_rect
                 current_speicherpunkt = self.speicherpunkte[0]
                 #backup_hintergrund_rect = hintergrund_rect
-                self.spieler1 = spieler1 #####################
+                self.spieler1 = spieler1 
                 self.spieler2 = spieler2
-                self.spieler = None # Wird dann nach Connection Aufbau gesetzt
-                self.anderer_spieler = None #######################
+                self.spieler = None 
+                self.anderer_spieler = None
                 self.finish = False
                 self.init = False
 
@@ -175,8 +170,6 @@ class Welt():
                         if rect.colliderect(i.center_rect()) and i.center_rect().top < LEVELSURF.get_height() - 200:
                                 i.update(rect)
                                 LEVELSURF.blit(i.surf, (i.center_rect()))
-                                #pygame.draw.polygon(LEVELSURF, ((34,66,34)), i.shape.get_vertices())
-                               # pygame.draw.circle(LEVELSURF, ((4,5,6)), (int(i.body.position.x), int(i.body.position.y)), 10)
 
                 for i in self.steine:
                         if i.body.position.y > LEVELSURF.get_height() - 200 and i in self.steine: 
@@ -189,7 +182,8 @@ class Welt():
                                 LEVELSURF.blit(i.current_sprite(),i.center_rect())
                                
                 for i in self.hindernisse:
-                        if i.body.position.y > LEVELSURF.get_height() - 200 and i in self.hindernisse: #evtl zu updaten
+                        if (i.body.position.y > LEVELSURF.get_height() - 200 or i.hitpoints == 0 )and i in self.hindernisse: #evtl zu updaten
+                                ex = Explotion(i.body)
                                 self.hindernisse.remove(i)
                                 space.remove(i.body, i.shape)
                         if rect.colliderect(i.center_rect()):
@@ -202,8 +196,6 @@ class Welt():
                                         k.shape.collision_type = 3
                                         k.shape.sprite_group = 2
                         i.update()
-                                #pygame.draw.polygon(LEVELSURF, ((34,66,34)), i.shape.get_vertices())
-                                #pygame.draw.circle(LEVELSURF, ((4,5,6)), (int(i.body.position.x), int(i.body.position.y)), 10)
                                 
                 for i in self.power_ups:
                         if i.body.position.y > LEVELSURF.get_height() - 200 and i in self.power_ups: #evtl zu updaten
@@ -214,7 +206,6 @@ class Welt():
                         i.body.velocity.x = 0
                         if rect.colliderect(i.rect):
                                 LEVELSURF.blit(i.sprite_list[i.sprite_iterator], i.rect)
-
 
                 for i in self.speicherpunkte:
                          if rect.colliderect(i.rect):
@@ -240,19 +231,16 @@ class Welt():
                         self.spieler.body.position.y = self.speicherpunkte[0].rect.top - 250
                         self.addToSpace()
                         self.init = True
+                        
                 for spieler in alle_spieler:
-
                         if spieler == self.spieler: # Nur für den eigenen Spieler state-Update!
                                 spieler.state_update()
-                                
                                 if spieler.body.position.y > LEVELSURF.get_height() - 200:
                                         spieler.is_alive = False
                                 if spieler.is_alive == False:
                                         spieler.body.velocity.x = 0
-                                        #hintergrund_rect.left = backup_hintergrund_rect.left
                                         spieler.body.velocity.y = -50
                                         spieler.body.position = (current_speicherpunkt.rect.left + 50, current_speicherpunkt.rect.top - 200)
-                                        #spieler.moveSpeed
                                         spieler.is_alive = True
                                 spieler.dash()
                                 spieler.body.reset_forces()
@@ -261,13 +249,34 @@ class Welt():
                 #pygame.draw.polygon(LEVELSURF, ((76, 45, 98)), self.spieler.shape.get_vertices())
                 #pygame.draw.circle(LEVELSURF, ((45,34,23)), (int(self.spieler.body.position.x), int(self.spieler.body.position.y)), 10)
                 
+class Explotion(object):
+        def __init__(self, body):
+                self.x = body.position.x
+                self.y = body.position.y
+                self.reihe = 0
+                self.spalte = 0
+                self.sprite_iterator = 0
+                explosions.append(self)
+
+        def update(self):
+                LEVELSURF.blit(explosion_sprite.get_image(self.spalte * explosion_sprite.sprite_sheet.get_width()/10 ,
+                                                           self.reihe * explosion_sprite.sprite_sheet.get_height()/3, explosion_sprite.sprite_sheet.get_width()/10, explosion_sprite.sprite_sheet.get_height()/3), (self.x, self.y))
+                if self.sprite_iterator >= 3:
+                        self.sprite_iterator = 0
+                        if self.spalte < 9:     self.spalte += 1
+                        else:
+                                self.spalte = 0
+                                if self.reihe < 2:
+                                        self.reihe += 1
+                                else:   explosions.remove(self)
+                else:   self.sprite_iterator += 1 
 
 
 class Kugel(object):
         def __init__(self, vec, x_pos = 0, y_pos = 0, spielerdir = 0): ###################XPOS YPOS geändert für Multiplayer
                 object.__init__(self)                   #Spielerdir = 0 heißt eigener Player direction
                 self.vec = vec
-                self.body = pymunk.Body(1, pymunk.moment_for_circle(1, 10, 10))
+                self.body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, 10))
                 ###########################
                 if x_pos == 0:
                         x_pos = current_level.spieler.body.position.x
@@ -348,12 +357,16 @@ def kugel_hits_gegner(space, arbiter):
         arbiter.shapes[0].body.velocity.y -= 400
         arbiter.shapes[0].body.velocity.x += 150 * current_level.spieler.direction
         arbiter.shapes[1].body.velocity.x = -150 * current_level.spieler.direction ##########################################
+        for i in current_level.hindernisse:
+                if i.body == arbiter.shapes[0].body:
+                        i.hitpoints -= 1
         return True
 
 def kugel_hits_fliegender_gegner(space, arbiter):
         space.add(arbiter.shapes[0].body)
         arbiter.shapes[0].collision_type = 3
         arbiter.shapes[1].body.velocity.x = -150 * current_level.spieler.direction ########################################
+        return True
         
 
 def player_hits_kugel(space, arbiter):
@@ -510,6 +523,9 @@ portal1_sprite = pygame.transform.scale(portal1_sprite,(130,130))
 portal2_sprite = pygame.image.load("Gui/portal2.png")
 portal2_sprite = pygame.transform.scale(portal2_sprite,(130,130))
 turbine_sprite = SpriteSheet.SpriteSheet("Gui/turbine_sprite.png")
+explosion_sprite = SpriteSheet.SpriteSheet("Gui/explotion.png")
+
+explosions = []##################
 
 #SPIELER
 s = Spieler()
@@ -589,12 +605,17 @@ w2 = Welt( pygame.image.load("Gui/bg2.jpg").convert(), [bla, blb, blc, bld, ble,
 ###########Blöcke###################
 # Inhalt der Tupel:   ( left,   top,    width,  height)
 blockkoordinaten = [(50,2000,350,80),
-                    (500,3000,100,50),
+                    (500,3000,100,100),
                     (0,1500,50,580),
                     (0,1400,750,100),
                     (200,1250,50,50), #[4]
                     (300,650,200,50),
-                    (850,650,400,50)] 
+                    (850,650,400,50),
+                    (800,3000,500,100), #[7]
+                    (900,2700,400,100),
+                    (800,1500,100,1300),
+                    (1300,2950,100,150),
+                    (1400,2500,100,1000)] 
 leveldesign_block = rinde
 w3_bl = []
 for blockkoord in blockkoordinaten:
@@ -603,15 +624,16 @@ for blockkoord in blockkoordinaten:
 ###########Gegner###################
 gegner_in_lvl = []
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
-boden_gegner = [(w3_bl[1],2,woman,1,0),
-                (w3_bl[6],8,woman,5,0)] # TODO
+boden_gegner = [(1,2,woman,1,10),
+                (6,8,woman,5,10),
+                (7,5,woman,1,5)] # TODO
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
-flug_gegner = [(400,600,2250,3,woman,5,0,True),
-                (400,600,2500,3,woman,5,0,True),
-                (400,600,2500,3,woman,5,0,True)] 
+flug_gegner = [(400,600,2250,3,woman,5,10,True),
+                (400,600,2500,3,woman,5,10,True),
+                (400,600,2500,3,woman,5,10,True)] 
 
 for gegner in boden_gegner:
-    gegner_in_lvl.append(Hindernis.Gegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4]))
+    gegner_in_lvl.append(Hindernis.Gegner(w3_bl[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
 for gegner in flug_gegner:
     gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6],gegner[7]))
 #############Power_Ups###############
@@ -623,22 +645,14 @@ w3_bild = pygame.image.load("Gui/bg3.jpg").convert()
 w3 = Welt(w3_bild, w3_bl, gegner_in_lvl,powerups_in_lvl, [], speichpt_in_lvl,p2,s,s2)
 
 
-
-
-
-
-
-
-
-
-
+#Welt die Bugs behebt
 wend = Welt(w3_bild, w3_bl, gegner_in_lvl,powerups_in_lvl, [], speichpt_in_lvl,p2,s,s2)
 
 
 
 
-#SPIELER
-game = [w1,w2,w3,wend]
+#SPIEL
+game = [w1,wend]
 current_level = w1
 backup_hintergrund_rect = copy.deepcopy(hintergrund_rect)
 kugeln = []
@@ -678,6 +692,8 @@ def main():
                                                 if event.key == K_d:
                                                         if not w.spieler.is_Grounded:
                                                                 w.spieler.dash_counter += 5
+                                                if event.key == K_F5:
+                                                        w.spieler.is_alive = False
                                 frame_counter += 1                               
                                 keys = pygame.key.get_pressed()
                                 if keys[K_RIGHT] or keys[K_LEFT]:
@@ -735,13 +751,15 @@ def main():
                                 
                                 for i in kugeln:
                                         i.update()
+                                for i in explosions:
+                                        i.update()
                                         
                                 space.step(1/35)
                                 clock.tick(25)
                                 DISPLAYSURF.blit(camera_blit(), (0,0))
 
                                 ### Highscoreanzeige ###
-                                '''
+                                
                                 if bonustime > 0:
                                         bonustime = 300 - int(time.time() - start_time - pause_time)
                                 else:
@@ -751,8 +769,16 @@ def main():
                                 thisRect = thisPrint.get_rect()
                                 thisRect.center = ((150,40))
                                 DISPLAYSURF.blit(thisPrint,thisRect)
+                                if (frame_counter > 200 and frame_counter < 250):
+                                        die_string = "Press F5 to instantly die painfully"
+                                        diePrint = pygame.font.Font('freesansbold.ttf', 20).render(die_string,True,(255,255,255))
+                                        dieRect = diePrint.get_rect()
+                                        dieRect.center = ((470,40))
+                                        DISPLAYSURF.blit(diePrint,dieRect)
 
-                                '''
+                                if frame_counter > 5000: frame_counter = 0
+
+                                
 
                                 
                                 pygame.display.flip()
@@ -760,8 +786,8 @@ def main():
                                 #pygame.quit()
                                 #sys.exit()
                                 if w.finish and __name__ != "__main__":
-                                        print(game.index(current_level))
-                                        print(game.index(current_level) + 1 < len(game))
+                                        #print(game.index(current_level))
+                                        #print(game.index(current_level) + 1 < len(game))
                                         old_score = score
                                         score += bonustime
                                         if game.index(current_level) + 1 < len(game):
@@ -776,7 +802,7 @@ def on_execute(multi_True = False): # Multiplayer starten oder Singleplayer (bei
         multiplayer = multi_True
         #Für Highscore#
         survival_time = time.time()
-        
+        #reset_everything()
         if multiplayer:
                 if __name__ == "__main__":
                         try:
@@ -837,3 +863,16 @@ def on_execute(multi_True = False): # Multiplayer starten oder Singleplayer (bei
 
 if __name__ == "__main__":
         on_execute(multiplayer)
+
+
+def reset_everything():
+        global current_level,game
+        w1 = Welt(pygame.image.load("Gui/mars_back2.png").convert(),
+          [bl0, bl1, bl2, bl3, bl4, bl5, bl6, bl7, bl8, bl9, bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18, bl19,bl20, bl21, bl22],
+          [g0, g1, g2, g3, fg0, fg1, fg2, fg3, fg4], [hj1, hj2], [st], [sp1, sp2, sp3], p1, s, s2)
+        w2 = Welt( pygame.image.load("Gui/bg2.jpg").convert(), [bla, blb, blc, bld, ble, blf], [], [], [], [], p2, s, s2) 
+        w3 = Welt(w3_bild, w3_bl, gegner_in_lvl,powerups_in_lvl, [], speichpt_in_lvl,p2,s,s2)
+        game = [w1,wend]
+        current_level = w1
+        for w in game:
+                w.finish = False
