@@ -412,7 +412,7 @@ def player_stands_stein(space, arbiter):
         current_level.spieler.onStein = True
         keys = pygame.key.get_pressed()
         if keys[K_w]:
-                arbiter.shapes[1].body.apply_impulse((0, -1000), (0, 25))
+                pymunk.Body.apply_impulse(arbiter.shapes[1].body, (0, -800))
         elif keys[K_d]:
                 arbiter.shapes[1].body.apply_impulse((100, -250), (-25, -0))
         elif keys[K_a]:
@@ -425,6 +425,7 @@ def player_stands_stein(space, arbiter):
 
 def player_leaves_stein(space, arbiter):
         current_level.spieler.onStein = False
+
         
 
 # UNIVERSELLE OPTIONEN
@@ -470,7 +471,7 @@ hintergrund_rect =pygame.Rect(0, 0, DISPLAYSURF.get_width() + 25, DISPLAYSURF.ge
 man1 = pygame.image.load("Gui/man1.png")
 man1 = pygame.transform.scale(man1,(80,100))
 
-woman = SpriteSheet.SpriteSheet("Gui/player.png")
+woman = SpriteSheet.SpriteSheet("Gui/woman.png")
 
 #GELÄNDESPRITES
 mars = pygame.image.load("Gui/ground.png").convert()
