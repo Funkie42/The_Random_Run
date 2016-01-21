@@ -442,7 +442,7 @@ hj = Power_Ups.High_Jump(bl5, [man1])
 sp = Speicherpunkt.Speicherpunkt(bl9_2, [man1])
 
 
-w1 = Welt(pygame.image.load("Gui/mars_back.png"),
+w1 = Welt(pygame.image.load("Gui/bg1.jpg"),
           [bl,bl1,bl2,bl3, bl4, bl5, bl5_2, bl6, bl6_2, bl6_3, bl6_4, bl7, bl8, bl9,bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18],
           [g,g1,g2,g3, g4, g5, fg, fg1, fg2], [hj], [sp], s,s2)
 #^

@@ -20,7 +20,7 @@ normal_intro_teddy = [("THE RANDOM RUN",None),
                 ("You look closely and see a portal in the window",None),
                 ("Without thinking, you run towards it and jump though",None)]
 
-normal_intro = [("THE RANDOM RUN","Gui/portal1.png"),
+normal_intro = [("THE RANDOM RUN","Gui/splash.png"),
                 ("When you were sleeping sound in your bed",None),
                 ("A sudden burst of light wakes you up",None),
                 ("A creature, completely engulfed in darkness",None),
@@ -32,7 +32,7 @@ normal_intro = [("THE RANDOM RUN","Gui/portal1.png"),
                 ("You realise you're not home anymore",None),
                 ("You feel like you are free-falling",None),
                 ("A sound like from a different world",None),
-                ("You see yourself falling towards a red planet","Gui/mars_back2.jpg"),
+                ("You see yourself falling towards a red planet","Gui/bg1.jpg"),
                 ("'Where am I...?'",None)] 
 
 starwars_intro = [("A long time ago, in a galaxy far, far away..",None),
@@ -53,10 +53,10 @@ normal_level_1_teddy = ["You have fought bravely and reached the second portal",
                   "You see an image in your mind",
                   "The creature, that brought you here..",
                         "Who is he?"]
-normal_level_1 = [("You have fought bravely and reached the second portal","Gui/portal1.png"),
+normal_level_1 = [("You have fought bravely and reached the second portal","Gui/splash.png"),
                   ("Leaving Mars, you're flying in a stream of blue and orange",None),
                   ("Suddenly, the smell of nature surrounds you",None),
-                  ("A loud bang and you find yourself in a forest","Gui/wald.jpg"),
+                  ("A loud bang and you find yourself in a forest","Gui/bg2.jpg"),
                   ("You see an image in your mind",None),
                   ("The creature, that brought you here..",None),
                   ("Who is he?","Gui/powerups/qm.png")]
@@ -100,7 +100,7 @@ normal_level_3 = [("Leaving the vulcano, you calm down",None),
                   ("You immediatly see, it's not yours",None),
                   ("It starts talking...",None),
                   ("'Go home, you can't save him from Dr. Ka-Kowarui's claws!'",None),
-                  ("You push him aside, 'what does he know? he's just a teddy!",None)]
+                  ("You push him aside, what does he know? he's just a teddy!",None)]
 level_3_texts = [normal_level_3]
 
 ##########################

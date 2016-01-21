@@ -524,7 +524,7 @@ sp1 = Speicherpunkt.Speicherpunkt(bl9_2, [waypoint_sprite])
 st = Boden.Stein(bl3, mars)
 
 p1 = Speicherpunkt.Portal(bl20, [portal2_sprite])
-w1 = Welt(pygame.image.load("Gui/mars_back2.png"),
+w1 = Welt(pygame.image.load("Gui/bg1.jpg"),
           [bl0, bl1, bl2, bl3, bl4, bl5, bl6, bl7, bl8, bl9, bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18, bl19],
           [g0, g1, g2, g3, fg0, fg1], [hj1], [st], [sp1], p1, s, s2)
 

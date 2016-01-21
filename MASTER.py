@@ -567,7 +567,7 @@ st = Boden.Stein(bl19_2, turbine_sprite)
 
 p1 = Speicherpunkt.Portal(bl9, [portal2_sprite])
 
-w1 = Welt(pygame.image.load("Gui/mars_back2.png").convert(),
+w1 = Welt(pygame.image.load("Gui/bg1.jpg").convert(),
           [bl0, bl1, bl2, bl3, bl4, bl5, bl6, bl7, bl8, bl9, bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18, bl19,bl20, bl21, bl22],
           [g0, g1, g2, g3, fg0, fg1, fg2, fg3, fg4], [hj1, hj2], [st], [sp1, sp2, sp3], p1, s, s2)
 
