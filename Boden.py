@@ -1,11 +1,26 @@
-#<<<<<<< HEAD
 import pygame, sys, pymunk
 from pygame.locals import*
 
 class Boden(pygame.sprite.Sprite):
         def __init__(self):
                 pygame.sprite.Sprite.__init__(self)
-                
+
+class Textbox(Boden):
+        def __init__(self, rect, sprite):
+                self.rect = rect
+                self.sprite = sprite
+                self.surf = pygame.Surface((self.rect.width, self.rect.height))
+                self.body = pymunk.Body()
+                self.body.position = (self.rect.x+int(self.rect.width/2), self.rect.y+int(self.rect.height/2))
+                self.shape = pymunk.Poly.create_box(self.body, (self.rect.width, self.rect.height))
+                self.shape.collision_type = 2
+        def update(self, rect):
+                self.surf.blit(self.sprite, (int((self.rect.width-self.sprite.get_width())/2),int((self.rect.height-self.sprite.get_height())/2)))                
+        def center_rect(self):
+                x = self.rect
+                x.center = self.body.position
+                return x
+
 class Block(Boden):
         def __init__(self, rect, sprite):
                 self.rect = rect

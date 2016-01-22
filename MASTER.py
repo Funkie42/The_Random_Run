@@ -115,7 +115,7 @@ class Spieler(pygame.sprite.Sprite):
 
 #WELT/LEVELKLASSE
 class Welt():
-        def __init__(self, BACKGROUNDSURF, boeden, hindernisse, power_ups, steine, speicherpunkte, portal, spieler1, spieler2):
+        def __init__(self, BACKGROUNDSURF, boeden, hindernisse, power_ups, steine, speicherpunkte, portal, spieler1, spieler2, textboxes = []):
                 self.BACKGROUNDSURF = BACKGROUNDSURF
                 self.BACKGROUNDSURF = pygame.transform.scale(self.BACKGROUNDSURF, (int(LEVELSURF.get_width() * 2/3), DISPLAYSURF.get_height() + 25))
                 self.boeden = boeden
@@ -124,6 +124,7 @@ class Welt():
                 self.power_ups = power_ups
                 self.speicherpunkte = speicherpunkte
                 self.portal = portal
+                self.textboxes = textboxes
                 self.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(self.boeden[0], [waypoint_sprite]))
                 global current_speicherpunkt, hintergrund_rect
                 current_speicherpunkt = self.speicherpunkte[0]
@@ -136,6 +137,8 @@ class Welt():
                 self.init = False
 
         def addToSpace(self):
+                for i in self.textboxes:
+                        space.add(i.shape)
                 for i in self.boeden:
                         space.add(i.shape)
                 for i in self.steine:
@@ -166,12 +169,16 @@ class Welt():
                 global rect
                 global hintergrund_rect
                 hintergrund_rect.left = int(4/11 * rect.left)
+############################################################################
                 
+
                 for i in self.boeden:
                         if rect.colliderect(i.center_rect()) and i.center_rect().top < LEVELSURF.get_height() - 200:
                                 i.update(rect)
                                 LEVELSURF.blit(i.surf, (i.center_rect()))
-
+                for i in self.textboxes:
+                        i.update(rect)
+                        LEVELSURF.blit(i.surf, (i.center_rect()))
                 for i in self.steine:
                         if i.body.position.y > LEVELSURF.get_height() - 200 and i in self.steine: 
                                 i.respawn()
@@ -183,7 +190,7 @@ class Welt():
                                 LEVELSURF.blit(i.current_sprite(),i.center_rect())
                                
                 for i in self.hindernisse:
-                        if (i.body.position.y > LEVELSURF.get_height() - 200 or i.hitpoints == 0 )and i in self.hindernisse: #evtl zu updaten
+                        if (i.body.position.y > LEVELSURF.get_height() - 200 or i.hitpoints < 0 )and i in self.hindernisse: #evtl zu updaten
                                 ex = Explotion(i.body)
                                 self.hindernisse.remove(i)
                                 space.remove(i.body, i.shape)
@@ -359,7 +366,7 @@ def cänt_touch_dis(space, arbiter):
 def kugel_hits_gegner(space, arbiter):
         arbiter.shapes[0].body.velocity.y -= 400
         arbiter.shapes[0].body.velocity.x += 150 * current_level.spieler.direction
-        arbiter.shapes[1].body.velocity.x = -150 * current_level.spieler.direction ##########################################
+        arbiter.shapes[1].body.velocity.x = -150 * current_level.spieler.direction
         for i in current_level.hindernisse:
                 if i.body == arbiter.shapes[0].body:
                         i.hitpoints -= 1
@@ -368,21 +375,19 @@ def kugel_hits_gegner(space, arbiter):
 def kugel_hits_fliegender_gegner(space, arbiter):
         space.add(arbiter.shapes[0].body)
         arbiter.shapes[0].collision_type = 3
-        arbiter.shapes[1].body.velocity.x = -150 * current_level.spieler.direction ########################################
+        arbiter.shapes[1].body.velocity.x = -150 * current_level.spieler.direction
         return True
         
 
 def player_hits_kugel(space, arbiter):
         arbiter.shapes[1].body.velocity.y -= 1000
         arbiter.shapes[1].body.velocity.x += 1 * current_level.spieler.direction
-        #print("DEPP")
         return True
 
 def player_jumps_gegner(space, arbiter):
         if arbiter.contacts[0].normal.int_tuple[0] == 0:
                 current_level.spieler.body.velocity.y = -650
                 current_level.spieler.double_jump_counter = 1
-                #print("HURA")
         else:
                 current_level.spieler.body.velocity.x = -450 * current_level.spieler.direction
                 current_level.spieler.body.velocity.y = -750
@@ -528,7 +533,9 @@ portal2_sprite = pygame.transform.scale(portal2_sprite,(130,130))
 turbine_sprite = SpriteSheet.SpriteSheet("Gui/turbine_sprite.png")
 explosion_sprite = SpriteSheet.SpriteSheet("Gui/explotion.png")
 
-
+#SPIELER
+s = Spieler()
+s2 = Spieler()
 #LEVEL1
 bl0 = Boden.Block(pygame.Rect(50, 3000, 300, 50), mars)
 bl1 = Boden.Block(pygame.Rect(550, 3000, 300, 50), mars)
@@ -622,7 +629,7 @@ blockkoordinaten = [(50,2000,350,80),
                     (2400,2300,50,50),
                     (2800,2200,200,50),#[20]
                     (3000,2100,50,150),
-                    (2400,2050,50,100),] 
+                    (2400,2050,50,100)] 
 leveldesign_block = rinde
 w3_bl = []
 for blockkoord in blockkoordinaten:
@@ -661,36 +668,93 @@ w3_bild = pygame.image.load("Gui/bg3.jpg").convert()
 #Tutorial World
 ###########Blöcke###################
 # Inhalt der Tupel:   ( left,   top,    width,  height)
-blockkoordinaten = [(0,4000,1000,100),
-                    (1,1,1,1)] # TODO
-
+blockkoordinaten = [(100,4000,900,500),
+                    (1200,4000,800,500),
+                    (1600,3800,200,50),
+                    (1800,3800,200,50),
+                    (1000,4100,200,400),
+                    (2200,3800,200,50),#[5]
+                    (2600,3800,200,50),
+                    (2600,4000,500,500),
+                    (3100,4000,50,500),
+                    (3150,3500,800,1000),
+                    (3350,3050,100,50), #[10]
+                    (2800,2800,400,50),
+                    (2500,2000,50,50),
+                    (2550,1800,50,50),
+                    (2700,1600,1000,100),
+                    (3700,1300,50,400),
+                    (3750,1300,100,50),
+                    (3850,1300,50,400), # [17]
+                    (3750,1600,100,100),
+                    (3900,1600,600,100),
+                    (4500,1600,200,100),
+                    (4600,1700,400,100),
+                    (4900,1600,600,100),
+                    (5500,1500,100,200),
+                    (5900,0,100,4000),# [24]
+                    (5500,3000,400,1500),
+                    (4900,2800,50,50),
+                    (4500,2600,200,100),
+                    (0,0,100,4500), #  [28]
+                    (100,0,6000,100),
+                    (300,300,150,100)]
 leveldesign_block = space_ground # z.B. mars oder so
 Bloecke_in_lvl = []
 for blockkoord in blockkoordinaten:
     Bloecke_in_lvl.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
                                               blockkoord[2],blockkoord[3]), leveldesign_block))
-
+#Tut texte
+t1 = Boden.Textbox(pygame.Rect(200,3700,800,60),pygame.font.Font('freesansbold.ttf', 35).render("Welcome to the tutorial of 'The Random Run'",True,(255,255,255)))
+t2 = Boden.Textbox(pygame.Rect(600,4100,350,40),pygame.font.Font('freesansbold.ttf', 25).render("Press 'Space' to jump",True,(255,255,255)))
+t3 = Boden.Textbox(pygame.Rect(1250,4050,450,40),pygame.font.Font('freesansbold.ttf', 25).render("Press 'Space' twice to doublejump",True,(255,255,255)))
+t4 = Boden.Textbox(pygame.Rect(2050,4050,500,200),pygame.font.Font('freesansbold.ttf', 25).render("Don't jump down there though..",True,(255,255,255)))
+t5 = Boden.Textbox(pygame.Rect(2900,4050,500,100),pygame.font.Font('freesansbold.ttf', 25).render("To jump extra high, use the highjump!",True,(255,255,255)))
+t6 = Boden.Textbox(pygame.Rect(2700,3250,400,100),pygame.font.Font('freesansbold.ttf', 20).render("You then can still use the doublejump",True,(255,255,255)))
+t7 = Boden.Textbox(pygame.Rect(3650,3200,200,50),pygame.font.Font('freesansbold.ttf', 25).render("Sometimes...",True,(255,255,255)))
+t8 = Boden.Textbox(pygame.Rect(4000,3300,400,100),pygame.font.Font('freesansbold.ttf', 20).render("You have to jump into the unknown",True,(255,255,255)))
+t9 = Boden.Textbox(pygame.Rect(3650,3950,250,100),pygame.font.Font('freesansbold.ttf', 20).render("..But not this time",True,(255,255,255)))
+t10 = Boden.Textbox(pygame.Rect(2850,2550,300,50),pygame.font.Font('freesansbold.ttf', 20).render("Well Done! I'm surprised",True,(255,255,255)))
+t11 = Boden.Textbox(pygame.Rect(2875,2250,250,50),pygame.font.Font('freesansbold.ttf', 20).render("You seem quite fit",True,(255,255,255)))
+t12 = Boden.Textbox(pygame.Rect(2500,2250,300,50),pygame.font.Font('freesansbold.ttf', 20).render("Then let's turn it up a notch",True,(255,255,255)))
+t13 = Boden.Textbox(pygame.Rect(2500,1350,1050,50),pygame.font.Font('freesansbold.ttf', 20).render("You see.. you can shoot surreal-space-balls with the 'Up' Button! They sometimes shoot through walls!",True,(255,255,255)))
+t14 = Boden.Textbox(pygame.Rect(4100,1350,300,50),pygame.font.Font('freesansbold.ttf', 20).render("Ready for some fighting?",True,(255,255,255)))
+t15 = Boden.Textbox(pygame.Rect(4900,1350,500,50),pygame.font.Font('freesansbold.ttf', 20).render("Each Enemy gives you a number of extra points",True,(255,255,255)))
+t16 = Boden.Textbox(pygame.Rect(5400,1250,500,50),pygame.font.Font('freesansbold.ttf', 20).render("I think you should go down now",True,(255,255,255)))
+t17 = Boden.Textbox(pygame.Rect(5500,1300,400,50),pygame.font.Font('freesansbold.ttf', 20).render("Your shuttle is waiting",True,(255,255,255)))
+t18 = Boden.Textbox(pygame.Rect(4400,2300,400,50),pygame.font.Font('freesansbold.ttf', 20).render("You can control it with 'WASD'",True,(255,255,255)))
+t19 = Boden.Textbox(pygame.Rect(4200,2100,400,50),pygame.font.Font('freesansbold.ttf', 20).render("It may be a bit difficult at first..'",True,(255,255,255)))
+t20 = Boden.Textbox(pygame.Rect(3900,1900,500,50),pygame.font.Font('freesansbold.ttf', 20).render("The Portal home is in the upper left corner'",True,(255,255,255)))
+t21 = Boden.Textbox(pygame.Rect(3500,1900,300,50),pygame.font.Font('freesansbold.ttf', 20).render("Good luck!'",True,(255,255,255)))
+t22 = Boden.Textbox(pygame.Rect(200,450,350,50),pygame.font.Font('freesansbold.ttf', 20).render("You did it! Welcome home!'",True,(255,255,255)))
+tut_texte = [t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,t16,t17,t18,t19,t20,t21,t22]
 ###########Gegner###################
 gegner_in_lvl = []
-#Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse)
-boden_gegner = [] # TODO
+#Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
+boden_gegner = [(18,0,woman,5,50000),
+                (19,10,woman,5,20)] # TODO
 
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse, Waagrecht oder nicht (Bool, standart true))
-flug_gegner = [] # TODO
-
+flug_gegner = [(4700,4900,1600,10,woman,10,50,True),
+               (5200,5250,2900,0,woman,10,5000,True),
+               (4800,4850,2700,0,woman,10,5000,True)] # TODO
 for gegner in boden_gegner:
-    gegner_in_lvl.append(Hindernis.Gegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4]))
+    gegner_in_lvl.append(Hindernis.Gegner(Bloecke_in_lvl[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
 for gegner in flug_gegner:
     gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6],gegner[7]))
-
 #############Power_Ups###############
-tut_powerups= []
+tut_powerups= [Power_Ups.High_Jump(Bloecke_in_lvl[8], [highjump_sprite])]
 #############Speicherpunkte############
-tut_speichpt = []
+tut_speichpt = [Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[3], [waypoint_sprite]),Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[9],
+                                                                                                              [waypoint_sprite]),Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[11], [waypoint_sprite]),Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[14],
+                                                                                                                                                                                                                                [waypoint_sprite]),Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[25], [waypoint_sprite])]
+tut_p = Speicherpunkt.Portal(Bloecke_in_lvl[30], [portal2_sprite])
 tut_bl = Bloecke_in_lvl
+tut_steine = [Boden.Stein(Bloecke_in_lvl[27], turbine_sprite)]
 tut_gegner = gegner_in_lvl
 tut_bild = pygame.image.load("Gui/menu.jpg").convert()
 #Levels werden gespeichert in "set_everything"
+
 
 #SPIEL
 game = []
@@ -719,7 +783,8 @@ def main():
                                                 sys.exit()
                                         elif event.type == KEYDOWN:
                                                 if event.key == K_q: # Für Beenden und zurück zum startmenü
-                                                        return (False,score)
+                                                        w.removeFromSpace()
+                                                        return (False,score,bonustime)
                                                 if event.key == K_p and not multiplayer: #Pause TODO
                                                         pass
                                                 if event.key == K_SPACE:
@@ -829,10 +894,7 @@ def main():
                                 
 def set_everything(start_level):
         global current_level,game,score
-        #SPIELER
-        s = Spieler()
-        s2 = Spieler()
-        tut_w = Welt(tut_bild, tut_bl, tut_gegner,tut_powerups, [], tut_speichpt,p2,s,s2)
+        tut_w = Welt(tut_bild, tut_bl, tut_gegner,tut_powerups, tut_steine, tut_speichpt,tut_p,s,s2,textboxes = tut_texte)
         w1 = Welt(pygame.image.load("Gui/bg1.jpg").convert(),
           [bl0, bl1, bl2, bl3, bl4, bl5, bl6, bl7, bl8, bl9, bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18, bl19,bl20, bl21, bl22],
           [g0, g1, g2, g3, fg0, fg1, fg2, fg3, fg4], [hj1, hj2], [st], [sp1, sp2, sp3], p1, s, s2)

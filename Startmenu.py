@@ -405,20 +405,20 @@ class Main:
         sys.exit()
         
     def gameplay(self,multiplayer,start_level = 1):
-        if not multiplayer: self.interlevel_scene(0)
+        if not multiplayer and start_level > 0: self.interlevel_scene(0)
         pygame.mixer.music.stop()
         #pygame.mixer.music.load(level_music[0])
         #pygame.mixer.music.play(-1, 0.0)
-        score_info = MASTER.on_execute(multiplayer) # (Continue Bool, Punktzahl, bonustime)
-        finished_level_number = 1
-        continue_game = score_info[0]
-        while continue_game:
-            self.level_finished(score_info,finished_level_number)
-            if not multiplayer: self.interlevel_scene(finished_level_number)
-            finished_level_number += 1
-            score_info = MASTER.main()
+        score_info = MASTER.on_execute(multiplayer,start_level) # (Continue Bool, Punktzahl, bonustime)
+        if start_level > 0:
+            finished_level_number = 1
             continue_game = score_info[0]
-            
+            while continue_game:
+                self.level_finished(score_info,finished_level_number)
+                if not multiplayer: self.interlevel_scene(finished_level_number)
+                finished_level_number += 1
+                score_info = MASTER.main()
+                continue_game = score_info[0]
         highscore = score_info[1] + score_info[2]
         get_Highscore(playername,highscore)
          
@@ -451,7 +451,7 @@ class Main:
             self.gameplay(False,start_level = 0)
             
             self.blend_in_text("Have fun Playing!",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
-            time.sleep(3)
+            time.sleep(5)
             return "Singleplayer_screen"
         ###############################
         # Multiplayer Open Game
