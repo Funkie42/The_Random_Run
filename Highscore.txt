@@ -1,10 +1,10 @@
-Player
-1180
-Player
-1179
-Player
-1171
 Mister Man
 999
 Player
-891
+882
+Player
+880
+Mister Man
+500
+Mister Man
+420

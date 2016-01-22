@@ -99,6 +99,7 @@ star_wars_sound = "Sounds/Startwars_intro.ogg"
 
 
 game_music = 'Sounds/tetris.mid'
+level_music = ['Sounds/lvl1.m4a','Sounds/lvl2.m4a','Sounds/lvl3.m4a','Sounds/lvl4.m4a','Sounds/lvl5.m4a']
 menu_music = None
 
 #
@@ -245,7 +246,7 @@ class Menu:
             if self.menuname == "Singleplayer":
                 self.buttons.append(Button(buttonWidth*2,buttonHeight,firstButtonXpos + buttonDistance,firstButtonYpos - int(buttonDistance/2),"Game_start")) # Spielstart
                 self.buttons.append(Button(buttonWidth*2,buttonHeight,firstButtonXpos + buttonDistance, firstButtonYpos +buttonHeight+ int(buttonDistance/2) - int(buttonDistance/2),"Choose_lvl_screen"))
-                self.buttons.append(Button(buttonWidth*2,buttonHeight,firstButtonXpos + buttonDistance, firstButtonYpos +2*(buttonHeight+ int(buttonDistance/2)) - int(buttonDistance/2),"NotDone"))
+                self.buttons.append(Button(buttonWidth*2,buttonHeight,firstButtonXpos + buttonDistance, firstButtonYpos +2*(buttonHeight+ int(buttonDistance/2)) - int(buttonDistance/2),"Tutorial"))
 
             if self.menuname == "Choose Level":
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + int((buttonWidth + buttonDistance)/2),firstButtonYpos+ buttonHeight*2,"Load_single_game"))
@@ -402,79 +403,85 @@ class Main:
         pygame.mixer.music.stop()
         pygame.quit()
         sys.exit()
-
+        
+    def gameplay(self,multiplayer,start_level = 1):
+        if not multiplayer: self.interlevel_scene(0)
+        pygame.mixer.music.stop()
+        #pygame.mixer.music.load(level_music[0])
+        #pygame.mixer.music.play(-1, 0.0)
+        score_info = MASTER.on_execute(multiplayer) # (Continue Bool, Punktzahl, bonustime)
+        finished_level_number = 1
+        continue_game = score_info[0]
+        while continue_game:
+            self.level_finished(score_info,finished_level_number)
+            if not multiplayer: self.interlevel_scene(finished_level_number)
+            finished_level_number += 1
+            score_info = MASTER.main()
+            continue_game = score_info[0]
+            
+        highscore = score_info[1] + score_info[2]
+        get_Highscore(playername,highscore)
+         
     def button_clicked(self,button): # Was tun wenn Button geclickt
         global server_IP
 
         #####################################################################################################################################################
         #Spielstart Singleplayer
         #####################################################################################################################################################
-        
         if(button.goto_menutitle == "Game_start"): # Singleplayer start simple (Beginning)
           #  pygame.mixer.Sound(game_start_sound).play()
             #game_start_sound.play()
                 time.sleep(1)
                 
-                self.interlevel_scene(0)
-                score_info = MASTER.on_execute(False) # (Continue Bool, Punktzahl, bonustime)
-                finished_level_number = 1
-                continue_game = score_info[0]
-                while continue_game:
-                    self.level_finished(score_info,finished_level_number)
-                    self.interlevel_scene(finished_level_number)
-                    finished_level_number += 1
-                    score_info = MASTER.main()
-                    continue_game = score_info[0]
-
-                    
-                highscore = score_info[1] + score_info[2]
-                get_Highscore(playername,highscore)
+                self.gameplay(False)
 
                 self.display_surf.fill((0,0,0))
-                self.blend_in_text("Congratulations!",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
-                time.sleep(1)
-                self.blend_in_text("You finished..",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
-                time.sleep(1)
-                self.blend_in_text("The Random Run!",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
-                time.sleep(3)
-                
+                for text in ["Congratulations!","You finished..","The Random Run!"]:
+                    self.blend_in_text(text,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+                    time.sleep(2.5)
                 return "Credits_screen"            
+        ###############################
+            #Tutorial
+        ###############################
+        if(button.goto_menutitle == "Tutorial"):
+            time.sleep(1)
+            self.blend_in_text("Welcome to the Tutorial!",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
+            time.sleep(3)
 
+            self.gameplay(False,start_level = 0)
+            
+            self.blend_in_text("Have fun Playing!",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
+            time.sleep(3)
+            return "Singleplayer_screen"
         ###############################
         # Multiplayer Open Game
         ###############################
 
         elif(button.goto_menutitle == "Open_game"):
-            #try:
+            try:
                 server = Gameserver.ServerGame()
                 server.connect(server_ip,port)
-                server.accepting_allow() ###############
+                server.accepting_allow() 
                 client_ip = server_ip
                 Gameclient.create_Client(port,client_ip)
 
                 self.blend_in_text("Awaiting 2nd Player",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
-
                 time.sleep(2)
                 
-                MASTER.on_execute(True) #Start Game!
-                finished_level_number = 1
-                self.level_finished(score_info,finished_level_number)
-                continue_game = score_info[0]
-                while continue_game:
-                    finished_level_number += 1
-                    score_info = MASTER.main()
-                    self.level_finished(score_info,finished_level_number)
-                highscore = score_info[1]
-                get_Highscore(playername,highscore)
+                self.gameplay(True)
              
                 Gameclient.client.disconnect()
                 server.disconnect_clients()
                 server.disconnect()    
-           #except:
-             #   self.blend_in_text("Something went wrong...",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
-#
-  #              time.sleep(2)'''
-    #            return "Open_Multi_screen"         
+            except:
+                self.blend_in_text("Something went wrong..",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
+                time.sleep(2)
+                self.blend_in_text("Wait a minute and try again",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
+                time.sleep(2)
+                self.blend_in_text("Or maybe a server is already running",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
+               
+            time.sleep(2)
+            return "Open_Multi_screen"         
         
         ###############################
         #Mulitplayer Link in
@@ -487,34 +494,17 @@ class Main:
                 connection_text += dot
                 self.blend_in_text(connection_text,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
                 time.sleep(0.5)
-                
-            #####
-            #Multiplayer client aufrufen
-            #try:  
+            try:  
                 Gameclient.create_Client(port,client_ip)
-
                 self.blend_in_text("Starting Game",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
-
                 time.sleep(2)
-                
-                MASTER.on_execute(True) #Start Game!
-                finished_level_number = 1
-                self.level_finished(score_info,finished_level_number)
-                continue_game = score_info[0]
-                while continue_game:
-                    finished_level_number += 1
-                    score_info = MASTER.main()
-                    self.level_finished(score_info,finished_level_number)
-                highscore = score_info[1]
-                get_Highscore(playername,highscore)
+
+                self.gameplay(True)
              
-                Gameclient.client.disconnect()
-            #except:
-              #  self.blend_in_text("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
-                #Gameclient.client.disconnect()
-                #time.sleep(2)'''
-                
-                return self.menu_in_use.key_name
+            except IOError: self.blend_in_text("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+            Gameclient.client.disconnect()
+            time.sleep(2)     
+            return self.menu_in_use.key_name
 
 
         #########################
@@ -535,13 +525,10 @@ class Main:
         ####################
         #Anderes Menu
         ####################
-            
         else:
             button.sound.play()
             time.sleep(0.2)
             return button.goto_menutitle # Nächster Menübildschirm
-        
-
 
 
     def mouseclick(self, clickX, clickY, is_clicked = False):

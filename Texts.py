@@ -39,7 +39,7 @@ starwars_intro = [("A long time ago, in a galaxy far, far away..",None),
                   ("",None),
                   ("Oh, sorry, wrong soundtrack...",None)] + normal_intro
                   
-intro_texts = [starwars_intro,normal_intro]
+intro_texts = [starwars_intro,normal_intro*10]
 
 
 ########################
