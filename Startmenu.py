@@ -281,10 +281,10 @@ class Menu:
                 self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos, firstButtonYpos +buttonHeight+ int(buttonDistance/2), "Link_In_screen"))
 
             elif self.menuname == "Credits":
-                self.texts.append(("Graphical Design: The Phil",(WINDOWw/2,WINDOWh/2+50),20))
+                self.texts.append(("Graphical Design: The Phil-Fastic",(WINDOWw/2,WINDOWh/2+50),20))
                 self.texts.append(("Physiks and mechanics: Tom-Master",(WINDOWw/2,WINDOWh/2),20))
                 self.texts.append(("Menu and Multiplayer: General Funky",(WINDOWw/2,WINDOWh/2-50),20))
-                self.texts.append(("Supervision and advice: Clemens Schefel",(WINDOWw/2,WINDOWh/2+100),20))
+                self.texts.append(("Supervision and advice: Clemens Schefels",(WINDOWw/2,WINDOWh/2+100),20))
 
             elif self.menuname == "Open TCP-Server": 
                 self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos,"Open_game"))

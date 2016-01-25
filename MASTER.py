@@ -9,7 +9,12 @@ multiplayer = False
 multiplayer_ghostmode = True
 survival_time = 0
 score = 0
-test_startlvl = 0 # Für Testen
+test_startlvl = 1# Für Testen
+star_wars_sound = "Sounds/click.wav"
+jump_sound =  star_wars_sound
+explosion_sound = star_wars_sound
+die_sound = star_wars_sound
+kugel_sound  = star_wars_sound
 
 class Spieler(pygame.sprite.Sprite):
         def __init__(self):
@@ -52,12 +57,12 @@ class Spieler(pygame.sprite.Sprite):
         def current_sprite(self):
                 #return self.sprite_list[self.state][self.sprite_iterator]
                 if self.direction == 1:
-                        x = self.sprite.get_image(165 + self.spalte * self.sprite.sprite_sheet.get_width()/17 , 20, self.sprite.sprite_sheet.get_width()/17 -332, self.sprite.sprite_sheet.get_height() - 30)
-                        x = pygame.transform.scale(x, (90, 130))
+                        x = self.sprite.get_image(25 + self.spalte * self.sprite.sprite_sheet.get_width()/17 , 5, self.sprite.sprite_sheet.get_width()/17 -55, self.sprite.sprite_sheet.get_height() - 5)
+                        #x = pygame.transform.scale(x, (90, 130))
                         return x
                 else:
-                        x = pygame.transform.flip(self.sprite.get_image(165 + self.spalte * self.sprite.sprite_sheet.get_width()/17 , 20, self.sprite.sprite_sheet.get_width()/17 -332, self.sprite.sprite_sheet.get_height() - 30), True, False)
-                        x = pygame.transform.scale(x, (90, 130))
+                        x = pygame.transform.flip(self.sprite.get_image(25 + self.spalte * self.sprite.sprite_sheet.get_width()/17 , 5, self.sprite.sprite_sheet.get_width()/17 -55, self.sprite.sprite_sheet.get_height() - 5), True, False)
+                        #x = pygame.transform.scale(x, (90, 130))
                         return x
 
 
@@ -78,6 +83,7 @@ class Spieler(pygame.sprite.Sprite):
 
                         
         def jump(self):
+                pygame.mixer.Sound(jump_sound).play()
                 if current_level.spieler.body.velocity.y > 0:
                         self.body.velocity.y = -self.jumpPower
                 else:
@@ -99,12 +105,9 @@ class Spieler(pygame.sprite.Sprite):
                 elif self.state == 1:
                         if self.sprite_iterator >= 0:
                                 if self.spalte <= 15:
-                                        if self.spalte == 1:
-                                                self.spalte = 3
-                                        else:
-                                                self.spalte += 1
+                                        self.spalte += 1
                                 else:
-                                        self.spalte = 0
+                                        self.spalte = 5 
                                 self.sprite_iterator = 0
                         else:
                                 self.sprite_iterator += 1
@@ -153,6 +156,8 @@ class Welt():
                 space.add(self.portal.shape)
 
         def removeFromSpace(self):
+                for i in self.textboxes:
+                        space.remove(i.shape)
                 for i in self.boeden:
                         space.remove(i.shape)
                 for i in self.steine:
@@ -197,11 +202,11 @@ class Welt():
                                 space.remove(i.body, i.shape)
                         if rect.colliderect(i.center_rect()):
                                 LEVELSURF.blit(i.current_sprite(), i.center_rect())
-                                random_int = random.randint(0,400)
+                                random_int = random.randint(0,800)
                                 if random_int == 100:
                                         i.engage(self.spieler.body.position.x)
                                 if i.kugel_counter == i.feuerrate:
-                                        k = Kugel((1200 * i.direction, -50), i.body.position.x, i.body.position.y - 20, False)
+                                        k = Kugel((1200 * i.direction, -50),((245,12,188)), i.body.position.x + (15 * i.direction), i.body.position.y - 10, False)
                                         k.shape.collision_type = 3
                                         k.shape.sprite_group = 2
                         i.update()
@@ -235,11 +240,14 @@ class Welt():
                 alle_spieler = [self.spieler]
                 if self.anderer_spieler != None and multiplayer:
                         alle_spieler.append(self.anderer_spieler)
+
                 if not self.init:
                         self.spieler.body.position.x = self.speicherpunkte[0].rect.left
                         self.spieler.body.position.y = self.speicherpunkte[0].rect.top - 250
                         self.addToSpace()
                         self.init = True
+                        if playing_Spieler == 2:
+                                self.spieler.body.position.x += 100
                         
                 for spieler in alle_spieler:
                         if spieler == self.spieler: # Nur für den eigenen Spieler state-Update!
@@ -247,6 +255,10 @@ class Welt():
                                 if spieler.body.position.y > LEVELSURF.get_height() - 200:
                                         spieler.is_alive = False
                                 if spieler.is_alive == False:
+                                        pygame.mixer.Sound(die_sound).play()
+                                        time.sleep(1)
+                                        for j in self.steine:
+                                                j.respawn()
                                         spieler.body.velocity.x = 0
                                         spieler.body.velocity.y = -50
                                         spieler.body.position = (current_speicherpunkt.rect.left + 50, current_speicherpunkt.rect.top - 200)
@@ -259,7 +271,9 @@ class Welt():
                 #pygame.draw.circle(LEVELSURF, ((45,34,23)), (int(self.spieler.body.position.x), int(self.spieler.body.position.y)), 10)
                 
 class Explotion(object):
+        
         def __init__(self, body):
+                pygame.mixer.Sound(explosion_sound).play()
                 self.x = body.position.x
                 self.y = body.position.y
                 self.reihe = 0
@@ -273,7 +287,7 @@ class Explotion(object):
                 
                 LEVELSURF.blit(explosion_sprite.get_image(self.spalte * explosion_sprite.sprite_sheet.get_width()/10 ,
                                                            self.reihe * explosion_sprite.sprite_sheet.get_height()/3, explosion_sprite.sprite_sheet.get_width()/10, explosion_sprite.sprite_sheet.get_height()/3), (self.x, self.y))
-                if self.sprite_iterator >= 3:
+                if self.sprite_iterator >= 0:
                         self.sprite_iterator = 0
                         if self.spalte < 9:     self.spalte += 1
                         else:
@@ -285,10 +299,12 @@ class Explotion(object):
 
 
 class Kugel(object):
-        def __init__(self, vec, x_pos = 0, y_pos = 0, spielerdir = 0): ###################XPOS YPOS geändert für Multiplayer
+        def __init__(self, vec,farbe, x_pos = 0, y_pos = 0, spielerdir = 0): ###################XPOS YPOS geändert für Multiplayer
                 object.__init__(self)                   #Spielerdir = 0 heißt eigener Player direction
+                pygame.mixer.Sound(kugel_sound).play()
                 self.vec = vec
-                self.body = pymunk.Body(1, pymunk.moment_for_circle(1, 10, 10))
+                self.body = pymunk.Body(1, pymunk.moment_for_circle(1, 7, 7))
+                self.farbe = farbe
                 ###########################
                 if x_pos == 0:
                         x_pos = current_level.spieler.body.position.x
@@ -296,21 +312,21 @@ class Kugel(object):
                         y_pos = current_level.spieler.body.position.y
                 if spielerdir == 0:
                         spielerdir = current_level.spieler.direction
-                self.body.position = (x_pos +40 * spielerdir,
-                                      y_pos - 40)
+                self.body.position = (x_pos +60 * spielerdir,
+                                      y_pos - 35)
                 ##############################
-                self.shape = pymunk.Circle(self.body, 10)
+                self.shape = pymunk.Circle(self.body,  7)
                 space.add(self.body, self.shape)
                 self.body.velocity.x = vec[0]
                 self.body.velocity.y = vec[1]
                 kugeln.append(self)
                 self.shape.collision_type = 4
                 self.shape.elasticy = 1
-                self.lebenszeit = 50
+                self.lebenszeit = 25
                 self.shape.group = 1
-
+        
         def update(self):
-                pygame.draw.circle(LEVELSURF, ((0,0,0)), (int(self.body.position.x), int(self.body.position.y)), 10)
+                pygame.draw.circle(LEVELSURF, self.farbe, (int(self.body.position.x), int(self.body.position.y)), 7)
                 if self.body.position.y > 7500 and self in kugeln or self.lebenszeit == 0:
                         kugeln.remove(self)
                         space.remove(self.body, self.shape)
@@ -421,6 +437,18 @@ def kugel_hits_highjump(space, arbiter):
 
 def player_hits_portal(space, arbiter):
         global current_level
+        random_int = random.randint(0,100)
+        if random_int == 1:
+                score_string = "You randomly passed away of a heart attack" 
+                thisPrint = pygame.font.Font('freesansbold.ttf', 35).render(score_string,True,(255,255,255))
+                thisRect = thisPrint.get_rect()
+                thisRect.center = ((400,300))
+                DISPLAYSURF.blit(thisPrint,thisRect)
+                pygame.display.flip()
+                time.sleep(2)
+                current_level.spieler.is_alive = False
+                return True
+        
         #current_level.removeFromSpace()
         current_level.removeFromSpace()
         current_level.finish = True
@@ -438,11 +466,11 @@ def player_stands_stein(space, arbiter):
         if keys[K_w]:
                 arbiter.shapes[1].body.velocity.y -= 10
         elif keys[K_d]:
-                arbiter.shapes[1].body.velocity.x += 1
+                arbiter.shapes[1].body.velocity.x += 2
         elif keys[K_a]:
-                arbiter.shapes[1].body.velocity.x -= 1
+                arbiter.shapes[1].body.velocity.x -= 2
         elif keys[K_s]:
-                arbiter.shapes[1].body.velocity.y += 1
+                arbiter.shapes[1].body.velocity.y += 2
         else:
                 pymunk.Body.update_velocity(arbiter.shapes[1].body, ((0, -2000)), 0.9, 1/35)
                 #rint(arbiter.shapes[1].body.velocity_func)
@@ -497,14 +525,15 @@ hintergrund_rect =pygame.Rect(0, 0, DISPLAYSURF.get_width() + 25, DISPLAYSURF.ge
 man1 = pygame.image.load("Gui/man1.png")
 man1 = pygame.transform.scale(man1,(80,100))
 
-woman = SpriteSheet.SpriteSheet("Gui/woman.png")
+#alien_sprite = SpriteSheet.SpriteSheet("Gui/alien_sprite.png")
 character_sprite = SpriteSheet.SpriteSheet("Gui/character.png")
 alien_sprite = SpriteSheet.SpriteSheet("Gui/alien.png")
 alien_sprite.sprite_sheet = pygame.transform.flip(alien_sprite.sprite_sheet, True , False)
+pacman_sprite = SpriteSheet.SpriteSheet("Gui/epm_spritesheet.png")
 
 #GELÄNDESPRITES
 mars = pygame.image.load("Gui/ground.png").convert()
-rinde = pygame.image.load("Gui/Rinde.jpg").convert()
+rinde = pygame.image.load("Gui/ground3.png").convert()
 rinde = pygame.transform.scale(rinde, (100, 100))
 space_ground = pygame.image.load("Gui/ground5.png").convert()
 
@@ -552,15 +581,15 @@ bl21 = Boden.Block(pygame.Rect(2700, 2950, 150, 50), mars)
 bl22 = Boden.Block(pygame.Rect(2700, 2700, 100, 50), mars)
 
 
-g0 = Hindernis.Gegner(bl2, 3, woman, 50, 100)
-g1 = Hindernis.Gegner(bl5, 3, woman, 100, 100)
-g2 = Hindernis.Gegner(bl8, 3, woman, 1, 100)
-g3 = Hindernis.Gegner(bl11, 3, woman, 10, 100)
-fg0 = Hindernis.FliegenderGegner(1600, 2100, 3850, 4, woman, 10, 100)
-fg1 = Hindernis.FliegenderGegner(900, 1450, 3850, 6, woman, 10, 100)
-fg2 = Hindernis.FliegenderGegner(4100, 4500, 1000, 6, woman, 10, 100, False)
-fg3 = Hindernis.FliegenderGegner(4100, 4500, 1500, 6, woman, 10, 100, False)
-fg4 = Hindernis.FliegenderGegner(4100, 4500, 200, 6, woman, 10, 100, False)
+g0 = Hindernis.Gegner(bl2, 3, alien_sprite, 50, 100)
+g1 = Hindernis.Gegner(bl5, 3, alien_sprite, 100, 100)
+g2 = Hindernis.Gegner(bl8, 3, alien_sprite, 1, 100)
+g3 = Hindernis.Gegner(bl11, 3, alien_sprite, 10, 100)
+fg0 = Hindernis.FliegenderGegner(1600, 2100, 3850, 4, pacman_sprite, 10, 100)
+fg1 = Hindernis.FliegenderGegner(900, 1450, 3850, 6, pacman_sprite, 10, 100)
+fg2 = Hindernis.FliegenderGegner(4100, 4500, 1000, 6, pacman_sprite, 10, 100, False)
+fg3 = Hindernis.FliegenderGegner(4100, 4500, 1500, 6, pacman_sprite, 10, 100, False)
+fg4 = Hindernis.FliegenderGegner(4100, 4500, 200, 6, pacman_sprite, 10, 100, False)
 
 
 hj1 = Power_Ups.High_Jump(bl6, [highjump_sprite])
@@ -626,15 +655,15 @@ for blockkoord in blockkoordinaten:
 ###########Gegner###################
 gegner_in_lvl = []
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
-boden_gegner = [(1,2,woman,1,10),
-                (6,8,woman,5,10),
-                (7,5,woman,1,5)] # TODO
+boden_gegner = [(1,2,alien_sprite,1,10),
+                (6,8,alien_sprite,5,10),
+                (7,5,alien_sprite,1,5)] # TODO
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
-flug_gegner = [(400,600,2250,3,woman,5,10,True),
-                (400,600,2500,3,woman,5,10,True),
-                (400,600,2500,3,woman,5,10,True),
-               (1000,1300,1800,4,woman,10,1000,True),
-               (1000,1300,2200,4,woman,10,1000,True)] 
+flug_gegner = [(400,600,2250,3,pacman_sprite,5,1,True),
+               # (400,600,2500,3,alien_sprite,5,10,True),
+                (400,600,2500,3,pacman_sprite,5,10,True),
+               (1000,1300,1800,4,pacman_sprite,10,1000,True),
+               (1000,1300,2200,4,pacman_sprite,10,1000,True)] 
 
 for gegner in boden_gegner:
     gegner_in_lvl.append(Hindernis.Gegner(w3_bl[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
@@ -687,7 +716,7 @@ blockkoordinaten = [(100,4000,900,500),
                     (0,0,100,4500), #  [28]
                     (100,0,6000,100),
                     (300,300,150,100)]
-leveldesign_block = space_ground # z.B. mars oder so
+leveldesign_block = space_ground.convert() # z.B. mars oder so
 Bloecke_in_lvl = []
 for blockkoord in blockkoordinaten:
     Bloecke_in_lvl.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
@@ -719,13 +748,13 @@ tut_texte = [t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,t16,t17,t18,t19,
 ###########Gegner###################
 gegner_in_lvl = []
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
-boden_gegner = [(18,0,woman,5,50000),
-                (19,10,woman,5,20)] # TODO
+boden_gegner = [(18,0,alien_sprite,5,50000),
+                (19,10,alien_sprite,5,20)] # TODO
 
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse, Waagrecht oder nicht (Bool, standart true))
-flug_gegner = [(4700,4900,1600,10,woman,10,50,True),
-               (5200,5250,2900,0,woman,10,5000,True),
-               (4800,4850,2700,0,woman,10,5000,True)] # TODO
+flug_gegner = [(4700,4900,1600,10,alien_sprite,10,50,True),
+               (5200,5250,2900,0,alien_sprite,10,5000,True),
+               (4800,4850,2700,0,alien_sprite,10,5000,True)] # TODO
 for gegner in boden_gegner:
     gegner_in_lvl.append(Hindernis.Gegner(Bloecke_in_lvl[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
 for gegner in flug_gegner:
@@ -794,7 +823,7 @@ def main():
                                 if keys[K_RIGHT] or keys[K_LEFT]:
                                         w.spieler.move()
                                 if new_kugel:
-                                        k = Kugel((1200 * current_level.spieler.direction, -100))        
+                                        k = Kugel((1200 * current_level.spieler.direction, -100),(218,165,32))        
 
 #################################################################
                                 #Mulitplayer Datenaustausch#
@@ -889,7 +918,7 @@ def set_everything(start_level):
         w2 = Welt( pygame.image.load("Gui/bg2.jpg").convert(), [bla, blb, blc, bld, ble, blf], [], [], [], [], p2, s, s2) 
         w3 = Welt(w3_bild, w3_bl, w3_gegner,w3_powerups, [], w3_speichpt,p2,s,s2)
         wend = Welt(w3_bild, w3_bl, w3_gegner,w3_powerups, [], w3_speichpt,p2,s,s2)
-        game = [tut_w,w1,w2,w3,wend]
+        game = [tut_w,w1,w3,wend]
         current_level = game[start_level]
         score = 0 
         for w in game:

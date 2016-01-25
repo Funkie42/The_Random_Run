@@ -39,8 +39,8 @@ class Block(Boden):
         def update(self, rect):
                 for i in range(0, self.surf.get_height(), self.sprite.get_height()):
                         for j in range(0, self.surf.get_width(), self.sprite.get_width()):
-                                if rect.collidepoint(self.center_rect().left + j, self.center_rect().top + i):
-                                        self.surf.blit(self.sprite, (j,i))
+                                #if rect.collidepoint(self.center_rect().left + j, self.center_rect().top + i):
+                                self.surf.blit(self.sprite, (j,i))
 
 class Stein(Boden):
                 def __init__(self, block,  sprite):
