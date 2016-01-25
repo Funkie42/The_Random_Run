@@ -56,9 +56,9 @@ highscore_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/bl_high_clicked
 #####################
 
 #Load Button
-load_button = pygame.image.load(PFAD + "Gui/Buttons/load_off.png")
-load_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/load_on.png")
-load_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/load_clicked.png")
+load_button = pygame.image.load(PFAD + "Gui/Buttons/tutorial_off.png")
+load_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/tutorial_on.png")
+load_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/tutorial_clicked.png")
 
 #New Game Button
 ng_button = pygame.image.load(PFAD + "Gui/Buttons/new_game_off.png")

@@ -752,7 +752,7 @@ tut_p = Speicherpunkt.Portal(Bloecke_in_lvl[30], [portal2_sprite])
 tut_bl = Bloecke_in_lvl
 tut_steine = [Boden.Stein(Bloecke_in_lvl[27], turbine_sprite)]
 tut_gegner = gegner_in_lvl
-tut_bild = pygame.image.load("Gui/menu.jpg").convert()
+tut_bild = pygame.image.load("Gui/bg_tut.jpg").convert()
 #Levels werden gespeichert in "set_everything"
 
 
