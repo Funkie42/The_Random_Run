@@ -23,11 +23,6 @@ class Hindernis():
         x.center = self.body.position
         return x
 
-    def current_sprite(self):
-        if self.direction == 1:
-            return self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/7 , self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7, self.sprite.sprite_sheet.get_height()/3)
-        else:
-            return pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/7 , self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7, self.sprite.sprite_sheet.get_height()/3), True, False)
 
 class Gegner(Hindernis):
     def __init__(self, block, moveSpeed, sprite, mass, feuerrate): #########!!!!!!!!!!!!!!!
@@ -56,8 +51,23 @@ class Gegner(Hindernis):
         else:
             self.body.velocity.x = -200
             self.direction = -1
+
+    def current_sprite(self):
+        if self.direction == 1:
+            x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 + 98 , 70, self.sprite.sprite_sheet.get_width()/12 - 310 , self.sprite.sprite_sheet.get_height() -140)
+            x = pygame.transform.scale(x, (100, 130))
+            return x
+        else:
+            x = pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 + 98 , 70, self.sprite.sprite_sheet.get_width()/12 -310, self.sprite.sprite_sheet.get_height() -140), True, False)
+            x = pygame.transform.scale(x, (100, 130))
+            return x
+
         
     def update(self):
+        if self.body.position.x > self.block.rect.right + 50:
+            self.hitpoints = 0
+        if self.body.position.x < self.block.rect.left - 50:
+            self.hitpoints = 0
         if self.kugel_counter < self.feuerrate:
             self.kugel_counter += 1
         else:
@@ -68,14 +78,11 @@ class Gegner(Hindernis):
         if self.rect.left <= self.block.rect.left:
             self.direction = 1
         self.body.position.x += self.moveSpeed * self.direction
-        if self.sprite_iterator >= 1:
-                                if self.spalte <= 5:
+        if self.sprite_iterator >= 0:
+                                if self.spalte <= 10:
                                         self.spalte += 1
                                 else:
                                         self.spalte = 0
-                                        if self.reihe <= 1:
-                                                self.reihe += 1
-                                        else: self.reihe = 0
                                 self.sprite_iterator = 0
         else:
                                 self.sprite_iterator += 1
@@ -103,6 +110,16 @@ class FliegenderGegner(Hindernis):
 
     def remove(self, space):
         space.remove(self.shape)
+
+    def current_sprite(self):
+        if self.direction == 1:
+            x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 , 0, self.sprite.sprite_sheet.get_width()/12, self.sprite.sprite_sheet.get_height())
+            x = pygame.transform.scale(x, (90, 90))
+            return x
+        else:
+            x = pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 , 0, self.sprite.sprite_sheet.get_width()/12, self.sprite.sprite_sheet.get_height()), True, False)
+            x = pygame.transform.scale(x, (90, 90))
+            return x
 
     def course(self):
         if self.waagrecht:

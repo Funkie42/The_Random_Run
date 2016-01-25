@@ -16,14 +16,13 @@ class Spieler(pygame.sprite.Sprite):
                 pygame.sprite.Sprite.__init__(self)
                 self.sprite_iterator = 0
 
-                self.reihe = 0
                 self.spalte = 0
                 
                 self.state = 0 # 0 = stand, 1 = move, 2 = jump, 3 = fall, 4 = duck, 5 = roll, 6 = schlittern
 
                 self.jump_force = (0,0)
 
-                self.sprite = woman
+                self.sprite = character_sprite
                 
                 self.double_jump_iterator = 0
 
@@ -53,9 +52,13 @@ class Spieler(pygame.sprite.Sprite):
         def current_sprite(self):
                 #return self.sprite_list[self.state][self.sprite_iterator]
                 if self.direction == 1:
-                        return self.sprite.get_image(15 + self.spalte * self.sprite.sprite_sheet.get_width()/7 ,  5 +self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7 - 35, self.sprite.sprite_sheet.get_height()/3 - 15)
+                        x = self.sprite.get_image(165 + self.spalte * self.sprite.sprite_sheet.get_width()/17 , 20, self.sprite.sprite_sheet.get_width()/17 -332, self.sprite.sprite_sheet.get_height() - 30)
+                        x = pygame.transform.scale(x, (90, 130))
+                        return x
                 else:
-                         return pygame.transform.flip(self.sprite.get_image(15 + self.spalte * self.sprite.sprite_sheet.get_width()/7 , 5 + self.reihe * self.sprite.sprite_sheet.get_height()/3, self.sprite.sprite_sheet.get_width()/7 - 35, self.sprite.sprite_sheet.get_height()/3 - 15), True, False)
+                        x = pygame.transform.flip(self.sprite.get_image(165 + self.spalte * self.sprite.sprite_sheet.get_width()/17 , 20, self.sprite.sprite_sheet.get_width()/17 -332, self.sprite.sprite_sheet.get_height() - 30), True, False)
+                        x = pygame.transform.scale(x, (90, 130))
+                        return x
 
 
         def state_update(self):
@@ -92,23 +95,21 @@ class Spieler(pygame.sprite.Sprite):
         def selfblit(self):
                 #if self.sprite_iterator >= len(self.sprite_list[self.state]):
                 if self.state == 0:
-                        self.spalte = 5
-                        self.reihe = 1
+                        self.spalte = 0
                 elif self.state == 1:
-                        if self.sprite_iterator >= 1:
-                                if self.spalte <= 5:
-                                        self.spalte += 1
+                        if self.sprite_iterator >= 0:
+                                if self.spalte <= 15:
+                                        if self.spalte == 1:
+                                                self.spalte = 3
+                                        else:
+                                                self.spalte += 1
                                 else:
                                         self.spalte = 0
-                                        if self.reihe <= 1:
-                                                self.reihe += 1
-                                        else: self.reihe = 0
                                 self.sprite_iterator = 0
                         else:
                                 self.sprite_iterator += 1
                 elif self.state == 2:
-                        self.reihe = 0
-                        self.spalte = 0   
+                        self.spalte = 2  
                 LEVELSURF.blit(self.current_sprite(), self.rect())
               
 
@@ -452,22 +453,6 @@ def player_stands_stein(space, arbiter):
 def player_leaves_stein(space, arbiter):
         current_level.spieler.onStein = False
 
-def fly_right(body, gravity, damping, dt):
-        body.velocity.x = 100
-        damping = 0.5
-
-def fly_left(body, gravity, damping, dt):
-        body.velocity.x = -100
-        damping = 0.5
-
-def fly_down(body, gravity, damping, dt):
-        body.velocity.y = 100
-        damping = 0.5
-
-def fly_up(body, gravity, damping, dt):
-        body.velocity.y = -100
-        damping = 0.5
-
 
 # UNIVERSELLE OPTIONEN
 pygame.init()
@@ -513,6 +498,9 @@ man1 = pygame.image.load("Gui/man1.png")
 man1 = pygame.transform.scale(man1,(80,100))
 
 woman = SpriteSheet.SpriteSheet("Gui/woman.png")
+character_sprite = SpriteSheet.SpriteSheet("Gui/character.png")
+alien_sprite = SpriteSheet.SpriteSheet("Gui/alien.png")
+alien_sprite.sprite_sheet = pygame.transform.flip(alien_sprite.sprite_sheet, True , False)
 
 #GELÄNDESPRITES
 mars = pygame.image.load("Gui/ground.png").convert()
@@ -806,7 +794,7 @@ def main():
                                 if keys[K_RIGHT] or keys[K_LEFT]:
                                         w.spieler.move()
                                 if new_kugel:
-                                        k = Kugel((900 * current_level.spieler.direction, -75))        
+                                        k = Kugel((1200 * current_level.spieler.direction, -100))        
 
 #################################################################
                                 #Mulitplayer Datenaustausch#
