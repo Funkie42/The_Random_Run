@@ -175,7 +175,7 @@ class Button(pygame.Surface):
             return ng_button,ng_button_cursor_over,ng_button_clicked
         elif self.goto_menutitle == "Choose_lvl_screen":
             return choose_lvl_button,choose_lvl_button_cursor_over,choose_lvl_button_clicked
-        elif self.goto_menutitle == "NotDone": # TODO
+        elif self.goto_menutitle == "Tutorial":
             return load_button,load_button_cursor_over,load_button_clicked
 
     ######################
@@ -410,17 +410,20 @@ class Main:
         #pygame.mixer.music.load(level_music[0])
         #pygame.mixer.music.play(-1, 0.0)
         score_info = MASTER.on_execute(multiplayer,start_level) # (Continue Bool, Punktzahl, bonustime)
+        if not score_info[0]:
+            return 0 # Damit er nicht denkt spiel ist fertig
+        finished_level_number = start_level
+        self.level_finished(score_info,finished_level_number)
         if start_level > 0:
-            finished_level_number = 1
             continue_game = score_info[0]
             while continue_game:
-                self.level_finished(score_info,finished_level_number)
                 if not multiplayer: self.interlevel_scene(finished_level_number)
                 finished_level_number += 1
                 score_info = MASTER.main()
                 continue_game = score_info[0]
         highscore = score_info[1] + score_info[2]
         get_Highscore(playername,highscore)
+        return finished_level_number
          
     def button_clicked(self,button): # Was tun wenn Button geclickt
         global server_IP
@@ -433,13 +436,15 @@ class Main:
             #game_start_sound.play()
                 time.sleep(1)
                 
-                self.gameplay(False)
-
-                self.display_surf.fill((0,0,0))
-                for text in ["Congratulations!","You finished..","The Random Run!"]:
-                    self.blend_in_text(text,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
-                    time.sleep(2.5)
-                return "Credits_screen"            
+                level_finished = self.gameplay(False)
+                if level_finished > 2:
+                    self.display_surf.fill((0,0,0))
+                    for text in ["Congratulations!","You finished..","The Random Run!"]:
+                        self.blend_in_text(text,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+                        time.sleep(2.5)
+                    return "Credits_screen"
+                else:
+                    return "Singleplayer_screen"
         ###############################
             #Tutorial
         ###############################
@@ -683,7 +688,12 @@ class Main:
             pygame.display.flip()
 
     def level_finished(self,score_info,finished_level_number):
-                        level_end_string = "Congratulations! You've cleared Level " + str(finished_level_number) + "!"
+                        if finished_level_number == 0:
+                            level_end_string = "Thanks for playing the Tutorial!"
+                            levelnumberstring = "Tutorial:"
+                        else:
+                            level_end_string = "Congratulations! You've cleared Level " + str(finished_level_number) + "!"
+                            levelnumberstring = "Level  " + str(finished_level_number) + ":"
                         self.display_surf.fill((0,0,0))
                         self.showText(level_end_string, (int(WINDOWw/2),int(WINDOWh/2)))
                         pygame.display.flip()
@@ -695,7 +705,7 @@ class Main:
                             self.display_surf.fill((0,0,0))
                             score_shown += 2
                             bonus_shown -= 2
-                            self.showText("Level  " + str(finished_level_number) + ":",(int(WINDOWw/2),int(WINDOWh/2) -200),60)
+                            self.showText(levelnumberstring,(int(WINDOWw/2),int(WINDOWh/2) -200),60)
                             self.showText("Bonustime: " + str(bonus_shown),(int(WINDOWw/2),int(WINDOWh/2)-50),30)
                             self.showText("Score: " + str(score_shown),(int(WINDOWw/2),int(WINDOWh/2)),50)
                             pygame.display.flip()
@@ -703,7 +713,7 @@ class Main:
                             self.display_surf.fill((0,0,0))
                             score_shown += 1
                             bonus_shown -= 1
-                            self.showText("Level  " + str(finished_level_number) + ":",(int(WINDOWw/2),int(WINDOWh/2) -200),60)
+                            self.showText(levelnumberstring,(int(WINDOWw/2),int(WINDOWh/2) -200),60)
                             self.showText("Bonustime: " + str(bonus_shown),(int(WINDOWw/2),int(WINDOWh/2)-50),30)
                             self.showText("Score: " + str(score_shown),(int(WINDOWw/2),int(WINDOWh/2)),50)
                             pygame.display.flip()                            
