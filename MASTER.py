@@ -11,10 +11,13 @@ survival_time = 0
 score = 0
 test_startlvl = 1# Für Testen
 star_wars_sound = "Sounds/click.wav"
-jump_sound =  star_wars_sound
-explosion_sound = star_wars_sound
-die_sound = star_wars_sound
-kugel_sound  = star_wars_sound
+jump_sound = "Sounds/jump.wav"
+explosion_sound = "Sounds/dead.wav"
+die_sound = "Sounds/aah.wav"
+kugel_sound  = "Sounds/phaser.wav"
+portal_sound = "Sounds/swoop.wav"
+waypoint_sound = "Sounds/wp.wav"
+rocket_sound = "Sounds/rocket_sound.wav"
 
 class Spieler(pygame.sprite.Sprite):
         def __init__(self):
@@ -228,6 +231,7 @@ class Welt():
                                  current_speicherpunkt = i
                                  backup_hintergrund_rect.left = hintergrund_rect.left
                                  self.speicherpunkte.remove(i)
+                                 pygame.mixer.Sound(waypoint_sound).play()
                                  space.remove(i.shape)
 
                 if rect.colliderect(self.portal.rect):
@@ -252,17 +256,16 @@ class Welt():
                 for spieler in alle_spieler:
                         if spieler == self.spieler: # Nur für den eigenen Spieler state-Update!
                                 spieler.state_update()
-                                if spieler.body.position.y > LEVELSURF.get_height() - 200:
-                                        spieler.is_alive = False
-                                if spieler.is_alive == False:
+                                if spieler.body.position.y > LEVELSURF.get_height() - 150:
                                         pygame.mixer.Sound(die_sound).play()
-                                        time.sleep(1)
-                                        for j in self.steine:
-                                                j.respawn()
-                                        spieler.body.velocity.x = 0
-                                        spieler.body.velocity.y = -50
-                                        spieler.body.position = (current_speicherpunkt.rect.left + 50, current_speicherpunkt.rect.top - 200)
-                                        spieler.is_alive = True
+                                        if spieler.body.position.y > LEVELSURF.get_height() - 200:
+                                            spieler.is_alive = False
+                                            for j in self.steine:
+                                                    j.respawn()
+                                                    spieler.body.velocity.x = 0
+                                                    spieler.body.velocity.y = -50
+                                                    spieler.body.position = (current_speicherpunkt.rect.left + 50, current_speicherpunkt.rect.top - 200)
+                                                    spieler.is_alive = True
                                 spieler.dash()
                                 spieler.body.reset_forces()
                         spieler.selfblit()
@@ -451,6 +454,7 @@ def player_hits_portal(space, arbiter):
         
         #current_level.removeFromSpace()
         current_level.removeFromSpace()
+        pygame.mixer.Sound(portal_sound).play()
         current_level.finish = True
         if game.index(current_level) + 1 < len(game):
                 current_level = game[game.index(current_level) + 1]
