@@ -1,5 +1,5 @@
 import sys, pygame, pymunk, time, random
-import Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, cProfile, copy
+import Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, Level,cProfile, copy
 from pygame.locals import*
 from copy import deepcopy
 from Gameclient import *
@@ -10,6 +10,7 @@ multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 test_startlvl = 1# Für Testen
+
 star_wars_sound = "Sounds/click.wav"
 jump_sound = "Sounds/jump.wav"
 explosion_sound = "Sounds/dead.wav"
@@ -250,29 +251,27 @@ class Welt():
                         self.spieler.body.position.y = self.speicherpunkte[0].rect.top - 250
                         self.addToSpace()
                         self.init = True
+                        if multiplayer:  self.anderer_spieler.sprite = character2_sprite
                         if playing_Spieler == 2:
                                 self.spieler.body.position.x += 100
                         
                 for spieler in alle_spieler:
                         if spieler == self.spieler: # Nur für den eigenen Spieler state-Update!
                                 spieler.state_update()
-                                if spieler.body.position.y > LEVELSURF.get_height() - 150:
+                                if spieler.body.position.y > LEVELSURF.get_height() - 200:
+                                        spieler.is_alive = False
+                                if spieler.is_alive == False: # So lassen, sonst geht F5 nichtmehr
                                         pygame.mixer.Sound(die_sound).play()
-                                        if spieler.body.position.y > LEVELSURF.get_height() - 200:
-                                            spieler.is_alive = False
-                                            for j in self.steine:
-                                                    j.respawn()
-                                                    spieler.body.velocity.x = 0
-                                                    spieler.body.velocity.y = -50
-                                                    spieler.body.position = (current_speicherpunkt.rect.left + 50, current_speicherpunkt.rect.top - 200)
-                                                    spieler.is_alive = True
+                                        for j in self.steine:
+                                                j.respawn()
+                                        spieler.body.velocity.x = 0
+                                        spieler.body.velocity.y = -50
+                                        spieler.body.position = (current_speicherpunkt.rect.left + 50, current_speicherpunkt.rect.top - 200)
+                                        spieler.is_alive = True
                                 spieler.dash()
                                 spieler.body.reset_forces()
                         spieler.selfblit()
-                #print(self.spieler.spalte)
-                #pygame.draw.polygon(LEVELSURF, ((76, 45, 98)), self.spieler.shape.get_vertices())
-                #pygame.draw.circle(LEVELSURF, ((45,34,23)), (int(self.spieler.body.position.x), int(self.spieler.body.position.y)), 10)
-                
+
 class Explotion(object):
         
         def __init__(self, body):
@@ -462,6 +461,7 @@ def player_hits_portal(space, arbiter):
         return True
 
 def player_stands_stein(space, arbiter):
+        pygame.mixer.Sound(rocket_sound).play()
         current_level.spieler.is_Grounded = True
         current_level.spieler.body.velocity.x = 0
         current_level.spieler.onStein = True
@@ -526,17 +526,15 @@ rect = pygame.Rect(0,0,DISPLAYSURF.get_width(),DISPLAYSURF.get_height())
 hintergrund_rect =pygame.Rect(0, 0, DISPLAYSURF.get_width() + 25, DISPLAYSURF.get_height() + 25)
 
 #SPIELERSPRITES
-man1 = pygame.image.load("Gui/man1.png")
-man1 = pygame.transform.scale(man1,(80,100))
-
-#alien_sprite = SpriteSheet.SpriteSheet("Gui/alien_sprite.png")
-character_sprite = SpriteSheet.SpriteSheet("Gui/character.png")
-alien_sprite = SpriteSheet.SpriteSheet("Gui/alien.png")
+character_sprite = Level.character_sprite
+character2_sprite = Level.character2_sprite
+alien_sprite = Level.alien_sprite
 alien_sprite.sprite_sheet = pygame.transform.flip(alien_sprite.sprite_sheet, True , False)
-pacman_sprite = SpriteSheet.SpriteSheet("Gui/epm_spritesheet.png")
+pacman_sprite = Level.pacman_sprite
 
 #GELÄNDESPRITES
 mars = pygame.image.load("Gui/ground.png").convert()
+level2_ground = pygame.image.load("Gui/ground2.png").convert()
 rinde = pygame.image.load("Gui/ground3.png").convert()
 rinde = pygame.transform.scale(rinde, (100, 100))
 space_ground = pygame.image.load("Gui/ground5.png").convert()
@@ -609,74 +607,45 @@ p1 = Speicherpunkt.Portal(bl9, [portal2_sprite])
 
 #Levels werden gespeichert in "set_everything"
 
+##################LEVEL2###################################################
 
+leveldesign_block = rinde
+w2_bl = []
+for blockkoord in Level.w2_blockkoordinaten:
+    w2_bl.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
+                                              blockkoord[2],blockkoord[3]), leveldesign_block))
+gegner_in_lvl = []
+for gegner in Level.w2_boden_gegner:
+    gegner_in_lvl.append(Hindernis.Gegner(w2_bl[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
+for gegner in Level.w2_flug_gegner:
+    gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6],gegner[7]))
 
-#LEVEL2
+w2_powerups = []
+w2_speichpt = []
+w2_gegner = gegner_in_lvl
+w2_bild = pygame.image.load("Gui/bg2.jpg").convert()
 
-bla = Boden.Block(pygame.Rect(100,2200,700 ,50), rinde)
-blb = Boden.Block(pygame.Rect(1700,2000,1200,50), rinde)
-blc = Boden.Block(pygame.Rect(2900,1700,750, 50), rinde)
-bld = Boden.Block(pygame.Rect(3650,1700,50, 800), rinde)
-ble = Boden.Block(pygame.Rect(3650, 2400,1450, 50), rinde)
-blf = Boden.Block(pygame.Rect(4400,2000,100, 50), rinde)
-
-p2 = Speicherpunkt.Portal(ble, [portal2_sprite])
+p2 = Speicherpunkt.Portal(w2_bl[4], [portal2_sprite])
 
 #Levels werden gespeichert in "set_everything"
 
 
-#LEVEL3
-###########Blöcke###################
-# Inhalt der Tupel:   ( left,   top,    width,  height)
-blockkoordinaten = [(50,2000,350,80),
-                    (500,3000,100,100),
-                    (0,1500,50,580),
-                    (0,1400,900,100),
-                    (200,1250,50,50), #[4]
-                    (300,650,200,50),
-                    (850,650,400,50),
-                    (800,3000,500,100), #[7]
-                    (900,2700,400,100),
-                    (800,1640,100,1160),
-                    (1300,2950,100,150),
-                    (1400,2500,100,1000),
-                    (900,1900,1100,100), #[12]
-                    (1600,2000,200,1000),
-                    (1700,3200,250,500), # [14]
-                    (1200,3700,400,100),
-                    (1800,2700,50,50),
-                    (2000,2500,50,50),
-                    (2200,2400,50,50),
-                    (2400,2300,50,50),
-                    (2800,2200,200,50),#[20]
-                    (3000,2100,50,150),
-                    (2400,2050,50,100)] 
+####################Level 3##################################################
 leveldesign_block = rinde
 w3_bl = []
-for blockkoord in blockkoordinaten:
+for blockkoord in Level.w3_blockkoordinaten:
     w3_bl.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
                                               blockkoord[2],blockkoord[3]), leveldesign_block))
-###########Gegner###################
 gegner_in_lvl = []
-#Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
-boden_gegner = [(1,2,alien_sprite,1,10),
-                (6,8,alien_sprite,5,10),
-                (7,5,alien_sprite,1,5)] # TODO
-#Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
-flug_gegner = [(400,600,2250,3,pacman_sprite,5,1,True),
-               # (400,600,2500,3,alien_sprite,5,10,True),
-                (400,600,2500,3,pacman_sprite,5,10,True),
-               (1000,1300,1800,4,pacman_sprite,10,1000,True),
-               (1000,1300,2200,4,pacman_sprite,10,1000,True)] 
-
-for gegner in boden_gegner:
+for gegner in Level.w3_boden_gegner:
     gegner_in_lvl.append(Hindernis.Gegner(w3_bl[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
-for gegner in flug_gegner:
+for gegner in Level.w3_flug_gegner:
     gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6],gegner[7]))
 
-
 w3_powerups = [Power_Ups.High_Jump(w3_bl[4], [highjump_sprite]),Power_Ups.High_Jump(w3_bl[14], [highjump_sprite])]
-w3_speichpt = [Speicherpunkt.Speicherpunkt(w3_bl[12], [waypoint_sprite]),Speicherpunkt.Speicherpunkt(w3_bl[8], [waypoint_sprite]),Speicherpunkt.Speicherpunkt(w3_bl[20], [waypoint_sprite])]
+w3_speichpt = [Speicherpunkt.Speicherpunkt(w3_bl[12], [waypoint_sprite]),
+               Speicherpunkt.Speicherpunkt(w3_bl[8], [waypoint_sprite]),
+               Speicherpunkt.Speicherpunkt(w3_bl[20], [waypoint_sprite])]
 w3_gegner = gegner_in_lvl
 w3_bild = pygame.image.load("Gui/bg3.jpg").convert()
 
@@ -686,95 +655,37 @@ w3_bild = pygame.image.load("Gui/bg3.jpg").convert()
 #Welt die Bugs behebt
 # Gleicht welt 3, wird nie aufgerufen
 
-#Tutorial World
-###########Blöcke###################
-# Inhalt der Tupel:   ( left,   top,    width,  height)
-blockkoordinaten = [(100,4000,900,500),
-                    (1200,4000,800,500),
-                    (1600,3800,200,50),
-                    (1800,3800,200,50),
-                    (1000,4100,200,400),
-                    (2200,3800,200,50),#[5]
-                    (2600,3800,200,50),
-                    (2600,4000,500,500),
-                    (3100,4000,50,500),
-                    (3150,3500,800,1000),
-                    (3350,3050,100,50), #[10]
-                    (2800,2800,400,50),
-                    (2500,2000,50,50),
-                    (2550,1800,50,50),
-                    (2700,1600,1000,100),
-                    (3700,1300,50,400),
-                    (3750,1300,100,50),
-                    (3850,1300,50,400), # [17]
-                    (3750,1600,100,100),
-                    (3900,1600,600,100),
-                    (4500,1600,200,100),
-                    (4600,1700,400,100),
-                    (4900,1600,600,100),
-                    (5500,1500,100,200),
-                    (5900,0,100,4000),# [24]
-                    (5500,3000,400,1500),
-                    (4900,2800,50,50),
-                    (4500,2600,200,100),
-                    (0,0,100,4500), #  [28]
-                    (100,0,6000,100),
-                    (300,300,150,100)]
+################Tutorial World#########################################################
 leveldesign_block = space_ground.convert() # z.B. mars oder so
+
 Bloecke_in_lvl = []
-for blockkoord in blockkoordinaten:
+for blockkoord in Level.tut_blockkoordinaten:
     Bloecke_in_lvl.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
                                               blockkoord[2],blockkoord[3]), leveldesign_block))
-#Tut texte
-t1 = Boden.Textbox(pygame.Rect(200,3700,800,60),pygame.font.Font('freesansbold.ttf', 35).render("Welcome to the tutorial of 'The Random Run'",True,(255,255,255)))
-t2 = Boden.Textbox(pygame.Rect(600,4100,350,40),pygame.font.Font('freesansbold.ttf', 25).render("Press 'Space' to jump",True,(255,255,255)))
-t3 = Boden.Textbox(pygame.Rect(1250,4050,450,40),pygame.font.Font('freesansbold.ttf', 25).render("Press 'Space' twice to doublejump",True,(255,255,255)))
-t4 = Boden.Textbox(pygame.Rect(2050,4050,500,200),pygame.font.Font('freesansbold.ttf', 25).render("Don't jump down there though..",True,(255,255,255)))
-t5 = Boden.Textbox(pygame.Rect(2900,4050,500,100),pygame.font.Font('freesansbold.ttf', 25).render("To jump extra high, use the highjump!",True,(255,255,255)))
-t6 = Boden.Textbox(pygame.Rect(2700,3250,400,100),pygame.font.Font('freesansbold.ttf', 20).render("You then can still use the doublejump",True,(255,255,255)))
-t7 = Boden.Textbox(pygame.Rect(3650,3200,200,50),pygame.font.Font('freesansbold.ttf', 25).render("Sometimes...",True,(255,255,255)))
-t8 = Boden.Textbox(pygame.Rect(4000,3300,400,100),pygame.font.Font('freesansbold.ttf', 20).render("You have to jump into the unknown",True,(255,255,255)))
-t9 = Boden.Textbox(pygame.Rect(3650,3950,250,100),pygame.font.Font('freesansbold.ttf', 20).render("..But not this time",True,(255,255,255)))
-t10 = Boden.Textbox(pygame.Rect(2850,2550,300,50),pygame.font.Font('freesansbold.ttf', 20).render("Well Done! I'm surprised",True,(255,255,255)))
-t11 = Boden.Textbox(pygame.Rect(2875,2250,250,50),pygame.font.Font('freesansbold.ttf', 20).render("You seem quite fit",True,(255,255,255)))
-t12 = Boden.Textbox(pygame.Rect(2500,2250,300,50),pygame.font.Font('freesansbold.ttf', 20).render("Then let's turn it up a notch",True,(255,255,255)))
-t13 = Boden.Textbox(pygame.Rect(2500,1350,1050,50),pygame.font.Font('freesansbold.ttf', 20).render("You see.. you can shoot surreal-space-balls with the 'Up' Button! They sometimes shoot through walls!",True,(255,255,255)))
-t14 = Boden.Textbox(pygame.Rect(4100,1350,300,50),pygame.font.Font('freesansbold.ttf', 20).render("Ready for some fighting?",True,(255,255,255)))
-t15 = Boden.Textbox(pygame.Rect(4900,1350,500,50),pygame.font.Font('freesansbold.ttf', 20).render("Each Enemy gives you a number of extra points",True,(255,255,255)))
-t16 = Boden.Textbox(pygame.Rect(5400,1250,500,50),pygame.font.Font('freesansbold.ttf', 20).render("I think you should go down now",True,(255,255,255)))
-t17 = Boden.Textbox(pygame.Rect(5500,1300,400,50),pygame.font.Font('freesansbold.ttf', 20).render("Your shuttle is waiting",True,(255,255,255)))
-t18 = Boden.Textbox(pygame.Rect(4400,2300,400,50),pygame.font.Font('freesansbold.ttf', 20).render("You can control it with 'WASD'",True,(255,255,255)))
-t19 = Boden.Textbox(pygame.Rect(4200,2100,400,50),pygame.font.Font('freesansbold.ttf', 20).render("It may be a bit difficult at first..'",True,(255,255,255)))
-t20 = Boden.Textbox(pygame.Rect(3900,1900,500,50),pygame.font.Font('freesansbold.ttf', 20).render("The Portal home is in the upper left corner'",True,(255,255,255)))
-t21 = Boden.Textbox(pygame.Rect(3500,1900,300,50),pygame.font.Font('freesansbold.ttf', 20).render("Good luck!'",True,(255,255,255)))
-t22 = Boden.Textbox(pygame.Rect(200,450,350,50),pygame.font.Font('freesansbold.ttf', 20).render("You did it! Welcome home!'",True,(255,255,255)))
-tut_texte = [t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,t16,t17,t18,t19,t20,t21,t22]
-###########Gegner###################
+tut_texte = []
+for textbox in Level.tut_textboxes:
+        tut_texte.append(Boden.Textbox(pygame.Rect(textbox[0],textbox[1],textbox[2],textbox[3],),pygame.font.Font('freesansbold.ttf', textbox[4]).render(textbox[5],True,(255,255,255))))
+        
 gegner_in_lvl = []
-#Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
-boden_gegner = [(18,0,alien_sprite,5,50000),
-                (19,10,alien_sprite,5,20)] # TODO
-
-#Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse, Waagrecht oder nicht (Bool, standart true))
-flug_gegner = [(4700,4900,1600,10,alien_sprite,10,50,True),
-               (5200,5250,2900,0,alien_sprite,10,5000,True),
-               (4800,4850,2700,0,alien_sprite,10,5000,True)] # TODO
-for gegner in boden_gegner:
+for gegner in Level.tut_boden_gegner:
     gegner_in_lvl.append(Hindernis.Gegner(Bloecke_in_lvl[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
-for gegner in flug_gegner:
+for gegner in Level.tut_flug_gegner:
     gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6],gegner[7]))
-#############Power_Ups###############
+    
 tut_powerups= [Power_Ups.High_Jump(Bloecke_in_lvl[8], [highjump_sprite])]
-#############Speicherpunkte############
-tut_speichpt = [Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[3], [waypoint_sprite]),Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[9],
-                                                                                                              [waypoint_sprite]),Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[11], [waypoint_sprite]),Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[14],
-                                                                                                                                                                                                                                [waypoint_sprite]),Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[25], [waypoint_sprite])]
+tut_speichpt = [Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[3], [waypoint_sprite]),
+                Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[9], [waypoint_sprite]),
+                Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[11], [waypoint_sprite]),
+                Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[14], [waypoint_sprite]),
+                Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[25], [waypoint_sprite])]
 tut_p = Speicherpunkt.Portal(Bloecke_in_lvl[30], [portal2_sprite])
 tut_bl = Bloecke_in_lvl
 tut_steine = [Boden.Stein(Bloecke_in_lvl[27], turbine_sprite)]
 tut_gegner = gegner_in_lvl
 tut_bild = pygame.image.load("Gui/bg_tut.jpg").convert()
-#Levels werden gespeichert in "set_everything"
+#Levels werden eingefügt in "set_everything"
+
+
 
 
 #SPIEL
@@ -805,6 +716,7 @@ def main():
                                         elif event.type == KEYDOWN:
                                                 if event.key == K_q: # Für Beenden und zurück zum startmenü
                                                         w.removeFromSpace()
+                                                        w.finish = True
                                                         return (False,score,bonustime)
                                                 if event.key == K_p and not multiplayer: #Pause TODO
                                                         pass
@@ -919,7 +831,7 @@ def set_everything(start_level):
         w1 = Welt(pygame.image.load("Gui/bg1.jpg").convert(),
           [bl0, bl1, bl2, bl3, bl4, bl5, bl6, bl7, bl8, bl9, bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18, bl19,bl20, bl21, bl22],
           [g0, g1, g2, g3, fg0, fg1, fg2, fg3, fg4], [hj1, hj2], [st], [sp1, sp2, sp3], p1, s, s2)
-        w2 = Welt( pygame.image.load("Gui/bg2.jpg").convert(), [bla, blb, blc, bld, ble, blf], [], [], [], [], p2, s, s2) 
+        w2 = Welt( pygame.image.load("Gui/bg2.jpg").convert(), w2_bl, w2_gegner, [], [], [], p2, s, s2) 
         w3 = Welt(w3_bild, w3_bl, w3_gegner,w3_powerups, [], w3_speichpt,p2,s,s2)
         wend = Welt(w3_bild, w3_bl, w3_gegner,w3_powerups, [], w3_speichpt,p2,s,s2)
         game = [tut_w,w1,w3,wend]

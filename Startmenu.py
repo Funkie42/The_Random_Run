@@ -400,6 +400,12 @@ class Main:
             
     #Beende Spiel
     def endIt(self):
+        try:
+            Gameclient.client.disconnect()
+            server.disconnect_clients()
+            server.disconnect()
+        except:
+            pass
         pygame.mixer.music.stop()
         pygame.quit()
         sys.exit()
