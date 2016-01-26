@@ -9,7 +9,7 @@ multiplayer = False
 multiplayer_ghostmode = True
 survival_time = 0
 score = 0
-test_startlvl = 1# Für Testen
+test_startlvl = 2# Für Testen
 
 star_wars_sound = "Sounds/click.wav"
 jump_sound = "Sounds/jump.wav"
@@ -536,7 +536,7 @@ pacman_sprite = Level.pacman_sprite
 mars = pygame.image.load("Gui/ground.png").convert()
 level2_ground = pygame.image.load("Gui/ground2.png").convert()
 rinde = pygame.image.load("Gui/ground3.png").convert()
-rinde = pygame.transform.scale(rinde, (100, 100))
+#rinde = pygame.transform.scale(rinde, (100, 100))
 space_ground = pygame.image.load("Gui/ground5.png").convert()
 
 #POWERUPSPRITES
@@ -609,7 +609,7 @@ p1 = Speicherpunkt.Portal(bl9, [portal2_sprite])
 
 ##################LEVEL2###################################################
 
-leveldesign_block = rinde
+leveldesign_block = level2_ground
 w2_bl = []
 for blockkoord in Level.w2_blockkoordinaten:
     w2_bl.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
@@ -645,9 +645,13 @@ for gegner in Level.w3_flug_gegner:
 w3_powerups = [Power_Ups.High_Jump(w3_bl[4], [highjump_sprite]),Power_Ups.High_Jump(w3_bl[14], [highjump_sprite])]
 w3_speichpt = [Speicherpunkt.Speicherpunkt(w3_bl[12], [waypoint_sprite]),
                Speicherpunkt.Speicherpunkt(w3_bl[8], [waypoint_sprite]),
-               Speicherpunkt.Speicherpunkt(w3_bl[20], [waypoint_sprite])]
+               Speicherpunkt.Speicherpunkt(w3_bl[20], [waypoint_sprite]),
+               Speicherpunkt.Speicherpunkt(w3_bl[24], [waypoint_sprite])]
+w3_steine = [Boden.Stein(w3_bl[26], turbine_sprite)]
 w3_gegner = gegner_in_lvl
 w3_bild = pygame.image.load("Gui/bg3.jpg").convert()
+
+p3 = Speicherpunkt.Portal(w3_bl[29], [portal2_sprite])
 
 #Levels werden gespeichert in "set_everything"
 
@@ -832,9 +836,9 @@ def set_everything(start_level):
           [bl0, bl1, bl2, bl3, bl4, bl5, bl6, bl7, bl8, bl9, bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18, bl19,bl20, bl21, bl22],
           [g0, g1, g2, g3, fg0, fg1, fg2, fg3, fg4], [hj1, hj2], [st], [sp1, sp2, sp3], p1, s, s2)
         w2 = Welt( pygame.image.load("Gui/bg2.jpg").convert(), w2_bl, w2_gegner, [], [], [], p2, s, s2) 
-        w3 = Welt(w3_bild, w3_bl, w3_gegner,w3_powerups, [], w3_speichpt,p2,s,s2)
-        wend = Welt(w3_bild, w3_bl, w3_gegner,w3_powerups, [], w3_speichpt,p2,s,s2)
-        game = [tut_w,w1,w3,wend]
+        w3 = Welt(w3_bild, w3_bl, w3_gegner,w3_powerups, w3_steine, w3_speichpt,p3,s,s2)
+        wend = Welt(w3_bild, w3_bl, w3_gegner,w3_powerups, [], w3_speichpt,p3,s,s2)
+        game = [tut_w,w1,w2,w3,wend]
         current_level = game[start_level]
         score = 0 
         for w in game:

@@ -79,15 +79,18 @@ tut_flug_gegner = [(4700,4900,1600,10,pacman_sprite,10,50,True),
 #LEVEL2
 ###########Blöcke###################
 # Inhalt der Tupel:   ( left,   top,    width,  height)
-w2_blockkoordinaten = [(100,2200,700 ,50),
-                    (1700,2000,1200,50),
-                    (2900,1700,750, 50),
-                    (3650,1700,50, 800),
-                    (3650, 2400,1450, 50),
-                    (4400,2000,100, 50)]
+w2_blockkoordinaten = [(100,2200,700 ,300),
+                    (1700,2000,1000,100),
+                    (2900,1700,750, 100),
+                    (3651,1700,100, 800),
+                    (3750, 2400,1450, 100),
+                    (4400,2000,100, 100), # 5
+                       (1100,2100,300,100),
+                       (0,0,100,2500)]
 
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
-w2_boden_gegner = [] # TODO
+w2_boden_gegner = [(2,10,alien_sprite,1,22),
+                   (2,10,alien_sprite,1,22)] # TODO
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
 w2_flug_gegner = [] 
 
@@ -116,11 +119,20 @@ w3_blockkoordinaten = [(50,2000,350,80),
                     (2400,2300,50,50),
                     (2800,2200,200,50),#[20]
                     (3000,2100,50,150),
-                    (2400,2050,50,100)]
+                    (2400,2050,50,100),
+                       (1500,700,300,50),
+                       (1800,700,200,50),
+                       (2000,600,50,150),
+                       (2050,700,400,50),#[26]
+                       (2350,600,50,150),
+                       (4500,2000,1500,400),
+                       (5000,1950,150,50),
+                       (4600,2500,400,3600)]
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 w3_boden_gegner = [(1,2,alien_sprite,1,10),
                 (6,8,alien_sprite,5,10),
-                (7,5,alien_sprite,1,5)] # TODO
+                (7,5,alien_sprite,1,5),
+                   (23,3,alien_sprite,100,200)] # TODO
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
 w3_flug_gegner = [(400,600,2250,3,pacman_sprite,5,1,True),
                 (400,600,2500,3,pacman_sprite,5,10,True),
