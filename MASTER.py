@@ -11,6 +11,8 @@ survival_time = 0
 score = 0
 test_startlvl = 3# Für Testen
 hitpoints = 5
+death_counter = 0
+dead_show = 0
 TOMFAKTOR = False # Weil tom keinen Text anzeigen kann
 
 jump_sound = "Sounds/jump.wav"
@@ -265,8 +267,10 @@ class Welt():
                                         spieler.is_alive = False
                                 if spieler.is_alive == False: # So lassen, sonst geht F5 nichtmehr
                                         pygame.mixer.Sound(die_sound).play()
-                                        global score
-                                        score -= 10
+                                        global score,death_counter,dead_show
+                                        score -= death_counter*10
+                                        death_counter += 1
+                                        dead_show = 20
                                         spieler.hitpoints = hitpoints
                                         for j in self.steine:
                                                 j.respawn()
@@ -569,13 +573,16 @@ explosions = []
 
 
 def main():
-        global score
+        global score,dead_show
         start_time = time.time()
         pause_time = 0
         bonustime = 300
         frame_counter = 0       
         for w in game:
+                        global death_counter
+                        death_counter = 0
                         while not w.finish and w == current_level:
+                                old_death_counter = death_counter
                                 new_kugel = False
 #################################
                                 #Event Getter
@@ -672,19 +679,27 @@ def main():
                                         thisRect = thisPrint.get_rect()
                                         thisRect.center = ((150,40))
                                         DISPLAYSURF.blit(thisPrint,thisRect)
-                                        if (frame_counter > 800 and frame_counter < 850):
+                                        if (frame_counter > 1800 and frame_counter < 1850):
                                                 die_string = "Press F5 to instantly die painfully"
                                                 diePrint = pygame.font.Font('freesansbold.ttf', 20).render(die_string,True,(255,255,255))
                                                 dieRect = diePrint.get_rect()
                                                 dieRect.center = ((470,40))
                                                 DISPLAYSURF.blit(diePrint,dieRect)
-                                        if (frame_counter > 850 and frame_counter < 900):
+                                        if (frame_counter > 1850 and frame_counter < 1900):
                                                 die_string = "Press 'Q' to give up and go home"
                                                 diePrint = pygame.font.Font('freesansbold.ttf', 20).render(die_string,True,(255,255,255))
                                                 dieRect = diePrint.get_rect()
                                                 dieRect.center = ((470,40))
                                                 DISPLAYSURF.blit(diePrint,dieRect)
-                                        if frame_counter > 5000000: frame_counter = 0
+                                        if frame_counter > 500000000: frame_counter = 0
+                                        if old_death_counter < death_counter or dead_show > 0:
+                                                dead_show -= 1
+                                                dead_string = "-" + str(death_counter*10)
+                                                deadPrint = pygame.font.Font('freesansbold.ttf', 35).render(dead_string,True,(155,0,0))
+                                                deadRect = thisPrint.get_rect()
+                                                deadRect.center = ((380,70))
+                                                DISPLAYSURF.blit(deadPrint,deadRect)       
+
                                         
                                 lebenscounter = 0
                                 for life in range(0,w.spieler.hitpoints):
@@ -741,7 +756,7 @@ def set_everything(start_level):
         w1 = construct_level(1)
         w2 = construct_level(2)
         w3 = construct_level(3)
-        wend = construct_level(3)
+        wend = construct_level(0)
         game = [tut_w,w1,w2,w3,wend] 
         current_level = game[start_level]
         score = 0 
