@@ -13,6 +13,7 @@ test_startlvl = 3# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
+
 TOMFAKTOR = False # Weil tom keinen Text anzeigen kann
 
 jump_sound = "Sounds/jump.wav"
@@ -132,6 +133,7 @@ class Welt():
         def __init__(self, BACKGROUNDSURF, boeden, hindernisse, power_ups, steine, speicherpunkte, portal, spieler1, spieler2, textboxes = []):
                 self.BACKGROUNDSURF = BACKGROUNDSURF
                 self.BACKGROUNDSURF = pygame.transform.scale(self.BACKGROUNDSURF, (int(LEVELSURF.get_width() * 2/3), DISPLAYSURF.get_height() + 25))
+                self.sterbehoehe = 200
                 self.boeden = boeden
                 self.hindernisse = hindernisse
                 self.steine = steine
@@ -263,13 +265,13 @@ class Welt():
                 for spieler in alle_spieler:
                         if spieler == self.spieler: # Nur für den eigenen Spieler state-Update!
                                 spieler.state_update()
-                                if spieler.body.position.y > LEVELSURF.get_height() - 200:
+                                if spieler.body.position.y > LEVELSURF.get_height() - self.sterbehoehe:
                                         spieler.is_alive = False
                                 if spieler.is_alive == False: # So lassen, sonst geht F5 nichtmehr
                                         pygame.mixer.Sound(die_sound).play()
                                         global score,death_counter,dead_show
                                         score -= death_counter*10
-                                        death_counter += 1
+                                        if death_counter < 10: death_counter += 1
                                         dead_show = 20
                                         spieler.hitpoints = hitpoints
                                         for j in self.steine:
@@ -665,6 +667,7 @@ def main():
                                 w.update()
                                 for i in kugeln: i.update()
                                 for i in explosions: i.update()
+                                pygame.draw.rect(LEVELSURF,(155,0,0),pygame.Rect(0,LEVELSURF.get_height() - w.sterbehoehe,LEVELSURF.get_width(),5))
                                 space.step(1/35)
                                 clock.tick(25)
                                 DISPLAYSURF.blit(camera_blit(), (0,0))
@@ -756,6 +759,7 @@ def set_everything(start_level):
         w1 = construct_level(1)
         w2 = construct_level(2)
         w3 = construct_level(3)
+        w3.sterbehoehe = 4000
         wend = construct_level(0)
         game = [tut_w,w1,w2,w3,wend] 
         current_level = game[start_level]

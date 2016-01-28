@@ -44,13 +44,13 @@ class ServerGame(MastermindServerTCP):
         
     def callback_connect_client(self,connection_object):
         global connected_clients
-        print ("A new client connected!")
+        #print ("A new client connected!")
         connected_clients += 1
         return super(MastermindServerTCP,self).callback_connect_client(connection_object)
     
     def callback_disconnect_client(self,connection_object):
         global connected_clients
-        print("the client disconnected!")
+        #print("the client disconnected!")
         connected_clients -= 1
         if connected_clients == 0:
             self.data_Player1 = None

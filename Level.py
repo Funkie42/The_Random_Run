@@ -54,7 +54,8 @@ tut_blockkoordinaten = [(100,4000,900,500),
                     (4500,2600,200,100),
                     (0,0,100,4500), #  [28]
                     (100,0,6000,100),
-                    (300,300,150,100)]
+                    (300,300,150,100),
+                    (3650,3190,200,10)]
 # Inhalt der Tupel:   (left,   top,    width,  height,size,text)
 tut_textboxes = [(200,3700,800,60,35,"Welcome to the tutorial of 'The Random Run'"),
                  (600,4100,350,40,25,"Press 'Space' to jump"),
@@ -68,16 +69,17 @@ tut_textboxes = [(200,3700,800,60,35,"Welcome to the tutorial of 'The Random Run
                  (2850,2550,300,50, 20,"Well Done!"),
                  (2875,2250,250,50, 20,"You seem quite fit"),
                  (2500,2250,300,50,20,"Let's turn it up a notch"),
-                 (2500,1350,1050,50, 20,"You can shoot Hyper-Space-Balls with the Up-Key"),
+                 (2800,1350,750,50, 20,"You can shoot Hyper-Space-Balls with the Up-Key"),
                  (4100,1350,300,50, 20,"Ready for some fighting?"),
                  (4900,1350,500,50, 20,"Each Enemy gives you a number of bonus points"),
                  (5400,1250,500,50, 20,"Maybe you should go down"),
                  (5500,1300,400,50, 20,"Your shuttle is waiting"),
-                 (4400,2300,400,50, 20,"You can control it with 'WASD'"),
-                 (4200,2100,400,50, 20,"It may be a bit difficult at first.."),
-                 (3900,1900,500,50, 20,"The Portal is in the upper left corner"),
-                 (3500,1900,300,50, 20,"Good luck!"),
-                 (200,450,350,50, 20,"You did it!")]
+                 (4450,2200,400,50, 20,"You can control it with 'WASD'"),
+                 (3900,2500,400,50, 20,"It may be a bit difficult at first.."),
+                 (4200,2140,500,50, 20,"The Portal is in the upper left corner"),
+                 (3800,2450,300,50, 20,"Good luck!"),
+                 (200,450,350,50, 20,"You did it!"),
+                 (200,4050,200,50,20,"Use ← or → to move")]
 
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 tut_boden_gegner = [(18,0,alien_sprite,5,50000),
@@ -180,8 +182,8 @@ w3_blockkoordinaten = [(50,2000,350,80),
                     (500,3000,100,100),
                     (0,1500,50,580),
                     (0,1400,900,100),
-                    (200,1250,50,50), #[4]
-                    (300,650,200,50),
+                    (200,1250,70,50), #[4]
+                    (300,750,200,50),
                     (850,650,400,50),
                     (800,3000,500,100), #[7]
                     (900,2700,400,100),
@@ -196,34 +198,79 @@ w3_blockkoordinaten = [(50,2000,350,80),
                     (2000,2500,50,50),
                     (2200,2400,50,50),
                     (2400,2300,50,50),
-                    (2800,2200,200,50),#[20]
-                    (3000,2100,50,150),
+                    (2800,2200,200,1750),#[20]
+                    (3000,2100,100,1850),
                     (2400,2050,50,100),
                        (1500,700,300,50),
                        (1800,700,200,50),
                        (2000,600,50,150),
-                       (2050,700,400,50),#[26]
-                       (2350,600,50,150),
+                       (2050,700,350,50),#[26]
+                       (2350,600,50,300),
                        (4500,2000,1500,400),
                        (5000,1950,150,50),
-                       (4600,2500,400,3600)]
+                       (4600,2500,400,3600),
+                       (1500,100,6300,200),
+                       (2400,800,300,100), #32
+                       (2720,800,300,100),
+                       (3040,800,300,100),
+                       (3360,800,300,100),
+                       (3680,800,300,100),
+                       (4000,800,300,100),
+                       (4350,800,950,100),
+                       (4600,600,150,50), #39
+                       (4600,550,20,100),
+                       (4800,700,150,50),
+                       (4800,650,20,100),
+                       (5100,300,200,200),#43
+                       (5100,600,200,200),
+                       (5300,800,375,400),
+                       (4940,650,10,100),
+                       (4740,550,10,100),
+                       (5800,300,200,1000), #48
+                       (5150,1300,800,100),
+                       (5000,1000,150,400),
+                       (3000,1000,2000,100),
+                       (2800,900,100,600), #52
+                       (2900,1400,300,100),
+                      # (3400,1600,60,30),
+                      # (3700,1800,60,30),
+                      # (4200,1800,60,30),
+                       (1000,3430,50,50),
+                       (800,3200,50,50),
+                       (100,3000,200,100)]
+w3_textboxes = [(1300,3725,200,50,20,"Wrong way..")]
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 w3_boden_gegner = [(1,2,alien_sprite,1,10),
                 (6,8,alien_sprite,5,10),
                 (7,5,alien_sprite,1,5),
-                   (23,3,alien_sprite,100,200)] # TODO
+                   (23,3,alien_sprite,100,200),
+                   (32,100,alien_sprite,100,10000),
+                   (33,100,alien_sprite,100,10000),
+                   (34,50,alien_sprite,100,10000),
+                   (35,100,alien_sprite,100,10000),
+                   (36,100,alien_sprite,100,10000),
+                   (37,50,alien_sprite,100,10000),
+                   (39,2,alien_sprite,5,6),
+                   (41,4,alien_sprite,5,6),
+                   (49,0,alien_sprite,1,1)] # TODO
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
-w3_flug_gegner = [(400,600,2250,3,pacman_sprite,5,1,True),
+w3_flug_gegner = [(400,600,2250,3,pacman_sprite,5,10,True),
                 (400,600,2500,3,pacman_sprite,5,10,True),
                (1000,1300,1800,4,pacman_sprite,10,1000,True),
-               (1000,1300,2200,4,pacman_sprite,10,1000,True)]
+               (1000,1300,2200,4,pacman_sprite,10,1000,True),
+                (2500,3000,350,10,pacman_sprite,10,10,True),
+                  (3000,3500,350,10,pacman_sprite,10,10,True),
+                  (3500,4000,350,10,pacman_sprite,10,10,True),
+                  (300,680,4400,55,pacman_sprite,10,2,False),
+                  (1300,1600,3550,5,pacman_sprite,10,20000,False),
+                  (1500,1800,3850,5,pacman_sprite,10,20000,False)]
 w3_powerups = [("highjump",4),("highjump",14)]
-w3_speichpunkte = [12,8,20,24]
+w3_speichpunkte = [12,8,20,24,45]
 w3_steine = [26]
 w3_portal = 29
 
 blockkoords = [tut_blockkoordinaten,w1_blockkoordinaten,w2_blockkoordinaten,w3_blockkoordinaten]
-textboxes = [tut_textboxes,[],[],[],[],[]]
+textboxes = [tut_textboxes,[],[],w3_textboxes,[],[]]
 bodengegner = [tut_boden_gegner,w1_boden_gegner,w2_boden_gegner,w3_boden_gegner]
 fluggegner = [tut_flug_gegner,w1_flug_gegner,w2_flug_gegner,w3_flug_gegner]
 speicherpunkte = [tut_speicherpunkte,w1_speichpunkte,w2_speichpunkte,w3_speichpunkte]

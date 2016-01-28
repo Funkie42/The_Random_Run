@@ -36,24 +36,8 @@ buttonHeight = int(buttonWidth / 2)
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
-
-
-
-
-
-
-#
-'''
-Highscores
-'''
-#
-
-
-
-highscore_list = [] # Erster Platz ist die Nummer 0
-#Max_size ist so 5?!
-
-
+#Highscores
+highscore_list = []
 test = []
 with open('Highscore.txt','r') as f:
     for line in f:
@@ -64,7 +48,6 @@ for i in range(0,len(test)):
     if i % 2 == 0:
         highscore_list.append((test[i],test[i+1]))
     
-
 
 def change_playername(newname):
     global playername
@@ -99,38 +82,15 @@ def reset_Highscore():
             file.write(entry[0] + "\n")
             file.write(str(entry[1]) + "\n")
             
-            
-    
-    
+# Images in Startmenu_Images.py!           
 
-#
-'''
-Sounds
-'''
-#
-
+#Sounds
 button_sound = "Sounds/click.wav"
-
 game_start_sound = None
 star_wars_sound = "Sounds/Startwars_intro.ogg"
-
-
-
 game_music = 'Sounds/tetris.mid'
 level_music = ['Sounds/lvl1.ogg','Sounds/lvl2.ogg','Sounds/lvl3.ogg','Sounds/lvl4.ogg','Sounds/lvl5.ogg']
 menu_music = None
-
-#
-'''
-Images:
-'''
-#
-#
-#
-# Images in Startmenu_Images.py!
-#
-#
-#
 
 
 
@@ -513,7 +473,7 @@ class Main:
                 Gameclient.create_Client(port,client_ip)
 
                 self.blend_in_text("Awaiting 2nd Player",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
-                time.sleep(2)
+                time.sleep(0.5)
                 
                 self.gameplay(True)
              
@@ -544,7 +504,7 @@ class Main:
             try:  
                 Gameclient.create_Client(port,client_ip)
                 self.blend_in_text("Starting Game",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
-                time.sleep(2)
+                time.sleep(0.5)
 
                 self.gameplay(True)
              
