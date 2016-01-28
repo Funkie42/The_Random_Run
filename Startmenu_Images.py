@@ -3,7 +3,7 @@ from pygame.locals import *
 
 PFAD = ""
 
-background_image = "Gui/menu.png"
+background_image = "Gui/background.jpg"
 
 
 #Generic Button

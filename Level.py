@@ -5,6 +5,7 @@ character_sprite = SpriteSheet.SpriteSheet("Gui/character.png")
 character2_sprite = SpriteSheet.SpriteSheet("Gui/character2.png")
 alien_sprite = SpriteSheet.SpriteSheet("Gui/alien.png")
 pacman_sprite = SpriteSheet.SpriteSheet("Gui/epm_spritesheet.png")
+zyklop_sprite = SpriteSheet.SpriteSheet("Gui/zyklop.png")
 
 
 ########################Tutorial#######################################################################
@@ -47,27 +48,28 @@ tut_textboxes = [(200,3700,800,60,35,"Welcome to the tutorial of 'The Random Run
                  (1250,4050,450,40, 25,"Press 'Space' twice to doublejump"),
                  (2050,4050,500,200, 25,"Don't jump down there though.."),
                  (2900,4050,500,100, 25,"To jump extra high, use the highjump!"),
-                 (2700,3250,400,100, 20,"You then can still use the doublejump"),
+                 (2700,3250,400,100, 20," "),
                  (3650,3200,200,50, 25,"Sometimes..."),
                  (4000,3300,400,100, 20,"You have to jump into the unknown"),
                  (3650,3950,250,100, 20,"..But not this time"),
-                 (2850,2550,300,50, 20,"Well Done! I'm surprised"),
+                 (2850,2550,300,50, 20,"Well Done!"),
                  (2875,2250,250,50, 20,"You seem quite fit"),
-                 (2500,2250,300,50,20,"Then let's turn it up a notch"),
-                 (2500,1350,1050,50, 20,"You see.. you can shoot surreal-space-balls with the 'Up' Button! They sometimes shoot through walls!"),
+                 (2500,2250,300,50,20,"Let's turn it up a notch"),
+                 (2500,1350,1050,50, 20,"You can shoot with the Up-Key"),
                  (4100,1350,300,50, 20,"Ready for some fighting?"),
-                 (4900,1350,500,50, 20,"Each Enemy gives you a number of extra points"),
-                 (5400,1250,500,50, 20,"I think you should go down now"),
+                 (4900,1350,500,50, 20,"Each Enemy gives you a number of bonus points"),
+                 (5400,1250,500,50, 20,"Maybe you should go down"),
                  (5500,1300,400,50, 20,"Your shuttle is waiting"),
                  (4400,2300,400,50, 20,"You can control it with 'WASD'"),
-                 (4200,2100,400,50, 20,"It may be a bit difficult at first..'"),
-                 (3900,1900,500,50, 20,"The Portal home is in the upper left corner'"),
-                 (3500,1900,300,50, 20,"Good luck!'"),
-                 (200,450,350,50, 20,"You did it! Welcome home!'")]
+                 (4200,2100,400,50, 20,"It may be a bit difficult at first.."),
+                 (3900,1900,500,50, 20,"The Portal is in the upper left corner"),
+                 (3500,1900,300,50, 20,"Good luck!"),
+                 (200,450,350,50, 20,"You did it!")]
 
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 tut_boden_gegner = [(18,0,alien_sprite,5,50000),
-                (19,10,alien_sprite,5,20)] # TODO
+                (19,10,zyklop_sprite,5,20)] # TODO
+
 
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse, Waagrecht oder nicht (Bool, standart true))
 tut_flug_gegner = [(4700,4900,1600,10,pacman_sprite,10,50,True),
@@ -91,6 +93,7 @@ w2_blockkoordinaten = [(100,2200,700 ,300),
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 w2_boden_gegner = [(2,10,alien_sprite,1,22),
                    (2,10,alien_sprite,1,22)] # TODO
+
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
 w2_flug_gegner = [] 
 

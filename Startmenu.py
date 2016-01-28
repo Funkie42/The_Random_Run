@@ -238,7 +238,7 @@ class Menu:
             self.buttons.append(Button(int(buttonWidth/2),buttonHeight,WINDOWw/2-(buttonWidth/2/2),WINDOWh-(int(WINDOWh/4)), "Quit_screen")) # Quit game screen
             
         elif self.menuname == "Quit Confirm":
-                self.texts.append(("Are you sure? (Don't do it!)",(WINDOWw/2,WINDOWh/2-100),30))
+                self.texts.append(("Are you sure you want to quit? (Don't do it!)",(WINDOWw/2,WINDOWh/2-100),30))
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos+100, "End"))
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos+100, "Start_screen"))
                                 
@@ -258,7 +258,7 @@ class Menu:
             if self.menuname == "Highscore":
                 #self.buttons.append(Button(int(buttonWidth/2),buttonHeight,firstButtonXpos,firstButtonYpos,"NotDone"))
                 place = 1
-                place_y_pos = WINDOWh/2-100
+                place_y_pos = WINDOWh/2-110
                 for (name,points) in highscore_list:
 
                     if place == 1:

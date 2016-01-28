@@ -11,7 +11,7 @@ survival_time = 0
 score = 0
 test_startlvl = 2# Für Testen
 
-star_wars_sound = "Sounds/click.wav"
+
 jump_sound = "Sounds/jump.wav"
 explosion_sound = "Sounds/dead.wav"
 die_sound = "Sounds/aah.wav"
@@ -19,7 +19,11 @@ kugel_sound  = "Sounds/phaser.wav"
 portal_sound = "Sounds/swoop.wav"
 waypoint_sound = "Sounds/wp.wav"
 rocket_sound = "Sounds/rocket_sound.wav"
-
+lvl1 = "Sounds/lvl1.ogg"
+lvl2 = "Sounds/lvl2.ogg"
+lvl3 = "Sounds/lvl3.ogg"
+lvl4 = "Sounds/lvl4.ogg"
+lvl5 = "Sounds/lvl5.ogg"
 class Spieler(pygame.sprite.Sprite):
         def __init__(self):
                 pygame.sprite.Sprite.__init__(self)
