@@ -1,4 +1,4 @@
-import sys, pygame, pymunk, time, random
+import sys, pygame, pymunk, time, random, copy
 import Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, Level,cProfile, copy
 from pygame.locals import*
 from copy import deepcopy
@@ -233,7 +233,8 @@ class Welt():
                                  backup_hintergrund_rect.left = hintergrund_rect.left
                                  self.speicherpunkte.remove(i)
                                  pygame.mixer.Sound(waypoint_sound).play()
-                                 space.remove(i.shape)
+                                 try: space.remove(i.shape)
+                                 except: pass
 
                 if rect.colliderect(self.portal.rect):
                                 LEVELSURF.blit(self.portal.sprite_list[self.portal.sprite_iterator], self.portal.rect)
@@ -531,13 +532,6 @@ alien_sprite = Level.alien_sprite
 alien_sprite.sprite_sheet = pygame.transform.flip(alien_sprite.sprite_sheet, True , False)
 pacman_sprite = Level.pacman_sprite
 
-#GELÄNDESPRITES
-mars = pygame.image.load("Gui/ground5.png").convert()
-level2_ground = pygame.image.load("Gui/ground2.png").convert()
-rinde = pygame.image.load("Gui/ground3.png").convert()
-#rinde = pygame.transform.scale(rinde, (100, 100))
-space_ground = pygame.image.load("Gui/ground5.png").convert()
-
 #POWERUPSPRITES
 
 highjump_sprite = pygame.image.load("Gui/pad.png")
@@ -551,44 +545,45 @@ portal2_sprite = pygame.transform.scale(portal2_sprite,(130,130))
 turbine_sprite = SpriteSheet.SpriteSheet("Gui/turbine_sprite.png")
 explosion_sprite = SpriteSheet.SpriteSheet("Gui/explotion.png")
 
+
 #SPIELER
 s = Spieler()
 s2 = Spieler()
-#LEVEL1
-bl0 = Boden.Block(pygame.Rect(50, 3000, 300, 50), mars)
-bl1 = Boden.Block(pygame.Rect(550, 3000, 300, 50), mars)
-bl2 = Boden.Block(pygame.Rect(950, 2850, 300, 50), mars)
-bl3 = Boden.Block(pygame.Rect(1250, 2850, 50, 450), mars)
-bl4 = Boden.Block(pygame.Rect(1550, 2400, 50, 650), mars)
-bl5 = Boden.Block(pygame.Rect(1300, 3250, 800, 50), mars)
-bl6 = Boden.Block(pygame.Rect(1600, 3000, 350, 50), mars)
-bl7 = Boden.Block(pygame.Rect(2100, 2600, 50, 700), mars)
-bl8 = Boden.Block(pygame.Rect(1750, 2550, 300, 50), mars)
-bl9 = Boden.Block(pygame.Rect(2350, 2550, 150, 50), mars)
-bl9_2 = Boden.Block(pygame.Rect(2500, 2550, 150, 50), mars)
-bl10 = Boden.Block(pygame.Rect(2650, 2100, 50, 1100), mars)#
-bl11 = Boden.Block(pygame.Rect(2450, 2750, 200, 50), mars)
-bl12 = Boden.Block(pygame.Rect(2550, 2950, 100, 50), mars)
-bl13 = Boden.Block(pygame.Rect(2600, 3150, 50, 50), mars)
-bl14 = Boden.Block(pygame.Rect(2500, 3350, 50, 50), mars)
-bl15 = Boden.Block(pygame.Rect(2400, 3550, 50, 50), mars)
-bl16 = Boden.Block(pygame.Rect(2500, 3750, 50, 50), mars)
-bl17 = Boden.Block(pygame.Rect(2200, 3950, 250, 50), mars)
-bl18 = Boden.Block(pygame.Rect(1500, 3950, 50, 50), mars)
-bl19 = Boden.Block(pygame.Rect(600, 3950, 250, 50), mars)
-bl19_2 = Boden.Block(pygame.Rect(400, 4200, 50, 50), mars)
-bl20 = Boden.Block(pygame.Rect(2700, 2950, 100, 50), mars)
-bl21 = Boden.Block(pygame.Rect(2700, 2950, 150, 50), mars)
-bl22 = Boden.Block(pygame.Rect(2700, 2700, 100, 50), mars)
-bl23 = Boden.Block(pygame.Rect(3000, 2250, 150, 50), mars)
-bl24 = Boden.Block(pygame.Rect(3300, 2000, 50, 50), mars)
-bl25 = Boden.Block(pygame.Rect(3500, 2000, 50, 50), mars)
-bl26 = Boden.Block(pygame.Rect(3700, 2000, 50, 50), mars)
-bl27 = Boden.Block(pygame.Rect(3200, 2250, 50, 1500), mars)
-bl28 = Boden.Block(pygame.Rect(3900, 2000, 150, 50), mars)
-bl29 = Boden.Block(pygame.Rect(3850, 1950, 50, 100), mars)
-#bl30 = Boden.Block(pygame.Rect(4050, 1600, 50, 250), mars)
-bl31 = Boden.Block(pygame.Rect(4300, 2100, 50, 50), mars)
+'''#LEVEL1
+bl0 = Boden.Block(pygame.Rect(50, 3000, 300, 50), level1_ground)
+bl1 = Boden.Block(pygame.Rect(550, 3000, 300, 50), level1_ground)
+bl2 = Boden.Block(pygame.Rect(950, 2850, 300, 50), level1_ground)
+bl3 = Boden.Block(pygame.Rect(1250, 2850, 50, 450), level1_ground)
+bl4 = Boden.Block(pygame.Rect(1550, 2400, 50, 650), level1_ground)
+bl5 = Boden.Block(pygame.Rect(1300, 3250, 800, 50), level1_ground)
+bl6 = Boden.Block(pygame.Rect(1600, 3000, 350, 50), level1_ground)
+bl7 = Boden.Block(pygame.Rect(2100, 2600, 50, 700), level1_ground)
+bl8 = Boden.Block(pygame.Rect(1750, 2550, 300, 50), level1_ground)
+bl9 = Boden.Block(pygame.Rect(2350, 2550, 150, 50), level1_ground)
+bl9_2 = Boden.Block(pygame.Rect(2500, 2550, 150, 50), level1_ground)
+bl10 = Boden.Block(pygame.Rect(2650, 2100, 50, 1100), level1_ground)#
+bl11 = Boden.Block(pygame.Rect(2450, 2750, 200, 50), level1_ground)
+bl12 = Boden.Block(pygame.Rect(2550, 2950, 100, 50), level1_ground)
+bl13 = Boden.Block(pygame.Rect(2600, 3150, 50, 50), level1_ground)
+bl14 = Boden.Block(pygame.Rect(2500, 3350, 50, 50), level1_ground)
+bl15 = Boden.Block(pygame.Rect(2400, 3550, 50, 50), level1_ground)
+bl16 = Boden.Block(pygame.Rect(2500, 3750, 50, 50), level1_ground)
+bl17 = Boden.Block(pygame.Rect(2200, 3950, 250, 50), level1_ground)
+bl18 = Boden.Block(pygame.Rect(1500, 3950, 50, 50), level1_ground)
+bl19 = Boden.Block(pygame.Rect(600, 3950, 250, 50), level1_ground)
+bl19_2 = Boden.Block(pygame.Rect(400, 4200, 50, 50), level1_ground)
+bl20 = Boden.Block(pygame.Rect(2700, 2950, 100, 50), level1_ground)
+bl21 = Boden.Block(pygame.Rect(2700, 2950, 150, 50), level1_ground)
+bl22 = Boden.Block(pygame.Rect(2700, 2700, 100, 50), level1_ground)
+bl23 = Boden.Block(pygame.Rect(3000, 2250, 150, 50), level1_ground)
+bl24 = Boden.Block(pygame.Rect(3300, 2000, 50, 50), level1_ground)
+bl25 = Boden.Block(pygame.Rect(3500, 2000, 50, 50), level1_ground)
+bl26 = Boden.Block(pygame.Rect(3700, 2000, 50, 50), level1_ground)
+bl27 = Boden.Block(pygame.Rect(3200, 2250, 50, 1500), level1_ground)
+bl28 = Boden.Block(pygame.Rect(3900, 2000, 150, 50), level1_ground)
+bl29 = Boden.Block(pygame.Rect(3850, 1950, 50, 100), level1_ground)
+#bl30 = Boden.Block(pygame.Rect(4050, 1600, 50, 250), level1_ground)
+bl31 = Boden.Block(pygame.Rect(4300, 2100, 50, 50), level1_ground)
 
 
 
@@ -619,88 +614,16 @@ st = Boden.Stein(bl19_2, turbine_sprite)
 p1 = Speicherpunkt.Portal(bl31, [portal2_sprite])
 
 #Levels werden gespeichert in "set_everything"
-
-##################LEVEL2###################################################
-
-leveldesign_block = level2_ground
-w2_bl = []
-for blockkoord in Level.w2_blockkoordinaten:
-    w2_bl.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
-                                              blockkoord[2],blockkoord[3]), leveldesign_block))
-gegner_in_lvl = []
-for gegner in Level.w2_boden_gegner:
-    gegner_in_lvl.append(Hindernis.Gegner(w2_bl[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
-for gegner in Level.w2_flug_gegner:
-    gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6],gegner[7]))
-
-w2_powerups = []
-w2_speichpt = []
-w2_gegner = gegner_in_lvl
-w2_bild = pygame.image.load("Gui/bg2.jpg").convert()
-
-p2 = Speicherpunkt.Portal(w2_bl[4], [portal2_sprite])
-
-#Levels werden gespeichert in "set_everything"
+'''
 
 
-####################Level 3##################################################
-leveldesign_block = rinde
-w3_bl = []
-for blockkoord in Level.w3_blockkoordinaten:
-    w3_bl.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
-                                              blockkoord[2],blockkoord[3]), leveldesign_block))
-gegner_in_lvl = []
-for gegner in Level.w3_boden_gegner:
-    gegner_in_lvl.append(Hindernis.Gegner(w3_bl[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
-for gegner in Level.w3_flug_gegner:
-    gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6],gegner[7]))
 
-w3_powerups = [Power_Ups.High_Jump(w3_bl[4], [highjump_sprite]),Power_Ups.High_Jump(w3_bl[14], [highjump_sprite])]
-w3_speichpt = [Speicherpunkt.Speicherpunkt(w3_bl[12], [waypoint_sprite]),
-               Speicherpunkt.Speicherpunkt(w3_bl[8], [waypoint_sprite]),
-               Speicherpunkt.Speicherpunkt(w3_bl[20], [waypoint_sprite]),
-               Speicherpunkt.Speicherpunkt(w3_bl[24], [waypoint_sprite])]
-w3_steine = [Boden.Stein(w3_bl[26], turbine_sprite)]
-w3_gegner = gegner_in_lvl
-w3_bild = pygame.image.load("Gui/bg3.jpg").convert()
-
-p3 = Speicherpunkt.Portal(w3_bl[29], [portal2_sprite])
 
 #Levels werden gespeichert in "set_everything"
 
 
 #Welt die Bugs behebt
 # Gleicht welt 3, wird nie aufgerufen
-
-################Tutorial World#########################################################
-leveldesign_block = space_ground.convert() # z.B. mars oder so
-
-Bloecke_in_lvl = []
-for blockkoord in Level.tut_blockkoordinaten:
-    Bloecke_in_lvl.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
-                                              blockkoord[2],blockkoord[3]), leveldesign_block))
-tut_texte = []
-for textbox in Level.tut_textboxes:
-        tut_texte.append(Boden.Textbox(pygame.Rect(textbox[0],textbox[1],textbox[2],textbox[3],),pygame.font.Font('freesansbold.ttf', textbox[4]).render(textbox[5],True,(255,255,255))))
-        
-gegner_in_lvl = []
-for gegner in Level.tut_boden_gegner:
-    gegner_in_lvl.append(Hindernis.Gegner(Bloecke_in_lvl[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
-for gegner in Level.tut_flug_gegner:
-    gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6],gegner[7]))
-    
-tut_powerups= [Power_Ups.High_Jump(Bloecke_in_lvl[8], [highjump_sprite])]
-tut_speichpt = [Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[3], [waypoint_sprite]),
-                Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[9], [waypoint_sprite]),
-                Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[11], [waypoint_sprite]),
-                Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[14], [waypoint_sprite]),
-                Speicherpunkt.Speicherpunkt(Bloecke_in_lvl[25], [waypoint_sprite])]
-tut_p = Speicherpunkt.Portal(Bloecke_in_lvl[30], [portal2_sprite])
-tut_bl = Bloecke_in_lvl
-tut_steine = [Boden.Stein(Bloecke_in_lvl[27], turbine_sprite)]
-tut_gegner = gegner_in_lvl
-tut_bild = pygame.image.load("Gui/bg_tut.jpg").convert()
-#Levels werden eingefügt in "set_everything"
 
 
 
@@ -841,17 +764,48 @@ def main():
                                         if game.index(current_level) + 1 < len(game): return True, old_score,bonustime
                                         else: return False, old_score,bonustime
                                 
-                                
+def construct_level(level):
+        blocks = []
+        leveldesign_block = pygame.image.load(Level.level_grounds[level]).convert() # z.B. level1_ground oder so
+        for blockkoord in Level.blockkoords[level]:
+            blocks.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
+                                                      blockkoord[2],blockkoord[3]), leveldesign_block))
+        texts = []
+        for textbox in Level.textboxes[level]:
+                texts.append(Boden.Textbox(pygame.Rect(textbox[0],textbox[1],textbox[2],textbox[3],),pygame.font.Font('freesansbold.ttf', textbox[4]).render(textbox[5],True,(255,255,255))))
+        enemys = []
+        for gegner in Level.bodengegner[level]:
+            enemys.append(Hindernis.Gegner(blocks[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
+        for gegner in Level.fluggegner[level]:
+            enemys.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6],gegner[7]))
+        waypoints = []
+        for speicherpunkt in Level.speicherpunkte[level]:
+                waypoints.append(Speicherpunkt.Speicherpunkt(blocks[speicherpunkt], [waypoint_sprite]))
+        powerups = []
+        for powerup in Level.powerups[level]:
+                if powerup[0] == "highjump":
+                        powerups.append(Power_Ups.High_Jump(blocks[powerup[1]], [highjump_sprite]))
+        spaceshuttles = []
+        for stein in Level.steine[level]:
+                        spaceshuttles.append(Boden.Stein(blocks[27], turbine_sprite))
+        p = Speicherpunkt.Portal(blocks[Level.portale[level]], [portal2_sprite])
+        bild = pygame.image.load(Level.bg_bilder[level]).convert() 
+        return Welt(bild,blocks,enemys,powerups,spaceshuttles,waypoints,p,s,s2,texts)
+
+
+        
 def set_everything(start_level):
         global current_level,game,score
-        tut_w = Welt(tut_bild, tut_bl, tut_gegner,tut_powerups, tut_steine, tut_speichpt,tut_p,s,s2,textboxes = tut_texte)
-        w1 = Welt(pygame.image.load("Gui/bg5.jpg").convert(),
-          [bl0, bl1, bl2, bl3, bl4, bl5, bl6, bl7, bl8, bl9, bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18, bl19,bl20, bl21, bl22, bl23, bl24, bl25, bl26, bl27, bl28, bl29],
-          [g0, g1, g2, g3, g4, fg0, fg1, fg2, fg3, fg4, fg5, fg6], [hj1, hj2], [st], [sp1, sp2, sp3], p1, s, s2)
-        w2 = Welt( pygame.image.load("Gui/bg2.jpg").convert(), w2_bl, w2_gegner, [], [], [], p2, s, s2) 
-        w3 = Welt(w3_bild, w3_bl, w3_gegner,w3_powerups, w3_steine, w3_speichpt,p3,s,s2)
-        wend = Welt(w3_bild, w3_bl, w3_gegner,w3_powerups, [], w3_speichpt,p3,s,s2)
-        game = [tut_w,w1,w2,w3,wend]
+        #tut_w = Welt(tut_bild, tut_bl, tut_gegner,tut_powerups, tut_steine, tut_speichpt,tut_p,s,s2,textboxes = tut_texte)
+        tut_w = construct_level(0)
+        #w1 = Welt(pygame.image.load("Gui/bg5.jpg").convert(),
+       #   [bl0, bl1, bl2, bl3, bl4, bl5, bl6, bl7, bl8, bl9, bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18, bl19,bl20, bl21, bl22, bl23, bl24, bl25, bl26, bl27, bl28, bl29],
+     #     [g0, g1, g2, g3, g4, fg0, fg1, fg2, fg3, fg4, fg5, fg6], [hj1, hj2], [st], [sp1, sp2, sp3], p1, s, s2)
+        w2 = construct_level(2)
+        w3 = construct_level(3)
+        wend = construct_level(3)
+        game = [tut_w,w2,w3,wend]
+                        
         current_level = game[start_level]
         score = 0 
         for w in game:

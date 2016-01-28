@@ -4,7 +4,7 @@ Mister Man
 500
 Mister Man
 420
-Player
-150
-Player
-147
+Best-Player
+257
+Best-Player
+241

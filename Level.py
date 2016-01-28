@@ -7,6 +7,19 @@ alien_sprite = SpriteSheet.SpriteSheet("Gui/alien.png")
 pacman_sprite = SpriteSheet.SpriteSheet("Gui/epm_spritesheet.png")
 zyklop_sprite = SpriteSheet.SpriteSheet("Gui/zyklop.png")
 
+#GELÄNDESPRITES
+level_grounds = ["Gui/ground5.png","Gui/ground1.png",
+                 "Gui/ground2.png","Gui/ground3.png",
+                 "Gui/ground4.png","Gui/ground5.png"]
+
+# Background Bilder
+tut_bild = "Gui/bg_tut.jpg"
+w1_bild = "Gui/bg1.jpg"
+w2_bild = "Gui/bg2.jpg"
+w3_bild = "Gui/bg3.jpg"
+w4_bild = "Gui/bg4.jpg"
+w5_bild = "Gui/bg5.jpg"
+bg_bilder = [tut_bild,w1_bild,w2_bild,w3_bild,w4_bild,w5_bild]
 
 ########################Tutorial#######################################################################
 ###########Blöcke###################
@@ -48,14 +61,14 @@ tut_textboxes = [(200,3700,800,60,35,"Welcome to the tutorial of 'The Random Run
                  (1250,4050,450,40, 25,"Press 'Space' twice to doublejump"),
                  (2050,4050,500,200, 25,"Don't jump down there though.."),
                  (2900,4050,500,100, 25,"To jump extra high, use the highjump!"),
-                 (2700,3250,400,100, 20," "),
+                 (2700,3250,400,100, 20,"You can still use the doublejump"),
                  (3650,3200,200,50, 25,"Sometimes..."),
                  (4000,3300,400,100, 20,"You have to jump into the unknown"),
                  (3650,3950,250,100, 20,"..But not this time"),
                  (2850,2550,300,50, 20,"Well Done!"),
                  (2875,2250,250,50, 20,"You seem quite fit"),
                  (2500,2250,300,50,20,"Let's turn it up a notch"),
-                 (2500,1350,1050,50, 20,"You can shoot with the Up-Key"),
+                 (2500,1350,1050,50, 20,"You can shoot Hyper-Space-Balls with the Up-Key"),
                  (4100,1350,300,50, 20,"Ready for some fighting?"),
                  (4900,1350,500,50, 20,"Each Enemy gives you a number of bonus points"),
                  (5400,1250,500,50, 20,"Maybe you should go down"),
@@ -76,6 +89,10 @@ tut_flug_gegner = [(4700,4900,1600,10,pacman_sprite,10,50,True),
                (5200,5250,2900,0,pacman_sprite,10,5000,True),
                (4800,4850,2700,0,pacman_sprite,10,5000,True)] # TODO
 
+tut_speicherpunkte = [3,9,11,14,25] #Block nummer
+tut_powerups = [("highjump",8)]
+tut_portal = 30 #Block nummer
+tut_steine = [27]
 
 
 #LEVEL2
@@ -92,10 +109,14 @@ w2_blockkoordinaten = [(100,2200,700 ,300),
 
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 w2_boden_gegner = [(2,10,alien_sprite,1,22),
-                   (2,10,alien_sprite,1,22)] # TODO
-
+                   (2,10,alien_sprite,1,22)] 
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
-w2_flug_gegner = [] 
+w2_flug_gegner = []
+w2_powerups = []
+w2_speichpunkte = []
+w2_steine= []
+w2_portal = 4
+
 
 #LEVEL3
 ###########Blöcke###################
@@ -140,43 +161,18 @@ w3_boden_gegner = [(1,2,alien_sprite,1,10),
 w3_flug_gegner = [(400,600,2250,3,pacman_sprite,5,1,True),
                 (400,600,2500,3,pacman_sprite,5,10,True),
                (1000,1300,1800,4,pacman_sprite,10,1000,True),
-               (1000,1300,2200,4,pacman_sprite,10,1000,True)] 
-'''
-#Level a
-# Levelmach Vorlage zum schnellen erstellen
-###########Blöcke###################
-# Inhalt der Tupel:   ( left,   top,    width,  height)
-blockkoordinaten = [(1,1,1,1),
-                    (1,1,1,1)] # TODO
-leveldesign_block = None # z.B. mars oder so
-Bloecke_in_lvl = []
-for blockkoord in blockkoordinaten:
-    Bloecke_in_lvl.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
-                                              blockkoord[2],blockkoord[3]), leveldesign_block))
+               (1000,1300,2200,4,pacman_sprite,10,1000,True)]
+w3_powerups = [("highjump",4),("highjump",14)]
+w3_speichpunkte = [12,8,20,24]
+w3_steine = [26]
+w3_portal = 29
 
-###########Gegner###################
-gegner_in_lvl = []
-#Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse)
+blockkoords = [tut_blockkoordinaten,[],w2_blockkoordinaten,w3_blockkoordinaten]
+textboxes = [tut_textboxes,[],[],[],[],[]]
+bodengegner = [tut_boden_gegner,[],w2_boden_gegner,w3_boden_gegner]
+fluggegner = [tut_flug_gegner,[],w2_flug_gegner,w3_flug_gegner]
+speicherpunkte = [tut_speicherpunkte,[],w2_speichpunkte,w3_speichpunkte]
+powerups = [tut_powerups,[],w2_powerups,w3_powerups]
+steine = [tut_steine,[],w2_steine,w3_steine]
+portale = [tut_portal,None,w2_portal,w3_portal]
 
-boden_gegner = [(1,1,1,1),
-                     (1,1,1,1)] # TODO
-
-#Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse, Waagrecht oder nicht (Bool, standart true))
-
-flug_gegner = [(1,1,1,1),
-                     (1,1,1,1)] # TODO
-
-for gegner in boden_gegner:
-    gegner_in_lvl.append(Hindernis.Gegner(gegner[0],gegner[1],gegner[2],gegner[3]))
-for gegner in flug_gegner:
-    gegner_in_lvl.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6]))
-
-#############Power_Ups###############
-
-powerups_in_lvl = []
-#############Speicherpunkte############
-
-speichpt_in_lvl = []
-welt_a_bild = None
-welt_a = Welt(welt_a_bild, Bloecke_in_lvl, gegner_in_lvl,powerups_in_lvl,speichpt_in_lvl,s,s2)
-'''

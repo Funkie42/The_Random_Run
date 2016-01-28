@@ -491,14 +491,9 @@ class Main:
             #Tutorial
         ###############################
         if(button.goto_menutitle == "Tutorial"):
-            time.sleep(1)
-            self.blend_in_text("Welcome to the Tutorial!",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
-            time.sleep(3)
 
             self.gameplay(False,start_level = 0)
             
-            self.blend_in_text("Have fun Playing!",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
-            time.sleep(5)
             return "Singleplayer_screen"
         ###############################
         # Multiplayer Open Game
