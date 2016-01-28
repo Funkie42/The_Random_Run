@@ -9,7 +9,9 @@ multiplayer = False
 multiplayer_ghostmode = True
 survival_time = 0
 score = 0
-test_startlvl = 1# Für Testen
+test_startlvl = 3# Für Testen
+hitpoints = 5
+TOMFAKTOR = False # Weil tom keinen Text anzeigen kann
 
 jump_sound = "Sounds/jump.wav"
 explosion_sound = "Sounds/dead.wav"
@@ -18,6 +20,8 @@ kugel_sound  = "Sounds/phaser.wav"
 portal_sound = "Sounds/swoop.wav"
 waypoint_sound = "Sounds/wp.wav"
 rocket_sound = "Sounds/rocket_sound.wav"
+
+
 
 class Spieler(pygame.sprite.Sprite):
         def __init__(self):
@@ -35,7 +39,7 @@ class Spieler(pygame.sprite.Sprite):
                 self.double_jump_iterator = 0
 
                 self.direction = 1 #1 = rechts, -1 = links
-
+                self.hitpoints = hitpoints
                 self.mass = 10
                 self.moveSpeed = 1
                 self.jumpPower = 650
@@ -179,9 +183,7 @@ class Welt():
                 global rect
                 global hintergrund_rect
                 hintergrund_rect.left = int(4/11 * rect.left)
-############################################################################
                 
-
                 for i in self.boeden:
                         if rect.colliderect(i.center_rect()) and i.center_rect().top < LEVELSURF.get_height() - 200:
                                 i.update(rect)
@@ -265,6 +267,7 @@ class Welt():
                                         pygame.mixer.Sound(die_sound).play()
                                         global score
                                         score -= 10
+                                        spieler.hitpoints = hitpoints
                                         for j in self.steine:
                                                 j.respawn()
                                         spieler.body.velocity.x = 0
@@ -411,6 +414,7 @@ def player_jumps_gegner(space, arbiter):
                 current_level.spieler.body.velocity.y = -650
                 current_level.spieler.double_jump_counter = 1
         else:
+                current_level.spieler.hitpoints -= 1
                 current_level.spieler.body.velocity.x = -450 * current_level.spieler.direction
                 current_level.spieler.body.velocity.y = -750
         return True
@@ -422,9 +426,10 @@ def player_jumps_fliegender_gegner(space, arbiter):
                 space.add(arbiter.shapes[1].body)
                 arbiter.shapes[1].collision_type = 3
         else:
+                current_level.spieler.hitpoints -= 1
                 current_level.spieler.body.velocity.x = -450 * current_level.spieler.direction
                 current_level.spieler.body.velocity.y = -750
-                current_level.spieler.moveSpeed = 0
+                #current_level.spieler.moveSpeed = 0
         return True
 
 def player_jumps_highjump(space, arbiter):
@@ -443,7 +448,7 @@ def kugel_hits_highjump(space, arbiter):
 def player_hits_portal(space, arbiter):
         global current_level
         random_int = random.randint(0,100)
-        if random_int == 1:
+        if random_int == 1 and not TOMFAKTOR:
                 score_string = "You randomly passed away of a heart attack" 
                 thisPrint = pygame.font.Font('freesansbold.ttf', 35).render(score_string,True,(255,255,255))
                 thisRect = thisPrint.get_rect()
@@ -547,76 +552,12 @@ portal2_sprite = pygame.transform.scale(portal2_sprite,(130,130))
 turbine_sprite = SpriteSheet.SpriteSheet("Gui/turbine_sprite.png")
 explosion_sprite = SpriteSheet.SpriteSheet("Gui/explotion.png")
 
+lebensanzeige = pygame.image.load("Gui/powerups/heart.png")#.convert()
+lebensanzeige = pygame.transform.scale(lebensanzeige,(25,25))
+
 #SPIELER
 s = Spieler()
 s2 = Spieler()
-
-'''#LEVEL1
-bl0 = Boden.Block(pygame.Rect(50, 3000, 300, 50), level1_ground)
-bl1 = Boden.Block(pygame.Rect(550, 3000, 300, 50), level1_ground)
-bl2 = Boden.Block(pygame.Rect(950, 2850, 300, 50), level1_ground)
-bl3 = Boden.Block(pygame.Rect(1250, 2850, 50, 450), level1_ground)
-bl4 = Boden.Block(pygame.Rect(1550, 2400, 50, 650), level1_ground)
-bl5 = Boden.Block(pygame.Rect(1300, 3250, 800, 50), level1_ground)
-bl6 = Boden.Block(pygame.Rect(1600, 3000, 350, 50), level1_ground)
-bl7 = Boden.Block(pygame.Rect(2100, 2600, 50, 700), level1_ground)
-bl8 = Boden.Block(pygame.Rect(1750, 2550, 300, 50), level1_ground)
-bl9 = Boden.Block(pygame.Rect(2350, 2550, 150, 50), level1_ground)
-bl9_2 = Boden.Block(pygame.Rect(2500, 2550, 150, 50), level1_ground)
-bl10 = Boden.Block(pygame.Rect(2650, 2100, 50, 1100), level1_ground)#
-bl11 = Boden.Block(pygame.Rect(2450, 2750, 200, 50), level1_ground)
-bl12 = Boden.Block(pygame.Rect(2550, 2950, 100, 50), level1_ground)
-bl13 = Boden.Block(pygame.Rect(2600, 3150, 50, 50), level1_ground)
-bl14 = Boden.Block(pygame.Rect(2500, 3350, 50, 50), level1_ground)
-bl15 = Boden.Block(pygame.Rect(2400, 3550, 50, 50), level1_ground)
-bl16 = Boden.Block(pygame.Rect(2500, 3750, 50, 50), level1_ground)
-bl17 = Boden.Block(pygame.Rect(2200, 3950, 250, 50), level1_ground)
-bl18 = Boden.Block(pygame.Rect(1500, 3950, 50, 50), level1_ground)
-bl19 = Boden.Block(pygame.Rect(600, 3950, 250, 50), level1_ground)
-bl19_2 = Boden.Block(pygame.Rect(400, 4200, 50, 50), level1_ground)
-bl20 = Boden.Block(pygame.Rect(2700, 2950, 100, 50), level1_ground)
-bl21 = Boden.Block(pygame.Rect(2700, 2950, 150, 50), level1_ground)
-bl22 = Boden.Block(pygame.Rect(2700, 2700, 100, 50), level1_ground)
-bl23 = Boden.Block(pygame.Rect(3000, 2250, 150, 50), level1_ground)
-bl24 = Boden.Block(pygame.Rect(3300, 2000, 50, 50), level1_ground)
-bl25 = Boden.Block(pygame.Rect(3500, 2000, 50, 50), level1_ground)
-bl26 = Boden.Block(pygame.Rect(3700, 2000, 50, 50), level1_ground)
-bl27 = Boden.Block(pygame.Rect(3200, 2250, 50, 1500), level1_ground)
-bl28 = Boden.Block(pygame.Rect(3900, 2000, 150, 50), level1_ground)
-bl29 = Boden.Block(pygame.Rect(3850, 1950, 50, 100), level1_ground)
-#bl30 = Boden.Block(pygame.Rect(4050, 1600, 50, 250), level1_ground)
-bl31 = Boden.Block(pygame.Rect(4300, 2100, 50, 50), level1_ground)
-
-
-
-g0 = Hindernis.Gegner(bl2, 3, alien_sprite, 50, 100)
-g1 = Hindernis.Gegner(bl5, 3, alien_sprite, 100, 100)####################################################
-g2 = Hindernis.Gegner(bl8, 3, alien_sprite, 1, 100)
-g3 = Hindernis.Gegner(bl11, 3, alien_sprite, 10, 100)
-g4 = Hindernis.Gegner(bl28, 10, alien_sprite, 10, 10)
-g4.hitpoints = 20
-fg0 = Hindernis.FliegenderGegner(1600, 2100, 3850, 4, pacman_sprite, 10, 100)
-fg1 = Hindernis.FliegenderGegner(900, 1450, 3850, 6, pacman_sprite, 10, 100)
-fg2 = Hindernis.FliegenderGegner(4100, 4500, 1000, 6, pacman_sprite, 10, 100, False)
-fg3 = Hindernis.FliegenderGegner(4100, 4500, 1500, 6, pacman_sprite, 10, 100, False)
-fg4 = Hindernis.FliegenderGegner(4100, 4500, 200, 6, pacman_sprite, 10, 100, False)
-fg5 = Hindernis.FliegenderGegner(3300, 3750, 1800, 15, pacman_sprite, 10, 25)
-fg6 = Hindernis.FliegenderGegner(3300, 3750, 2200, 15, pacman_sprite, 10, 25)
-
-
-hj1 = Power_Ups.High_Jump(bl6, [highjump_sprite])
-hj2 = Power_Ups.High_Jump(bl22, [highjump_sprite])
-
-sp1 = Speicherpunkt.Speicherpunkt(bl9_2, [waypoint_sprite])
-sp2 = Speicherpunkt.Speicherpunkt(bl19, [waypoint_sprite])
-sp3 = Speicherpunkt.Speicherpunkt(bl21, [waypoint_sprite])
-
-st = Boden.Stein(bl19_2, turbine_sprite)
-
-p1 = Speicherpunkt.Portal(bl31, [portal2_sprite])
-
-#Levels werden gespeichert in "set_everything"
-'''
 
 
 #SPIEL
@@ -712,7 +653,7 @@ def main():
     #                                            stuff_data = send_data((-42,playing_Spieler,1,1))
                                 
 #################################################################
-                                
+                                if w.spieler.hitpoints <= 0: w.spieler.is_alive = False
                                 if (frame_counter % 1 == 0): LEVELSURF.blit(hintergrund_blit(),(rect.left -10, rect.top -10))
                                 w.update()
                                 for i in kugeln: i.update()
@@ -724,24 +665,34 @@ def main():
                                 ### Highscoreanzeige ###
                                 if bonustime > 0: bonustime = 300 - int(time.time() - start_time - pause_time)
                                 else: bonustime = 0
-                                score_string = "Bonustime: " + str(bonustime) + "     Score: " + str(score)
-                                thisPrint = pygame.font.Font('freesansbold.ttf', 20).render(score_string,True,(255,255,255))
-                                thisRect = thisPrint.get_rect()
-                                thisRect.center = ((150,40))
-                                DISPLAYSURF.blit(thisPrint,thisRect)
-                                if (frame_counter > 800 and frame_counter < 850):
-                                        die_string = "Press F5 to instantly die painfully"
-                                        diePrint = pygame.font.Font('freesansbold.ttf', 20).render(die_string,True,(255,255,255))
-                                        dieRect = diePrint.get_rect()
-                                        dieRect.center = ((470,40))
-                                        DISPLAYSURF.blit(diePrint,dieRect)
-                                if (frame_counter > 850 and frame_counter < 900):
-                                        die_string = "Press 'Q' to give up and go home"
-                                        diePrint = pygame.font.Font('freesansbold.ttf', 20).render(die_string,True,(255,255,255))
-                                        dieRect = diePrint.get_rect()
-                                        dieRect.center = ((470,40))
-                                        DISPLAYSURF.blit(diePrint,dieRect)
-                                if frame_counter > 5000000: frame_counter = 0
+                                thisRect = None
+                                if not TOMFAKTOR:
+                                        score_string = "Bonustime: " + str(bonustime) + "     Score: " + str(score)
+                                        thisPrint = pygame.font.Font('freesansbold.ttf', 20).render(score_string,True,(255,255,255))
+                                        thisRect = thisPrint.get_rect()
+                                        thisRect.center = ((150,40))
+                                        DISPLAYSURF.blit(thisPrint,thisRect)
+                                        if (frame_counter > 800 and frame_counter < 850):
+                                                die_string = "Press F5 to instantly die painfully"
+                                                diePrint = pygame.font.Font('freesansbold.ttf', 20).render(die_string,True,(255,255,255))
+                                                dieRect = diePrint.get_rect()
+                                                dieRect.center = ((470,40))
+                                                DISPLAYSURF.blit(diePrint,dieRect)
+                                        if (frame_counter > 850 and frame_counter < 900):
+                                                die_string = "Press 'Q' to give up and go home"
+                                                diePrint = pygame.font.Font('freesansbold.ttf', 20).render(die_string,True,(255,255,255))
+                                                dieRect = diePrint.get_rect()
+                                                dieRect.center = ((470,40))
+                                                DISPLAYSURF.blit(diePrint,dieRect)
+                                        if frame_counter > 5000000: frame_counter = 0
+                                        
+                                lebenscounter = 0
+                                for life in range(0,w.spieler.hitpoints):
+                                        if not TOMFAKTOR: distance = thisRect.x
+                                        else: distance = 20
+                                        DISPLAYSURF.blit(lebensanzeige,(distance+ lebenscounter * 30,60))
+                                        lebenscounter += 1
+                                        
 
 
                                 pygame.display.flip()
@@ -761,8 +712,9 @@ def construct_level(level):
             blocks.append(Boden.Block(pygame.Rect(blockkoord[0],blockkoord[1],
                                                       blockkoord[2],blockkoord[3]), leveldesign_block))
         texts = []
-        for textbox in Level.textboxes[level]:
-                texts.append(Boden.Textbox(pygame.Rect(textbox[0],textbox[1],textbox[2],textbox[3],),pygame.font.Font('freesansbold.ttf', textbox[4]).render(textbox[5],True,(255,255,255))))
+        if not TOMFAKTOR:
+                for textbox in Level.textboxes[level]:
+                        texts.append(Boden.Textbox(pygame.Rect(textbox[0],textbox[1],textbox[2],textbox[3],),pygame.font.Font('freesansbold.ttf', textbox[4]).render(textbox[5],True,(255,255,255))))
         enemys = []
         for gegner in Level.bodengegner[level]:
             enemys.append(Hindernis.Gegner(blocks[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))

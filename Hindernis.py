@@ -25,7 +25,7 @@ class Hindernis():
 
 
 class Gegner(Hindernis):
-    def __init__(self, block, moveSpeed, sprite, mass, feuerrate): #########!!!!!!!!!!!!!!!
+    def __init__(self, block, moveSpeed, sprite, mass, feuerrate): 
         Hindernis.__init__(self,sprite, moveSpeed, mass, feuerrate)
         self.block = block
         self.rect.left = self.block.rect.left + 1
@@ -42,7 +42,7 @@ class Gegner(Hindernis):
     def remove(self, space):
         space.remove(self.body, self.shape)
 
-    def engage(self, x): #####!!!!!!!!!!
+    def engage(self, x): 
         self.body.velocity.y = -250
         self.moveSpeed += 3
         if x > self.body.position.x:
