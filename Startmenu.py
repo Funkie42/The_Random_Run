@@ -16,8 +16,15 @@ server_ip = ip
 client_ip = ip
 port = 42042
 
+
+with open('Playername.txt','r') as g:
+    for line in g:
+        if line[-1] == "\n"[-1]:
+            line = line[:-1]
+        playername = line
+
 gamename = "The Random Run"
-playername = "Player"
+#new_playername = playername
 
 WINDOWw = 800 #window width
 WINDOWh = 600 #window height
@@ -57,8 +64,18 @@ for i in range(0,len(test)):
     if i % 2 == 0:
         highscore_list.append((test[i],test[i+1]))
     
-    
 
+
+def change_playername(newname):
+    global playername
+    try:
+        if newname == "":
+            newname = "None"
+        with open('Playername.txt','w') as file:
+            file.write(newname)
+        playername = newname
+    except: pass    
+ 
 def get_Highscore(name,points):
     global highscore_list
     try:
@@ -76,7 +93,7 @@ def get_Highscore(name,points):
 
 def reset_Highscore():
     global highscore_list
-    highscore_list = [("Mister Man",999),("Mister Man",500),("Mister Man",420),("Mister Man",42),("Mister Man",1)]#  Tupel mit Name und Punkten
+    highscore_list = [("Mister Man",1000),("Mister Man",500),("Mister Man",420),("Mister Man",42),("Mister Man",1)]#  Tupel mit Name und Punkten
     with open('Highscore.txt','w') as file:
         for entry in highscore_list:
             file.write(entry[0] + "\n")
@@ -98,8 +115,9 @@ game_start_sound = None
 star_wars_sound = "Sounds/Startwars_intro.ogg"
 
 
+
 game_music = 'Sounds/tetris.mid'
-level_music = ['Sounds/lvl1.m4a','Sounds/lvl2.m4a','Sounds/lvl3.m4a','Sounds/lvl4.m4a','Sounds/lvl5.m4a']
+level_music = ['Sounds/lvl1.ogg','Sounds/lvl2.ogg','Sounds/lvl3.ogg','Sounds/lvl4.ogg','Sounds/lvl5.ogg']
 menu_music = None
 
 #
@@ -164,8 +182,17 @@ class Button(pygame.Surface):
             return credits_button,credits_button_cursor_over,credits_button_clicked
         elif self.goto_menutitle == "Highscore_screen":
             return highscore_button,highscore_button_cursor_over, highscore_button_clicked
+
+    #####################
+    #Highscore Menu
+    #####################
         elif self.goto_menutitle == "Reset_highscore":
             return reset_button,reset_button_cursor_over,reset_button_clicked
+        elif self.goto_menutitle == "Choose_name_screen":
+            return cn_button,cn_button_cursor_over,cn_button_clicked
+        elif self.goto_menutitle == "confirm_name":
+            return confirm_button,confirm_button_cursor_over,confirm_button_clicked
+                        
 
     #####################
     #Singleplayer Menu
@@ -238,7 +265,7 @@ class Menu:
             self.buttons.append(Button(int(buttonWidth/2),buttonHeight,WINDOWw/2-(buttonWidth/2/2),WINDOWh-(int(WINDOWh/4)), "Quit_screen")) # Quit game screen
             
         elif self.menuname == "Quit Confirm":
-                self.texts.append(("Are you sure you want to quit? (Don't do it!)",(WINDOWw/2,WINDOWh/2-100),30))
+                self.texts.append(("Are you sure? (Don't do it!)",(WINDOWw/2,WINDOWh/2-100),30))
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos,firstButtonYpos+100, "End"))
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + buttonWidth + buttonDistance, firstButtonYpos+100, "Start_screen"))
                                 
@@ -258,19 +285,16 @@ class Menu:
             if self.menuname == "Highscore":
                 #self.buttons.append(Button(int(buttonWidth/2),buttonHeight,firstButtonXpos,firstButtonYpos,"NotDone"))
                 place = 1
-                place_y_pos = WINDOWh/2-110
+                place_y_pos = WINDOWh/2-100
                 for (name,points) in highscore_list:
-
-                    if place == 1:
-                        textsize = 40
-                    else:
-                        textsize = 30 - place
-                    
+                    if place == 1:      textsize = 40
+                    else:                   textsize = 30 - place
                     self.texts.append((str(place) + ".    " + name + ":   " + str(points),(WINDOWw/2,place_y_pos),textsize))
                     place += 1
                     place_y_pos += 50
                 
                 self.buttons.append(Button(int(buttonWidth/2),int(buttonHeight/2),WINDOWw -320,WINDOWh - 182,"Reset_highscore"))
+                self.buttons.append(Button(int(buttonWidth),int(buttonHeight),WINDOWw -firstButtonXpos - buttonWidth,WINDOWh - 100,"Choose_name_screen"))
                 
                 if highscore_list[0][0] == "Mister Man":
                     self.texts.append(("GOAL: Beat Mister Man!",(WINDOWw/2,place_y_pos+30),30))
@@ -300,7 +324,13 @@ class Menu:
             elif self.menuname == "Awaiting second player":
                 self.texts.append(("Let a friend join in to start the randomness!",(WINDOWw/2,WINDOWh/2-50),30))
                 self.texts.append(("(If you have one...)",(WINDOWw/2,WINDOWh/2-25),10))
-
+                
+            elif self.menuname == "Choose name":
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + int((buttonWidth + buttonDistance)/2),firstButtonYpos+ int(buttonHeight*1.5),"confirm_name"))
+                self.texts.append(("Current Player: " + playername,(WINDOWw/2,firstButtonYpos+10),20))
+                self.surfaces.append( ( (buttonWidth*2 + buttonDistance,int(buttonHeight*1.5)), (firstButtonXpos,firstButtonYpos - 25)  ) )
+                self.texts.append(("Enter name: ",(firstButtonXpos+ int(buttonWidth/2+15),firstButtonYpos + int(buttonHeight*2/3)),20))
+                self.write_text_config = (( "",(firstButtonXpos+160,firstButtonYpos + 38),22,True))
             else:
                 pass
                 
@@ -332,7 +362,8 @@ class Main:
                       "Open_Multi_screen": Menu ("Open TCP-Server","Open_Multi_screen"),
                       "Link_In_screen": Menu("Enter Multiplayergame","Link_In_screen"),
                       "Open_game":Menu("Open_game","Open_game"), # Öffnet Multiplayerspiel
-                      "Awaiting_Player_screen": Menu("Awaiting second player","Awaiting_Player_screen")} 
+                      "Awaiting_Player_screen": Menu("Awaiting second player","Awaiting_Player_screen"),
+                     "Choose_name_screen": Menu("Choose name","Choose_name_screen")} 
 
         self.menu_in_use = self.menus["Start_screen"] # Startmenu in Benutzung
 
@@ -367,6 +398,8 @@ class Main:
             if event.key == K_RETURN:
                 if (self.menu_in_use.writeable_text != "") & (self.menu_in_use == self.menus["Link_In_screen"]):
                     self.button_clicked(Button(1,1,1,1,"Search"))
+                elif (self.menu_in_use.writeable_text != "") & (self.menu_in_use.menuname == "Choose name"):
+                    self.button_clicked(self.menu_in_use.buttons[0])
             elif event.key == K_BACKSPACE:
                 if len(self.menu_in_use.writeable_text) > 0:
                     self.menu_in_use.writeable_text = self.menu_in_use.writeable_text[:-1]
@@ -413,8 +446,8 @@ class Main:
     def gameplay(self,multiplayer,start_level = 1):
         if not multiplayer and start_level > 0: self.interlevel_scene(0)
         pygame.mixer.music.stop()
-        #pygame.mixer.music.load(level_music[0])
-        #pygame.mixer.music.play(-1, 0.0)
+        pygame.mixer.music.load(level_music[start_level])
+        pygame.mixer.music.play(-1, 0.0)
         score_info = MASTER.on_execute(multiplayer,start_level) # (Continue Bool, Punktzahl, bonustime)
         if not score_info[0]:
             return 0 # Damit er nicht denkt spiel ist fertig
@@ -424,6 +457,9 @@ class Main:
             continue_game = score_info[0]
             while continue_game:
                 if not multiplayer: self.interlevel_scene(finished_level_number)
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(level_music[start_level])
+                pygame.mixer.music.play(-1, 0.0)
                 finished_level_number += 1
                 score_info = MASTER.main()
                 continue_game = score_info[0]
@@ -512,7 +548,7 @@ class Main:
 
                 self.gameplay(True)
              
-            except IOError: self.blend_in_text("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+            except : self.blend_in_text("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
             Gameclient.client.disconnect()
             time.sleep(2)     
             return self.menu_in_use.key_name
@@ -525,6 +561,7 @@ class Main:
         elif(button.goto_menutitle == "Reset_highscore"):
             reset_Highscore()
             return "Highscore_screen"
+            
         #########################
         #Ende Spiel
         #########################
@@ -532,7 +569,14 @@ class Main:
         elif(button.goto_menutitle == "End"):
             pygame.quit()
             sys.exit()
-            
+
+        #########################
+        #Change Playername
+        #########################
+        elif(button.goto_menutitle == "confirm_name"):
+            change_playername(self.menu_in_use.writeable_text)
+            self.menu_in_use = Menu("Choose name", "Choose_name_screen")
+            return "Choose_name_screen"
         ####################
         #Anderes Menu
         ####################
@@ -547,7 +591,7 @@ class Main:
 
         
         for button in self.menu_in_use.buttons: # Test, Zeiger auf Button? Geklickt?
-            if ((clickX > button.xpos) & (clickX < (button.xpos+button.width))) & ((clickY > button.ypos) & (clickY < button.ypos+button.height)):
+            if (((clickX > button.xpos) & (clickX < (button.xpos+button.width))) & ((clickY > button.ypos) & (clickY < button.ypos+button.height))):
                 if is_clicked:
                     button.image_surf = button.clicked_surf
                     button.image_surf = pygame.transform.scale(button.image_surf,(button.width,button.height)) # Geklickter Button
@@ -558,6 +602,8 @@ class Main:
                     button.image_surf = button.normal_surf
                     if new_menu == "Highscore_screen":
                         self.menu_in_use = Menu("Highscore","Highscore_screen")
+                    elif new_menu == "Choose_name_screen":
+                        self.menu_in_use = Menu("Choose name", "Choose_name_screen")
                     else:
                         self.menu_in_use = self.menus[new_menu]
                 else:
@@ -598,7 +644,7 @@ class Main:
 
     def interlevel_scene(self, level = 0):
         awesomeness = 0
-        pygame.mixer.music.load(game_music)
+        #pygame.mixer.music.load(game_music)
 
         if level == 0:
             leveltext = random.choice(Texts.intro_texts)

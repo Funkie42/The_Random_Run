@@ -16,10 +16,7 @@ back_button = pygame.image.load(PFAD + "Gui/Buttons/bl_back_off.png")
 back_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/bl_back_on.png")
 back_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/bl_back_clicked.png")
 
-#Rest Highscore Button
-reset_button = pygame.image.load(PFAD + "Gui/Buttons/reset_off.png")
-reset_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/reset_on.png")
-reset_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/reset_clicked.png")
+
 
 ####################
 #Main Menu#
@@ -102,6 +99,24 @@ host_normal_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/ng_clicked.pn
 host_minigame_button = pygame.image.load(PFAD + "Gui/Buttons/mg_off.png")
 host_minigame_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/mg_on.png")
 host_minigame_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/mg_clicked.png") 
+
+#####################
+#Highscore Menu
+#####################
+#Rest Highscore Button
+reset_button = pygame.image.load(PFAD + "Gui/Buttons/reset_off.png")
+reset_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/reset_on.png")
+reset_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/reset_clicked.png")
+
+#Change Name Button
+cn_button = pygame.image.load(PFAD + "Gui/Buttons/cn_off.png")
+cn_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/cn_on.png")
+cn_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/cn_clicked.png")
+
+#Confirm Button
+confirm_button = pygame.image.load(PFAD + "Gui/Buttons/confirm_off.png")
+confirm_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/confirm_on.png")
+confirm_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/confirm_clicked.png")
 
 ######################
 #End Game Menu

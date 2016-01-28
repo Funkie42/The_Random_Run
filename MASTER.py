@@ -9,8 +9,7 @@ multiplayer = False
 multiplayer_ghostmode = True
 survival_time = 0
 score = 0
-test_startlvl = 2# Für Testen
-
+test_startlvl = 0# Für Testen
 
 jump_sound = "Sounds/jump.wav"
 explosion_sound = "Sounds/dead.wav"
@@ -19,11 +18,7 @@ kugel_sound  = "Sounds/phaser.wav"
 portal_sound = "Sounds/swoop.wav"
 waypoint_sound = "Sounds/wp.wav"
 rocket_sound = "Sounds/rocket_sound.wav"
-lvl1 = "Sounds/lvl1.ogg"
-lvl2 = "Sounds/lvl2.ogg"
-lvl3 = "Sounds/lvl3.ogg"
-lvl4 = "Sounds/lvl4.ogg"
-lvl5 = "Sounds/lvl5.ogg"
+
 class Spieler(pygame.sprite.Sprite):
         def __init__(self):
                 pygame.sprite.Sprite.__init__(self)
@@ -103,7 +98,8 @@ class Spieler(pygame.sprite.Sprite):
 
         def dash(self):
                 if self.dash_counter > 0:
-                        self.body.position.x += 60 * self.direction
+                        pass
+                        #self.body.position.x += 60 * self.direction
                         ###################################self.dash_counter -= 1
 
         def selfblit(self):
@@ -489,7 +485,6 @@ def player_stands_stein(space, arbiter):
 def player_leaves_stein(space, arbiter):
         current_level.spieler.onStein = False
 
-
 # UNIVERSELLE OPTIONEN
 pygame.init()
 DISPLAYSURF = pygame.display.set_mode((800, 600))
@@ -537,7 +532,7 @@ alien_sprite.sprite_sheet = pygame.transform.flip(alien_sprite.sprite_sheet, Tru
 pacman_sprite = Level.pacman_sprite
 
 #GELÄNDESPRITES
-mars = pygame.image.load("Gui/ground.png").convert()
+mars = pygame.image.load("Gui/ground5.png").convert()
 level2_ground = pygame.image.load("Gui/ground2.png").convert()
 rinde = pygame.image.load("Gui/ground3.png").convert()
 #rinde = pygame.transform.scale(rinde, (100, 100))
@@ -571,7 +566,7 @@ bl7 = Boden.Block(pygame.Rect(2100, 2600, 50, 700), mars)
 bl8 = Boden.Block(pygame.Rect(1750, 2550, 300, 50), mars)
 bl9 = Boden.Block(pygame.Rect(2350, 2550, 150, 50), mars)
 bl9_2 = Boden.Block(pygame.Rect(2500, 2550, 150, 50), mars)
-bl10 = Boden.Block(pygame.Rect(2650, 2100, 50, 1100), mars)
+bl10 = Boden.Block(pygame.Rect(2650, 2100, 50, 1100), mars)#
 bl11 = Boden.Block(pygame.Rect(2450, 2750, 200, 50), mars)
 bl12 = Boden.Block(pygame.Rect(2550, 2950, 100, 50), mars)
 bl13 = Boden.Block(pygame.Rect(2600, 3150, 50, 50), mars)
@@ -585,17 +580,31 @@ bl19_2 = Boden.Block(pygame.Rect(400, 4200, 50, 50), mars)
 bl20 = Boden.Block(pygame.Rect(2700, 2950, 100, 50), mars)
 bl21 = Boden.Block(pygame.Rect(2700, 2950, 150, 50), mars)
 bl22 = Boden.Block(pygame.Rect(2700, 2700, 100, 50), mars)
+bl23 = Boden.Block(pygame.Rect(3000, 2250, 150, 50), mars)
+bl24 = Boden.Block(pygame.Rect(3300, 2000, 50, 50), mars)
+bl25 = Boden.Block(pygame.Rect(3500, 2000, 50, 50), mars)
+bl26 = Boden.Block(pygame.Rect(3700, 2000, 50, 50), mars)
+bl27 = Boden.Block(pygame.Rect(3200, 2250, 50, 1500), mars)
+bl28 = Boden.Block(pygame.Rect(3900, 2000, 150, 50), mars)
+bl29 = Boden.Block(pygame.Rect(3850, 1950, 50, 100), mars)
+#bl30 = Boden.Block(pygame.Rect(4050, 1600, 50, 250), mars)
+bl31 = Boden.Block(pygame.Rect(4300, 2100, 50, 50), mars)
+
 
 
 g0 = Hindernis.Gegner(bl2, 3, alien_sprite, 50, 100)
-g1 = Hindernis.Gegner(bl5, 3, alien_sprite, 100, 100)
+g1 = Hindernis.Gegner(bl5, 3, alien_sprite, 100, 100)####################################################
 g2 = Hindernis.Gegner(bl8, 3, alien_sprite, 1, 100)
 g3 = Hindernis.Gegner(bl11, 3, alien_sprite, 10, 100)
+g4 = Hindernis.Gegner(bl28, 10, alien_sprite, 10, 10)
+g4.hitpoints = 20
 fg0 = Hindernis.FliegenderGegner(1600, 2100, 3850, 4, pacman_sprite, 10, 100)
 fg1 = Hindernis.FliegenderGegner(900, 1450, 3850, 6, pacman_sprite, 10, 100)
 fg2 = Hindernis.FliegenderGegner(4100, 4500, 1000, 6, pacman_sprite, 10, 100, False)
 fg3 = Hindernis.FliegenderGegner(4100, 4500, 1500, 6, pacman_sprite, 10, 100, False)
 fg4 = Hindernis.FliegenderGegner(4100, 4500, 200, 6, pacman_sprite, 10, 100, False)
+fg5 = Hindernis.FliegenderGegner(3300, 3750, 1800, 15, pacman_sprite, 10, 25)
+fg6 = Hindernis.FliegenderGegner(3300, 3750, 2200, 15, pacman_sprite, 10, 25)
 
 
 hj1 = Power_Ups.High_Jump(bl6, [highjump_sprite])
@@ -607,7 +616,7 @@ sp3 = Speicherpunkt.Speicherpunkt(bl21, [waypoint_sprite])
 
 st = Boden.Stein(bl19_2, turbine_sprite)
 
-p1 = Speicherpunkt.Portal(bl9, [portal2_sprite])
+p1 = Speicherpunkt.Portal(bl31, [portal2_sprite])
 
 #Levels werden gespeichert in "set_everything"
 
@@ -836,9 +845,9 @@ def main():
 def set_everything(start_level):
         global current_level,game,score
         tut_w = Welt(tut_bild, tut_bl, tut_gegner,tut_powerups, tut_steine, tut_speichpt,tut_p,s,s2,textboxes = tut_texte)
-        w1 = Welt(pygame.image.load("Gui/bg1.jpg").convert(),
-          [bl0, bl1, bl2, bl3, bl4, bl5, bl6, bl7, bl8, bl9, bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18, bl19,bl20, bl21, bl22],
-          [g0, g1, g2, g3, fg0, fg1, fg2, fg3, fg4], [hj1, hj2], [st], [sp1, sp2, sp3], p1, s, s2)
+        w1 = Welt(pygame.image.load("Gui/bg5.jpg").convert(),
+          [bl0, bl1, bl2, bl3, bl4, bl5, bl6, bl7, bl8, bl9, bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18, bl19,bl20, bl21, bl22, bl23, bl24, bl25, bl26, bl27, bl28, bl29],
+          [g0, g1, g2, g3, g4, fg0, fg1, fg2, fg3, fg4, fg5, fg6], [hj1, hj2], [st], [sp1, sp2, sp3], p1, s, s2)
         w2 = Welt( pygame.image.load("Gui/bg2.jpg").convert(), w2_bl, w2_gegner, [], [], [], p2, s, s2) 
         w3 = Welt(w3_bild, w3_bl, w3_gegner,w3_powerups, w3_steine, w3_speichpt,p3,s,s2)
         wend = Welt(w3_bild, w3_bl, w3_gegner,w3_powerups, [], w3_speichpt,p3,s,s2)
