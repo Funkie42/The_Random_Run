@@ -269,12 +269,44 @@ w3_speichpunkte = [12,8,20,24,45]
 w3_steine = [26]
 w3_portal = 29
 
-blockkoords = [tut_blockkoordinaten,w1_blockkoordinaten,w2_blockkoordinaten,w3_blockkoordinaten]
-textboxes = [tut_textboxes,[],[],w3_textboxes,[],[]]
-bodengegner = [tut_boden_gegner,w1_boden_gegner,w2_boden_gegner,w3_boden_gegner]
-fluggegner = [tut_flug_gegner,w1_flug_gegner,w2_flug_gegner,w3_flug_gegner]
-speicherpunkte = [tut_speicherpunkte,w1_speichpunkte,w2_speichpunkte,w3_speichpunkte]
-powerups = [tut_powerups,w1_powerups,w2_powerups,w3_powerups]
-steine = [tut_steine,w1_steine,w2_steine,w3_steine]
-portale = [tut_portal,w1_portal,w2_portal,w3_portal]
+#LEVEL4
+###########Blöcke###################
+# Inhalt der Tupel:   ( left,   top,    width,  height)
+w4_blockkoordinaten = [(150,7600,400,200),
+                       (700,7650,300,150),
+                       (0,6700,100,1100),
+                       (100,7600,50,200),
+                       (100,100,100,100)]
+w4_textboxes = []
+#Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
+w4_boden_gegner = [] # TODO
+#Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
+w4_flug_gegner = []
+w4_powerups = []
+w4_speichpunkte = []
+w4_steine = []
+w4_portal = 4
+
+#LEVEL5
+###########Blöcke###################
+# Inhalt der Tupel:   ( left,   top,    width,  height)
+w5_blockkoordinaten = []
+w5_textboxes = []
+#Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
+w5_boden_gegner = [] # TODO
+#Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
+w5_flug_gegner = []
+w5_powerups = []
+w5_speichpunkte = []
+w5_steine = []
+w5_portal = 11111
+
+blockkoords = [tut_blockkoordinaten,w1_blockkoordinaten,w2_blockkoordinaten,w3_blockkoordinaten,w4_blockkoordinaten,w5_blockkoordinaten]
+textboxes = [tut_textboxes,[],[],w3_textboxes,w4_textboxes,w5_textboxes]
+bodengegner = [tut_boden_gegner,w1_boden_gegner,w2_boden_gegner,w3_boden_gegner,w4_boden_gegner,w5_boden_gegner]
+fluggegner = [tut_flug_gegner,w1_flug_gegner,w2_flug_gegner,w3_flug_gegner,w4_flug_gegner,w5_flug_gegner]
+speicherpunkte = [tut_speicherpunkte,w1_speichpunkte,w2_speichpunkte,w3_speichpunkte,w4_speichpunkte,w5_speichpunkte]
+powerups = [tut_powerups,w1_powerups,w2_powerups,w3_powerups,w4_powerups,w5_powerups]
+steine = [tut_steine,w1_steine,w2_steine,w3_steine,w4_steine,w5_steine]
+portale = [tut_portal,w1_portal,w2_portal,w3_portal,w4_portal,w5_portal]
 

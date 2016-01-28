@@ -9,7 +9,7 @@ multiplayer = False
 multiplayer_ghostmode = True
 survival_time = 0
 score = 0
-test_startlvl = 3# Für Testen
+test_startlvl = 4# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
@@ -189,14 +189,14 @@ class Welt():
                 hintergrund_rect.left = int(4/11 * rect.left)
                 
                 for i in self.boeden:
-                        if rect.colliderect(i.center_rect()) and i.center_rect().top < LEVELSURF.get_height() - 200:
+                        if rect.colliderect(i.center_rect()) and i.center_rect().top < LEVELSURF.get_height() - self.sterbehoehe:
                                 i.update(rect)
                                 LEVELSURF.blit(i.surf, (i.center_rect()))
                 for i in self.textboxes:
                         i.update(rect)
                         LEVELSURF.blit(i.surf, (i.center_rect()))
                 for i in self.steine:
-                        if i.body.position.y > LEVELSURF.get_height() - 200 and i in self.steine: 
+                        if i.body.position.y > LEVELSURF.get_height() - self.sterbehoehe and i in self.steine: 
                                 i.respawn()
                         if rect.colliderect(i.center_rect()):
                                 if self.spieler.onStein: 
@@ -206,7 +206,7 @@ class Welt():
                                 LEVELSURF.blit(i.current_sprite(),i.center_rect())
                                
                 for i in self.hindernisse:
-                        if (i.body.position.y > LEVELSURF.get_height() - 200 or i.hitpoints < 0 )and i in self.hindernisse: #evtl zu updaten
+                        if (i.body.position.y > LEVELSURF.get_height() - self.sterbehoehe or i.hitpoints < 0 )and i in self.hindernisse: #evtl zu updaten
                                 ex = Explotion(i.body)
                                 self.hindernisse.remove(i)
                                 space.remove(i.body, i.shape)
@@ -222,7 +222,7 @@ class Welt():
                         i.update()
                                 
                 for i in self.power_ups:
-                        if i.body.position.y > LEVELSURF.get_height() - 200 and i in self.power_ups: #evtl zu updaten
+                        if i.body.position.y > LEVELSURF.get_height() - self.sterbehoehe and i in self.power_ups: #evtl zu updaten
                                 self.power_ups.remove(i)
                                 space.remove(i.body, i.shape)
                         i.rect.center = i.body.position
@@ -270,8 +270,8 @@ class Welt():
                                 if spieler.is_alive == False: # So lassen, sonst geht F5 nichtmehr
                                         pygame.mixer.Sound(die_sound).play()
                                         global score,death_counter,dead_show
-                                        score -= death_counter*10
                                         if death_counter < 10: death_counter += 1
+                                        score -= death_counter*10
                                         dead_show = 20
                                         spieler.hitpoints = hitpoints
                                         for j in self.steine:
@@ -341,7 +341,7 @@ class Kugel(object):
         
         def update(self):
                 pygame.draw.circle(LEVELSURF, self.farbe, (int(self.body.position.x), int(self.body.position.y)), 7)
-                if self.body.position.y > 7500 and self in kugeln or self.lebenszeit == 0:
+                if self.body.position.y > 7800 and self in kugeln or self.lebenszeit == 0:
                         kugeln.remove(self)
                         space.remove(self.body, self.shape)
                 self.lebenszeit -= 1                        
@@ -667,7 +667,7 @@ def main():
                                 w.update()
                                 for i in kugeln: i.update()
                                 for i in explosions: i.update()
-                                pygame.draw.rect(LEVELSURF,(155,0,0),pygame.Rect(0,LEVELSURF.get_height() - w.sterbehoehe,LEVELSURF.get_width(),5))
+                                pygame.draw.rect(LEVELSURF,(155,0,0),pygame.Rect(0,LEVELSURF.get_height() - w.sterbehoehe,LEVELSURF.get_width(),3))
                                 space.step(1/35)
                                 clock.tick(25)
                                 DISPLAYSURF.blit(camera_blit(), (0,0))
@@ -760,8 +760,9 @@ def set_everything(start_level):
         w2 = construct_level(2)
         w3 = construct_level(3)
         w3.sterbehoehe = 4000
+        w4 = construct_level(4)
         wend = construct_level(0)
-        game = [tut_w,w1,w2,w3,wend] 
+        game = [tut_w,w1,w2,w3,w4,wend] 
         current_level = game[start_level]
         score = 0 
         #for w in game:
