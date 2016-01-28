@@ -463,8 +463,13 @@ class Main:
                 finished_level_number += 1
                 score_info = MASTER.main()
                 continue_game = score_info[0]
-        highscore = score_info[1] + score_info[2]
-        get_Highscore(playername,highscore)
+                self.level_finished(score_info,finished_level_number)
+        if finished_level_number == 5:
+            highscore = score_info[1] + score_info[2]
+            get_Highscore(playername,highscore)
+        else:
+            get_Highscore(playername,score_info[1])
+
         return finished_level_number
          
     def button_clicked(self,button): # Was tun wenn Button geclickt
@@ -710,14 +715,16 @@ class Main:
             if playtime == 1:
                 if leveltext == Texts.normal_intro:
                     if awesome == 1:
-                        pygame.mixer.music.play(-1, 0.0)
+                        #pygame.mixer.music.play(-1, 0.0)
+                        print("musik!!")
             else:
                 if leveltext == Texts.starwars_intro:
                     if awesome == 1:
                         time.sleep(1)
                         pygame.mixer.Sound(star_wars_sound).play()
                     if awesome == 3:
-                        pygame.mixer.music.play(-1, 0.0)
+                        #pygame.mixer.music.play(-1, 0.0)
+                        print("musik!!")
         if level == 1:
             pass
         if level == 2:

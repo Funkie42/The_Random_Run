@@ -8,7 +8,7 @@ pacman_sprite = SpriteSheet.SpriteSheet("Gui/epm_spritesheet.png")
 zyklop_sprite = SpriteSheet.SpriteSheet("Gui/zyklop.png")
 
 #GELÄNDESPRITES
-level_grounds = ["Gui/ground5.png","Gui/ground1.png",
+level_grounds = ["Gui/ground5.png","Gui/ground.png",
                  "Gui/ground2.png","Gui/ground3.png",
                  "Gui/ground4.png","Gui/ground5.png"]
 
@@ -94,6 +94,61 @@ tut_powerups = [("highjump",8)]
 tut_portal = 30 #Block nummer
 tut_steine = [27]
 
+#LEVEL1
+# Inhalt der Tupel:   ( left,   top,    width,  height)
+w1_blockkoordinaten = [(50, 3000, 300, 50),
+                    (550, 3000, 300, 50),
+                    (950, 2850, 300, 50),
+                     (1250, 2850, 50, 450),
+                       (1550, 2400, 50, 650),
+                       (1300, 3250, 800, 50), #5
+                       (1600, 3000, 350, 50),
+                       (2100, 2600, 50, 700),
+                       (1750, 2550, 300, 50),
+                       (2350, 2550, 150, 50),
+                       (2500, 2550, 150, 50), #10
+                       (2650, 2100, 50, 1100),
+                       (2450, 2750, 200, 50),
+                       (2550, 2950, 100, 50),
+                       (2600, 3150, 50, 50),
+                       (2500, 3350, 50, 50),
+                       (2400, 3550, 50, 50),
+                       (2500, 3750, 50, 50),
+                       (2200, 3950, 250, 50), #18
+                       (1500, 3950, 50, 50),
+                       (600, 3950, 250, 50),
+                       (400, 4200, 1, 1),
+                       (2700, 2950, 100, 50),
+                       (2700, 2950, 150, 50),
+                       (2700, 2700, 100, 50),
+                       (3000, 2250, 150, 50),
+                       (3300, 2000, 50, 50), # 26
+                       (3500, 2000, 50, 50), # 27
+                       (3700, 2000, 50, 50),
+                       (3200,2250,50,1500),
+                       (3900, 2000, 150, 50),
+                       (3850, 1950, 50, 100), # 31
+                       (4050, 1600, 50, 250),  # Auskommentiert!?
+                       (4300, 2100, 50, 50)]
+
+#Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
+w1_boden_gegner = [(2, 3, alien_sprite, 50, 100),
+                   (5, 3, alien_sprite, 100, 100),
+                   (8, 3, alien_sprite, 1, 100),
+                   (12, 3, alien_sprite, 10, 100),
+                   (30, 10, alien_sprite, 10, 10)]
+#Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
+w1_flug_gegner = [(1600, 2100, 3850, 4, pacman_sprite, 10, 100,True),
+                  (900, 1450, 3850, 6, pacman_sprite, 10, 100,True),
+                  (4100, 4500, 1000, 6, pacman_sprite, 10, 100, False),
+                  (4100, 4500, 1500, 6, pacman_sprite, 10, 100, False),
+                  (4100, 4500, 200, 6, pacman_sprite, 10, 100, False),
+                  (3300, 3750, 1800, 15, pacman_sprite, 10, 25,True),
+                  (3300, 3750, 2200, 15, pacman_sprite, 10, 25,True)]
+w1_powerups = [("highjump",6),("highjump",24)]
+w1_speichpunkte = [10,20,22]
+w1_steine= [21]
+w1_portal = 33
 
 #LEVEL2
 ###########Blöcke###################
@@ -167,12 +222,12 @@ w3_speichpunkte = [12,8,20,24]
 w3_steine = [26]
 w3_portal = 29
 
-blockkoords = [tut_blockkoordinaten,[],w2_blockkoordinaten,w3_blockkoordinaten]
+blockkoords = [tut_blockkoordinaten,w1_blockkoordinaten,w2_blockkoordinaten,w3_blockkoordinaten]
 textboxes = [tut_textboxes,[],[],[],[],[]]
-bodengegner = [tut_boden_gegner,[],w2_boden_gegner,w3_boden_gegner]
-fluggegner = [tut_flug_gegner,[],w2_flug_gegner,w3_flug_gegner]
-speicherpunkte = [tut_speicherpunkte,[],w2_speichpunkte,w3_speichpunkte]
-powerups = [tut_powerups,[],w2_powerups,w3_powerups]
-steine = [tut_steine,[],w2_steine,w3_steine]
-portale = [tut_portal,None,w2_portal,w3_portal]
+bodengegner = [tut_boden_gegner,w1_boden_gegner,w2_boden_gegner,w3_boden_gegner]
+fluggegner = [tut_flug_gegner,w1_flug_gegner,w2_flug_gegner,w3_flug_gegner]
+speicherpunkte = [tut_speicherpunkte,w1_speichpunkte,w2_speichpunkte,w3_speichpunkte]
+powerups = [tut_powerups,w1_powerups,w2_powerups,w3_powerups]
+steine = [tut_steine,w1_steine,w2_steine,w3_steine]
+portale = [tut_portal,w1_portal,w2_portal,w3_portal]
 

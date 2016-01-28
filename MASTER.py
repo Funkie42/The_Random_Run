@@ -9,7 +9,7 @@ multiplayer = False
 multiplayer_ghostmode = True
 survival_time = 0
 score = 0
-test_startlvl = 0# Für Testen
+test_startlvl = 1# Für Testen
 
 jump_sound = "Sounds/jump.wav"
 explosion_sound = "Sounds/dead.wav"
@@ -99,7 +99,7 @@ class Spieler(pygame.sprite.Sprite):
         def dash(self):
                 if self.dash_counter > 0:
                         pass
-                        #self.body.position.x += 60 * self.direction
+                        self.body.position.x += 60 * self.direction
                         ###################################self.dash_counter -= 1
 
         def selfblit(self):
@@ -263,6 +263,8 @@ class Welt():
                                         spieler.is_alive = False
                                 if spieler.is_alive == False: # So lassen, sonst geht F5 nichtmehr
                                         pygame.mixer.Sound(die_sound).play()
+                                        global score
+                                        score -= 10
                                         for j in self.steine:
                                                 j.respawn()
                                         spieler.body.velocity.x = 0
@@ -545,10 +547,10 @@ portal2_sprite = pygame.transform.scale(portal2_sprite,(130,130))
 turbine_sprite = SpriteSheet.SpriteSheet("Gui/turbine_sprite.png")
 explosion_sprite = SpriteSheet.SpriteSheet("Gui/explotion.png")
 
-
 #SPIELER
 s = Spieler()
 s2 = Spieler()
+
 '''#LEVEL1
 bl0 = Boden.Block(pygame.Rect(50, 3000, 300, 50), level1_ground)
 bl1 = Boden.Block(pygame.Rect(550, 3000, 300, 50), level1_ground)
@@ -615,17 +617,6 @@ p1 = Speicherpunkt.Portal(bl31, [portal2_sprite])
 
 #Levels werden gespeichert in "set_everything"
 '''
-
-
-
-
-#Levels werden gespeichert in "set_everything"
-
-
-#Welt die Bugs behebt
-# Gleicht welt 3, wird nie aufgerufen
-
-
 
 
 #SPIEL
@@ -754,7 +745,6 @@ def main():
 
 
                                 pygame.display.flip()
-                                #print(game.index(current_level))
                                 
                                 if w.finish and __name__ != "__main__":
                                         #print(game.index(current_level))
@@ -787,29 +777,24 @@ def construct_level(level):
                         powerups.append(Power_Ups.High_Jump(blocks[powerup[1]], [highjump_sprite]))
         spaceshuttles = []
         for stein in Level.steine[level]:
-                        spaceshuttles.append(Boden.Stein(blocks[27], turbine_sprite))
+                        spaceshuttles.append(Boden.Stein(blocks[stein], turbine_sprite))
         p = Speicherpunkt.Portal(blocks[Level.portale[level]], [portal2_sprite])
         bild = pygame.image.load(Level.bg_bilder[level]).convert() 
         return Welt(bild,blocks,enemys,powerups,spaceshuttles,waypoints,p,s,s2,texts)
 
-
         
 def set_everything(start_level):
         global current_level,game,score
-        #tut_w = Welt(tut_bild, tut_bl, tut_gegner,tut_powerups, tut_steine, tut_speichpt,tut_p,s,s2,textboxes = tut_texte)
         tut_w = construct_level(0)
-        #w1 = Welt(pygame.image.load("Gui/bg5.jpg").convert(),
-       #   [bl0, bl1, bl2, bl3, bl4, bl5, bl6, bl7, bl8, bl9, bl9_2, bl10, bl11, bl12, bl13, bl14, bl15, bl16, bl17, bl18, bl19,bl20, bl21, bl22, bl23, bl24, bl25, bl26, bl27, bl28, bl29],
-     #     [g0, g1, g2, g3, g4, fg0, fg1, fg2, fg3, fg4, fg5, fg6], [hj1, hj2], [st], [sp1, sp2, sp3], p1, s, s2)
+        w1 = construct_level(1)
         w2 = construct_level(2)
         w3 = construct_level(3)
         wend = construct_level(3)
-        game = [tut_w,w2,w3,wend]
-                        
+        game = [tut_w,w1,w2,w3,wend] 
         current_level = game[start_level]
         score = 0 
-        for w in game:
-                w.finish = False
+        #for w in game:
+        #        w.finish = False
                 
 def on_execute(multi_True = False,start_level = 1): # Multiplayer starten oder Singleplayer (bei False singleplayer)
         global multiplayer,survival_time,playing_Spieler
