@@ -9,10 +9,11 @@ multiplayer = False
 multiplayer_ghostmode = True
 survival_time = 0
 score = 0
-test_startlvl = 4# Für Testen
+test_startlvl = 1# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
+kill_counter = 0
 
 TOMFAKTOR = False # Weil tom keinen Text anzeigen kann
 
@@ -210,6 +211,8 @@ class Welt():
                                 ex = Explotion(i.body)
                                 self.hindernisse.remove(i)
                                 space.remove(i.body, i.shape)
+                                global kill_counter
+                                kill_counter += 15
                         if rect.colliderect(i.center_rect()):
                                 LEVELSURF.blit(i.current_sprite(), i.center_rect())
                                 random_int = random.randint(0,800)
@@ -581,7 +584,8 @@ def main():
         bonustime = 300
         frame_counter = 0       
         for w in game:
-                        global death_counter
+                        global death_counter, kill_counter
+                        kill_counter = 0
                         death_counter = 0
                         while not w.finish and w == current_level:
                                 old_death_counter = death_counter
@@ -595,10 +599,10 @@ def main():
                                                 pygame.quit()
                                                 sys.exit()
                                         elif event.type == KEYDOWN:
-                                                if event.key == K_q: # Für Beenden und zurück zum startmenü
+                                                if event.key == K_F12: # Für Beenden und zurück zum startmenü
                                                         w.removeFromSpace()
                                                         w.finish = True
-                                                        return (False,score,bonustime)
+                                                        return (False,score,-1)
                                                 if event.key == K_p and not multiplayer: #Pause TODO
                                                         pass
                                                 if event.key == K_SPACE:
@@ -689,7 +693,7 @@ def main():
                                                 dieRect.center = ((470,40))
                                                 DISPLAYSURF.blit(diePrint,dieRect)
                                         if (frame_counter > 1850 and frame_counter < 1900):
-                                                die_string = "Press 'Q' to give up and go home"
+                                                die_string = "Press 'F12' to give up and go home"
                                                 diePrint = pygame.font.Font('freesansbold.ttf', 20).render(die_string,True,(255,255,255))
                                                 dieRect = diePrint.get_rect()
                                                 dieRect.center = ((470,40))
@@ -701,7 +705,14 @@ def main():
                                                 deadPrint = pygame.font.Font('freesansbold.ttf', 35).render(dead_string,True,(155,0,0))
                                                 deadRect = thisPrint.get_rect()
                                                 deadRect.center = ((380,70))
-                                                DISPLAYSURF.blit(deadPrint,deadRect)       
+                                                DISPLAYSURF.blit(deadPrint,deadRect)
+                                        if kill_counter > 0:
+                                                kill_counter -= 1
+                                                kill_string = "+10"
+                                                killPrint = pygame.font.Font('freesansbold.ttf', 35).render(kill_string,True,(0,155,0))
+                                                killRect = thisPrint.get_rect()
+                                                killRect.center = ((380,70))
+                                                DISPLAYSURF.blit(killPrint,killRect)                                                
 
                                         
                                 lebenscounter = 0
@@ -772,6 +783,9 @@ def on_execute(multi_True = False,start_level = 1): # Multiplayer starten oder S
         global multiplayer,survival_time,playing_Spieler
         multiplayer = multi_True     
         survival_time = time.time()#Für Highscore
+
+
+        
         set_everything(start_level)
         if multiplayer:
                 if __name__ == "__main__":

@@ -36,6 +36,13 @@ buttonHeight = int(buttonWidth / 2)
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
+levelcodes = ["","","heartattack","randomness","pymunk","stonepower"]
+
+def music_change(new_music):
+    pygame.mixer.music.stop()
+    pygame.mixer.music.load(new_music)
+    pygame.mixer.music.play(-1, 0.0)     
+
 #Highscores
 highscore_list = []
 test = []
@@ -88,9 +95,13 @@ def reset_Highscore():
 button_sound = "Sounds/click.wav"
 game_start_sound = None
 star_wars_sound = "Sounds/Startwars_intro.ogg"
-game_music = 'Sounds/tetris.mid'
-level_music = ['Sounds/lvl1.ogg','Sounds/lvl2.ogg','Sounds/lvl3.ogg','Sounds/lvl4.ogg','Sounds/lvl5.ogg']
-menu_music = None
+bonus_running_sound ="Sounds/tztztztztztz.ogg"
+bonus_done_sound = "Sounds/melodie.ogg"
+
+game_music = 'Sounds/sequenz.ogg'
+level_music = ['Sounds/lvl1.ogg','Sounds/lvl1.ogg','Sounds/lvl2.ogg','Sounds/lvl3.ogg','Sounds/lvl4.ogg','Sounds/lvl5.ogg']
+menu_music = "Sounds/bg_music.ogg"
+
 
 
 
@@ -164,6 +175,8 @@ class Button(pygame.Surface):
             return choose_lvl_button,choose_lvl_button_cursor_over,choose_lvl_button_clicked
         elif self.goto_menutitle == "Tutorial":
             return load_button,load_button_cursor_over,load_button_clicked
+        elif self.goto_menutitle == "Load_single_game":
+            return confirm_button,confirm_button_cursor_over,confirm_button_clicked
 
     ######################
     #End Game Menu
@@ -236,9 +249,9 @@ class Menu:
                 self.buttons.append(Button(buttonWidth*2,buttonHeight,firstButtonXpos + buttonDistance, firstButtonYpos +2*(buttonHeight+ int(buttonDistance/2)) - int(buttonDistance/2),"Tutorial"))
 
             if self.menuname == "Choose Level":
-                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + int((buttonWidth + buttonDistance)/2),firstButtonYpos+ buttonHeight*2,"Load_single_game"))
+                self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + int((buttonWidth + buttonDistance)/2),firstButtonYpos+ buttonHeight*1.5,"Load_single_game"))
                 self.surfaces.append( (   (buttonWidth*2 + buttonDistance,buttonHeight), (firstButtonXpos,firstButtonYpos)  ) )
-                self.texts.append(("Enter Levelcode: ",(firstButtonXpos+ int(buttonWidth/2+15),firstButtonYpos + int(buttonHeight/2)),20))
+                self.texts.append(("Enter Levelcode: ",(firstButtonXpos+ int(buttonWidth/2+17),firstButtonYpos + int(buttonHeight/2)),20))
                 self.write_text_config = (( "",(firstButtonXpos+175,firstButtonYpos + 25),22,True))
                 ######### TODO #############
             
@@ -330,8 +343,8 @@ class Main:
 
     def on_execute(self):
         
-        #pygame.mixer.music.load("/media/8C48-C703/sandman1.wav")
-        # pygame.mixer.music.play(-1, 0.0)
+        pygame.mixer.music.load(menu_music)
+        pygame.mixer.music.play(-1, 0.0)
         # musik    
         while(self.running):
             for event in pygame.event.get():
@@ -357,8 +370,10 @@ class Main:
         elif (self.menu_in_use.write_text_config != None) & (event.type == KEYDOWN):
             if event.key == K_RETURN:
                 if (self.menu_in_use.writeable_text != "") & (self.menu_in_use == self.menus["Link_In_screen"]):
-                    self.button_clicked(Button(1,1,1,1,"Search"))
+                    self.button_clicked(self.menu_in_use.buttons[0])
                 elif (self.menu_in_use.writeable_text != "") & (self.menu_in_use.menuname == "Choose name"):
+                    self.button_clicked(self.menu_in_use.buttons[0])
+                elif (self.menu_in_use.writeable_text != "") & (self.menu_in_use.menuname == "Choose Level"):
                     self.button_clicked(self.menu_in_use.buttons[0])
             elif event.key == K_BACKSPACE:
                 if len(self.menu_in_use.writeable_text) > 0:
@@ -402,35 +417,44 @@ class Main:
         pygame.mixer.music.stop()
         pygame.quit()
         sys.exit()
+
+
         
     def gameplay(self,multiplayer,start_level = 1):
-        if not multiplayer and start_level > 0: self.interlevel_scene(0)
-        pygame.mixer.music.stop()
-        pygame.mixer.music.load(level_music[start_level])
-        pygame.mixer.music.play(-1, 0.0)
-        score_info = MASTER.on_execute(multiplayer,start_level) # (Continue Bool, Punktzahl, bonustime)
-        if not score_info[0]:
-            return 0 # Damit er nicht denkt spiel ist fertig
-        finished_level_number = start_level
-        self.level_finished(score_info,finished_level_number)
-        if start_level > 0:
+        finished_level_number = start_level -1
+        continue_game = True
+        while continue_game:
+            if not multiplayer and start_level > 0: self.interlevel_scene(finished_level_number)
+            finished_level_number += 1
+            music_change(level_music[finished_level_number])
+            if finished_level_number == start_level: score_info = MASTER.on_execute(multiplayer,start_level) # (Continue Bool, Punktzahl, bonustime)
+            else: score_info = MASTER.main()
             continue_game = score_info[0]
-            while continue_game:
-                if not multiplayer: self.interlevel_scene(finished_level_number)
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load(level_music[start_level])
-                pygame.mixer.music.play(-1, 0.0)
-                finished_level_number += 1
-                score_info = MASTER.main()
-                continue_game = score_info[0]
+            if continue_game: self.level_finished(score_info,finished_level_number)
+        if score_info[2] >= 0: # Test, ob durch F12 abgebrochen wurde oder nicht
+            if finished_level_number == 5:
                 self.level_finished(score_info,finished_level_number)
-        if finished_level_number == 5:
-            highscore = score_info[1] + score_info[2]
-            get_Highscore(playername,highscore)
-        else:
+                highscore = score_info[1] + score_info[2]
+                get_Highscore(playername,highscore)
+                self.display_surf.fill((0,0,0))
+                for text in ["Congratulations!","You finished..","The Random Run!"]:
+                    self.blend_in_text(text,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+                    time.sleep(2.5)
+            elif finished_level_number == 0:
+                self.level_finished(score_info,finished_level_number)
+                highscore = score_info[1] + score_info[2]
+                get_Highscore(playername,highscore)
+        else: # Falls abgebrochen wurde keine Bonustime
+            music_change(menu_music)
+            self.blend_in_text("Your Score: "+ str(score_info[1]) ,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
             get_Highscore(playername,score_info[1])
+            time.sleep(2)
+            return "Highscore_screen"
+        
+        music_change(menu_music)
+        return "Credits_screen"
 
-        return finished_level_number
+            
          
     def button_clicked(self,button): # Was tun wenn Button geclickt
         global server_IP
@@ -442,24 +466,36 @@ class Main:
           #  pygame.mixer.Sound(game_start_sound).play()
             #game_start_sound.play()
                 time.sleep(1)
-                
-                level_finished = self.gameplay(False)
-                if level_finished > 2:
-                    self.display_surf.fill((0,0,0))
-                    for text in ["Congratulations!","You finished..","The Random Run!"]:
-                        self.blend_in_text(text,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
-                        time.sleep(2.5)
-                    return "Credits_screen"
-                else:
-                    return "Singleplayer_screen"
+                return self.gameplay(False)
+
         ###############################
             #Tutorial
         ###############################
         if(button.goto_menutitle == "Tutorial"):
 
             self.gameplay(False,start_level = 0)
-            
             return "Singleplayer_screen"
+        ###############################
+        #Levelcode
+        ###############################
+        if(button.goto_menutitle == "Load_single_game"):
+            levelcode = self.menu_in_use.writeable_text
+            self.menu_in_use.writeable_text = ""
+            if levelcode == levelcodes[2]:
+                start_level = 2
+            elif levelcode == levelcodes[3]:
+                    start_level = 3
+            elif levelcode == levelcodes[4]:
+                    start_level = 4
+            elif levelcode == levelcodes[5]:
+                    start_level = 5
+            else:
+                self.blend_in_text("Sorry, wrong code",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+                time.sleep(2.5)
+                return "Singleplayer_screen"
+            self.blend_in_text("Starting Level " + str(start_level),(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+            time.sleep(1)
+            return self.gameplay(False,start_level)
         ###############################
         # Multiplayer Open Game
         ###############################
@@ -473,7 +509,7 @@ class Main:
                 Gameclient.create_Client(port,client_ip)
 
                 self.blend_in_text("Awaiting 2nd Player",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
-                time.sleep(0.5)
+                time.sleep(1)
                 
                 self.gameplay(True)
              
@@ -595,16 +631,15 @@ class Main:
                 thisRect.x, thisRect.y = textpos
             else:
                 thisRect.center = (textpos)
-                
-            self.display_surf.blit(thisPrint,thisRect)
-                
+            self.display_surf.blit(thisPrint,thisRect) 
             if(waitingTime != 0):
                 pygame.display.update()
                 pygame.time.wait(waitingTime)
 
     def interlevel_scene(self, level = 0):
         awesomeness = 0
-        #pygame.mixer.music.load(game_music)
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load(game_music)
 
         if level == 0:
             leveltext = random.choice(Texts.intro_texts)
@@ -614,6 +649,10 @@ class Main:
             leveltext = random.choice(Texts.level_2_texts)
         elif level == 3:
             leveltext = random.choice(Texts.level_3_texts)
+        elif level == 4:
+            pass
+        elif level == 5:
+            pass
         else:
             return False
         
@@ -675,16 +714,15 @@ class Main:
             if playtime == 1:
                 if leveltext == Texts.normal_intro:
                     if awesome == 1:
-                        #pygame.mixer.music.play(-1, 0.0)
-                        print("musik!!")
+                        pygame.mixer.music.play(-1, 0.0)
             else:
                 if leveltext == Texts.starwars_intro:
                     if awesome == 1:
+                        pygame.mixer.music.stop()
                         time.sleep(1)
                         pygame.mixer.Sound(star_wars_sound).play()
                     if awesome == 3:
-                        #pygame.mixer.music.play(-1, 0.0)
-                        print("musik!!")
+                        pygame.mixer.music.play(-1, 0.0)
         if level == 1:
             pass
         if level == 2:
@@ -705,9 +743,11 @@ class Main:
                         if finished_level_number == 0:
                             level_end_string = "Thanks for playing the Tutorial!"
                             levelnumberstring = "Tutorial:"
+                            levelcodestring = ""
                         else:
                             level_end_string = "Congratulations! You've cleared Level " + str(finished_level_number) + "!"
                             levelnumberstring = "Level  " + str(finished_level_number) + ":"
+                            levelcodestring = "Levelcode: " + levelcodes[finished_level_number + 1]
                         self.display_surf.fill((0,0,0))
                         self.showText(level_end_string, (int(WINDOWw/2),int(WINDOWh/2)))
                         pygame.display.flip()
@@ -716,12 +756,14 @@ class Main:
                         score_shown = score_info[1]
                         bonus_shown = score_info[2]
                         for i in range(0,int(score_info[2]/2)):
+                            if (i % 20 == 0) and (i < int(score_info[2]/3)): pygame.mixer.Sound(bonus_running_sound).play()
                             self.display_surf.fill((0,0,0))
                             score_shown += 2
                             bonus_shown -= 2
                             self.showText(levelnumberstring,(int(WINDOWw/2),int(WINDOWh/2) -200),60)
                             self.showText("Bonustime: " + str(bonus_shown),(int(WINDOWw/2),int(WINDOWh/2)-50),30)
                             self.showText("Score: " + str(score_shown),(int(WINDOWw/2),int(WINDOWh/2)),50)
+                            if levelcodestring != "": self.showText(levelcodestring,(int(WINDOWw/2),WINDOWh-100),15)
                             pygame.display.flip()
                         if (score_info[2] % 2) == 1:
                             self.display_surf.fill((0,0,0))
@@ -730,7 +772,8 @@ class Main:
                             self.showText(levelnumberstring,(int(WINDOWw/2),int(WINDOWh/2) -200),60)
                             self.showText("Bonustime: " + str(bonus_shown),(int(WINDOWw/2),int(WINDOWh/2)-50),30)
                             self.showText("Score: " + str(score_shown),(int(WINDOWw/2),int(WINDOWh/2)),50)
-                            pygame.display.flip()                            
+                            pygame.display.flip()
+                        pygame.mixer.Sound(bonus_done_sound).play()
                         time.sleep(2)
 
 
