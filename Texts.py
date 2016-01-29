@@ -49,13 +49,23 @@ level_1_texts = [normal_level_1]
 #Level 2 finished Text
 #########################
 
-normal_level_2 = [("Finally you reach the Portal",None),
+normal_level_2 = [("Finally you reach the Portal","Gui/splash.png"),
                     ("This time, thick smoke starts surrounding you",None),
                   ("Laughter in your head",None),
                   ("You realize something",None),
                   ("To get back, you have to find him",None),
                   ("And make him get you home form this nighmare",None),
-                  ("You scream as you fall hard on the dusky ground","Gui/bg3.jpg")]
+                  ("Suddenly, you see a shadow closing in",None),
+                  ("It starts talking to you..",None),
+                  ("'So you have seen him'",None),
+                  ("'Seen whom?', you reply",None),
+                  ("'The Being that brought you here..'",None),
+                  ("'Well, I didn't, really, just some shades.. a figure!'",None),
+                  ("'He doesn't want people to know what he looks like..'",None),
+                  ("Just as the shadow appeared, it vanished again",None),
+                  ("This time it seems to be a vulcanic planet","Gui/bg3.jpg"),
+                  ("'A perfect place for a villian to hide', you think",None),
+                  ("You scream as you fall hard on the dusky ground",)]
 
 level_2_texts = [normal_level_2]
 
@@ -64,18 +74,36 @@ level_2_texts = [normal_level_2]
 ##########################
 
 normal_level_3 = [("Leaving the vulcano, you calm down",None),
-                  ("'I'm gonna kill him... KILL HIM' you think",None),
-                  ("Travalling through the portal, you see a teddy",None),
-                  ("You immediatly see, it's not yours",None),
-                  ("It starts talking...",None),
-                  ("'Go home, you can't save him from Dr. Ka-Kowarui's claws!'",None),
-                  ("You push him aside, what does he know? he's just a teddy!",None)]
+                  ("'What is going on? Where are these portals taking me?'",None),
+                  ("'Why is every world more absurd than the one before?'",None),
+                  ("'Why do I have to battle Pac-Mans.. I HATE Pac-Man..",None),
 level_3_texts = [normal_level_3]
 
 ##########################
 #Level 4 finished Text
 ##########################
 
-normal_level_4 = []
+normal_level_4 = [(" ",None),
+                  (" ",None),
+                  (" ",None),
+                  (" ",None),
+                  (" ",None),
+                  (" ",None),
+                  (" ",None),
+                  (" ",None)]
+
+level_4_texts = [normal_level_4]
+
+##########################
+#Level 5 finished Text
+##########################
+normal_level_4 = [(" ",None),
+                  (" ",None),
+                  (" ",None),
+                  (" ",None),
+                  (" ",None),
+                  (" ",None),
+                  (" ",None),
+                  (" ",None)]
 
 level_4_texts = [normal_level_4]

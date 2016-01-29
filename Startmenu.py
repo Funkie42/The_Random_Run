@@ -456,23 +456,21 @@ class Main:
 
             
          
-    def button_clicked(self,button): # Was tun wenn Button geclickt
+    def button_clicked(self,button):
+        #####################################
+        # Handlungen nach Button-drücken verwalten #
+        #####################################
         global server_IP
 
         #####################################################################################################################################################
         #Spielstart Singleplayer
         #####################################################################################################################################################
-        if(button.goto_menutitle == "Game_start"): # Singleplayer start simple (Beginning)
-          #  pygame.mixer.Sound(game_start_sound).play()
-            #game_start_sound.play()
-                time.sleep(1)
-                return self.gameplay(False)
-
+        if(button.goto_menutitle == "Game_start"): 
+            return self.gameplay(False)
         ###############################
             #Tutorial
         ###############################
         if(button.goto_menutitle == "Tutorial"):
-
             self.gameplay(False,start_level = 0)
             return "Singleplayer_screen"
         ###############################
@@ -496,10 +494,9 @@ class Main:
             self.blend_in_text("Starting Level " + str(start_level),(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
             time.sleep(1)
             return self.gameplay(False,start_level)
-        ###############################
+        ###################################################################################################
         # Multiplayer Open Game
-        ###############################
-
+        ###################################################################################################
         elif(button.goto_menutitle == "Open_game"):
             try:
                 server = Gameserver.ServerGame()
@@ -553,19 +550,15 @@ class Main:
         #########################
         #Reset Highscore
         #########################
-
         elif(button.goto_menutitle == "Reset_highscore"):
             reset_Highscore()
-            return "Highscore_screen"
-            
+            return "Highscore_screen"        
         #########################
         #Ende Spiel
         #########################
-        
         elif(button.goto_menutitle == "End"):
             pygame.quit()
             sys.exit()
-
         #########################
         #Change Playername
         #########################
