@@ -1,5 +1,5 @@
 import sys, pygame, pymunk, time, random, copy
-import Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, Level,cProfile, copy
+import Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, Level,cProfile
 from pygame.locals import*
 from copy import deepcopy
 from Gameclient import *
@@ -9,11 +9,13 @@ multiplayer = False
 multiplayer_ghostmode = True
 survival_time = 0
 score = 0
+opponentscore = 0
 test_startlvl = 1# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
 kill_counter = 0
+scorechange_size = 35
 
 TOMFAKTOR = False # Weil tom keinen Text anzeigen kann
 
@@ -584,10 +586,11 @@ def main():
         bonustime = 300
         frame_counter = 0       
         for w in game:
-                        global death_counter, kill_counter
+                        global death_counter, kill_counter, current_level, opponentscore
                         kill_counter = 0
                         death_counter = 0
                         while not w.finish and w == current_level:
+                                
                                 old_death_counter = death_counter
                                 new_kugel = False
 #################################
@@ -596,10 +599,13 @@ def main():
                                 
                                 for event in pygame.event.get():
                                         if event.type == QUIT or  (event.type == KEYUP and event.key == K_ESCAPE):
+                                                if multiplayer: send_data("gg")
                                                 pygame.quit()
                                                 sys.exit()
+                                                
                                         elif event.type == KEYDOWN:
                                                 if event.key == K_F12: # Für Beenden und zurück zum startmenü
+                                                        if multiplayer: send_data("gg")
                                                         w.removeFromSpace()
                                                         w.finish = True
                                                         return (False,score,-1)
@@ -631,13 +637,19 @@ def main():
 #################################################################
                                 if multiplayer and frame_counter > 2:
                                         if frame_counter % 1 == 0:  
-                                                if not multiplayer_ghostmode:
+                                                if not multiplayer_ghostmode: # Metzelmode
                                                         p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
                                                                            (current_level.spieler.direction,current_level.spieler.state), #  Richtung in die er schaut und sprite_in_use
                                                                            (current_level.spieler.body.position.x,current_level.spieler.body.position.y), # Positition des Spielers
                                                                            ((current_level.spieler.direction,
                                                                              new_kugel)))) # "Neue Kugel" (De facto alles um eine zu erstellen)
-                                                        if p2_data != None: # Sobald ein 2ter Spieler im Spiel ist
+                                                        if p2_data == "gg":
+                                                                w.removeFromSpace()
+                                                                w.finish = True
+                                                                return (False,score,-1,"")
+
+                                                        elif p2_data != None: # Sobald ein 2ter Spieler im Spiel ist
+                                                                
                                                                 (p2_direction, p2_koords, p2_kugel) = p2_data
                                                                 if p2_kugel[1]:
                                                                         Kugel((900 * p2_direction[0], -75), p2_koords[0],p2_koords[1],p2_direction[0])
@@ -647,17 +659,32 @@ def main():
                                                                 current_level.anderer_spieler.body.position.x = p2_koords[0]
                                                                 current_level.anderer_spieler.body.position.y = p2_koords[1]
                                                                 current_level.anderer_spieler.direction = p2_direction[0]
+
+                                                                
                                                 else: # Ghostmode
                                                         p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
                                                                            (current_level.spieler.direction,current_level.spieler.state), #  Richtung in die er schaut und sprite_in_use
-                                                                           (current_level.spieler.body.position.x,current_level.spieler.body.position.y),())) # Positition des Spielers
-                                                        if p2_data != None: # Sobald ein 2ter Spieler im Spiel ist
-                                                                (p2_direction, p2_koords,_) = p2_data
+                                                                           (current_level.spieler.body.position.x,current_level.spieler.body.position.y),
+                                                                             (score))) # Positition des Spielers
+                                                        if p2_data == "gg":
+                                                                w.removeFromSpace()
+                                                                w.finish = True
+                                                                return (False,score,-1,"")
+                                                        elif p2_data[0] == "level finished":
+                                                                print(game.index(current_level))
+                                                                w.removeFromSpace()
+                                                                w.finish = True
+                                                                if game.index(current_level) + 1 < len(game):
+                                                                        current_level = game[game.index(current_level) + 1]
+                                                                return(True,score,0,"lost")
+                                                        elif p2_data != None: # Sobald ein 2ter Spieler im Spiel ist
+                                                                (p2_direction, p2_koords,p2_score) = p2_data
                                                                 try:
                                                                         current_level.anderer_spieler.state = p2_direction[1]
                                                                         current_level.anderer_spieler.body.position.x = p2_koords[0]
                                                                         current_level.anderer_spieler.body.position.y = p2_koords[1]
                                                                         current_level.anderer_spieler.direction = p2_direction[0]
+                                                                        opponentscore = p2_score
                                                                 except: pass
                                 else: current_level.spieler2 = None # Im Singleplayer braucht man keinen 2. Spieler
                                        # if frame_counter%10 == 0:
@@ -679,47 +706,49 @@ def main():
                                 ### Highscoreanzeige ###
                                 if bonustime > 0: bonustime = 300 - int(time.time() - start_time - pause_time)
                                 else: bonustime = 0
-                                thisRect = None
                                 if not TOMFAKTOR:
-                                        score_string = "Bonustime: " + str(bonustime) + "     Score: " + str(score)
-                                        thisPrint = pygame.font.Font('freesansbold.ttf', 20).render(score_string,True,(255,255,255))
-                                        thisRect = thisPrint.get_rect()
-                                        thisRect.center = ((150,40))
-                                        DISPLAYSURF.blit(thisPrint,thisRect)
+                                        bonustime_string = "Bonustime: " + str(bonustime)
+                                        show_text(bonustime_string,20,(255,255,255),(20,20))
+                                        score_string =  "Score: " + str(score)
+                                        if multiplayer: score_string =  "P1 Score: " + str(score)
+                                        show_text(score_string,20,(255,255,255),(200,20))
+                                        if multiplayer: show_text("P2 Score: "+ str(opponentscore),20,(55,55,55),(200,50))
+                                        
                                         if (frame_counter > 1800 and frame_counter < 1850):
                                                 die_string = "Press F5 to instantly die painfully"
-                                                diePrint = pygame.font.Font('freesansbold.ttf', 20).render(die_string,True,(255,255,255))
-                                                dieRect = diePrint.get_rect()
-                                                dieRect.center = ((470,40))
-                                                DISPLAYSURF.blit(diePrint,dieRect)
+                                                show_text(die_string,20,(255,255,255),(333,20))
                                         if (frame_counter > 1850 and frame_counter < 1900):
                                                 die_string = "Press 'F12' to give up and go home"
-                                                diePrint = pygame.font.Font('freesansbold.ttf', 20).render(die_string,True,(255,255,255))
-                                                dieRect = diePrint.get_rect()
-                                                dieRect.center = ((470,40))
-                                                DISPLAYSURF.blit(diePrint,dieRect)
+                                                show_text(die_string,20,(255,255,255),(333,20))
+                                        if multiplayer:
+                                                if (frame_counter > 100 and frame_counter < 200):
+                                                        show_text("Welcome to the Ghost-Multiplayer",20,(255,255,255),(333,20))
+                                                if (frame_counter > 200 and frame_counter < 300):
+                                                        show_text("You can only influence your opponent directly",20,(255,255,255),(333,20))
+                                                if (frame_counter > 300 and frame_counter < 400):
+                                                        show_text("If one person finishes a level",20,(255,255,255),(333,20))
+                                                if (frame_counter > 400 and frame_counter < 500):
+                                                        show_text("He gets the Bonusscore and the level ends",20,(255,255,255),(333,20))
+                                                if (frame_counter > 500 and frame_counter < 600):
+                                                        show_text("May the fastest win",20,(255,255,255),(333,20))
+                                                        
+                                                
+                                                
                                         if frame_counter > 500000000: frame_counter = 0
-                                        if old_death_counter < death_counter or dead_show > 0:
-                                                dead_show -= 1
-                                                dead_string = "-" + str(death_counter*10)
-                                                deadPrint = pygame.font.Font('freesansbold.ttf', 35).render(dead_string,True,(155,0,0))
-                                                deadRect = thisPrint.get_rect()
-                                                deadRect.center = ((380,70))
-                                                DISPLAYSURF.blit(deadPrint,deadRect)
-                                        if kill_counter > 0:
-                                                kill_counter -= 1
-                                                kill_string = "+10"
-                                                killPrint = pygame.font.Font('freesansbold.ttf', 35).render(kill_string,True,(0,155,0))
-                                                killRect = thisPrint.get_rect()
-                                                killRect.center = ((380,70))
-                                                DISPLAYSURF.blit(killPrint,killRect)                                                
-
+                                        if not multiplayer:
+                                                if old_death_counter < death_counter or dead_show > 0:
+                                                        dead_show -= 1
+                                                        dead_string = "-" + str(death_counter*10)
+                                                        show_text(dead_string,scorechange_size,(155,0,0),(250,42))
+                                                if kill_counter > 0:
+                                                        kill_counter -= 1
+                                                        kill_string = "+10"
+                                                        show_text(kill_string,scorechange_size,(0,155,0),(250,42))                                         
                                         
                                 lebenscounter = 0
                                 for life in range(0,w.spieler.hitpoints):
-                                        if not TOMFAKTOR: distance = thisRect.x
-                                        else: distance = 20
-                                        DISPLAYSURF.blit(lebensanzeige,(distance+ lebenscounter * 30,60))
+                                        distance = 20
+                                        DISPLAYSURF.blit(lebensanzeige,(distance+ lebenscounter * 30,50))
                                         lebenscounter += 1
                                         
 
@@ -727,13 +756,18 @@ def main():
                                 pygame.display.flip()
                                 
                                 if w.finish and __name__ != "__main__":
-                                        #print(game.index(current_level))
-                                        #print(game.index(current_level) + 1 < len(game))
                                         old_score = score
                                         score += bonustime
-                                        if game.index(current_level) + 1 < len(game): return True, old_score,bonustime
-                                        else: return False, old_score,bonustime
-                                
+                                        if multiplayer: send_data(("level finished",game.index(current_level)))
+                                        if game.index(current_level) + 1 < len(game): return True, old_score,bonustime, "won"
+                                        else: return False, old_score,bonustime, "won"
+
+def show_text(text,size,color,position):
+        thisPrint = pygame.font.Font('freesansbold.ttf', size).render(text,True,color)
+        thisRect = thisPrint.get_rect()
+        thisRect.x = position[0]
+        thisRect.y = position[1]
+        DISPLAYSURF.blit(thisPrint,thisRect)
 def construct_level(level):
         blocks = []
         leveldesign_block = pygame.image.load(Level.level_grounds[level]).convert() # z.B. level1_ground oder so
@@ -823,6 +857,18 @@ def on_execute(multi_True = False,start_level = 1): # Multiplayer starten oder S
                                                                            (), #  Richtung in die er schaut und sprite_in_use
                                                                            (), # Positition des Spielers
                                                                            ()))
+                                                        for event in pygame.event.get():
+                                                                if event.type == QUIT or  (event.type == KEYDOWN:and event.key == K_ESCAPE):
+                                                                        if multiplayer: send_data("gg")
+                                                                        pygame.quit()
+                                                                        sys.exit()
+                                                                elif event.type == KEYDOWN:
+                                                                        if event.key == K_F12: # Für Beenden und zurück zum startmenü
+                                                                                if multiplayer: send_data("gg")
+                                                                                w.removeFromSpace()
+                                                                                w.finish = True
+                                                                                return (False,score,-1)
+                                                                
                                                         pygame.display.flip()
                                                         if p2_data != None:
                                                                 awaiting_snd_player = False    
@@ -830,7 +876,7 @@ def on_execute(multi_True = False,start_level = 1): # Multiplayer starten oder S
                                                 w.spieler = current_level.spieler2
                                                 w.anderer_spieler = current_level.spieler1
                                                 if multiplayer_ghostmode: w.anderer_spieler.shape.collision_type = 0
-                        main()
+                        return main()
         else:
                 for w in game: w.spieler = w.spieler1
                 if __name__ == "__main__": main()

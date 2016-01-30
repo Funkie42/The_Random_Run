@@ -357,7 +357,8 @@ class Main:
     def on_event(self, event):
         
         if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
-            self.running = False
+            #self.running = False
+            self.endIt()
             
         elif event.type == MOUSEMOTION: # Mausposition
             (mousex,mousey) = event.pos
@@ -414,7 +415,6 @@ class Main:
             server.disconnect()
         except:
             pass
-        pygame.mixer.music.stop()
         pygame.quit()
         sys.exit()
 
@@ -427,10 +427,16 @@ class Main:
             if not multiplayer and start_level > 0: self.interlevel_scene(finished_level_number)
             finished_level_number += 1
             music_change(level_music[finished_level_number])
-            if finished_level_number == start_level: score_info = MASTER.on_execute(multiplayer,start_level) # (Continue Bool, Punktzahl, bonustime)
+            if finished_level_number == start_level:
+                score_info = MASTER.on_execute(multiplayer,start_level) # (Continue Bool, Punktzahl, bonustime)
             else: score_info = MASTER.main()
+            print(finished_level_number)
             continue_game = score_info[0]
-            if continue_game: self.level_finished(score_info,finished_level_number)
+            if continue_game:
+                if (not multiplayer or score_info[3] == "won"): self.level_finished(score_info,finished_level_number)
+                else:
+                    self.blend_in_text("Too slow, no bonus this time",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*3,buttonHeight*2))
+                    time.sleep(2)
         if score_info[2] >= 0: # Test, ob durch F12 abgebrochen wurde oder nicht
             if finished_level_number == 5:
                 self.level_finished(score_info,finished_level_number)
@@ -446,7 +452,9 @@ class Main:
                 get_Highscore(playername,highscore)
         else: # Falls abgebrochen wurde keine Bonustime
             music_change(menu_music)
-            self.blend_in_text("Your Score: "+ str(score_info[1]) ,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+            if multiplayer: self.blend_in_text("Either you or your opponent left the game" ,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*5,buttonHeight*2))
+            time.sleep(2)
+            self.blend_in_text("Your Score: "+ str(score_info[1]) ,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*5,buttonHeight*2))
             get_Highscore(playername,score_info[1])
             time.sleep(2)
             return "Highscore_screen"
@@ -513,12 +521,15 @@ class Main:
                 Gameclient.client.disconnect()
                 server.disconnect_clients()
                 server.disconnect()    
-            except:
+            except IOError:
                 self.blend_in_text("Something went wrong..",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
                 time.sleep(2)
                 self.blend_in_text("Wait a minute and try again",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
                 time.sleep(2)
-                self.blend_in_text("Or maybe a server is already running",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
+                music_change(menu_music)
+            Gameclient.client.disconnect()
+            server.disconnect_clients()
+            server.disconnect() 
                
             time.sleep(2)
             return "Open_Multi_screen"         
@@ -541,7 +552,12 @@ class Main:
 
                 self.gameplay(True)
              
-            except : self.blend_in_text("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+            except :
+                try: self.blend_in_text("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+                except: self.endIt()
+                music_change(menu_music)
+                
+
             Gameclient.client.disconnect()
             time.sleep(2)     
             return self.menu_in_use.key_name
@@ -643,9 +659,9 @@ class Main:
         elif level == 3:
             leveltext = random.choice(Texts.level_3_texts)
         elif level == 4:
-            pass
+            leveltext = random.choice(Texts.level_4_texts)
         elif level == 5:
-            pass
+            leveltext = random.choice(Texts.level_5_texts)
         else:
             return False
         
@@ -726,7 +742,6 @@ class Main:
         # feldgröße ist Breite und Höhe Tupel
             text_surface = (feldgroeße,
                 (position[0] - int(feldgroeße[0]/2),position[1] - int(feldgroeße[1]/2)))
-        
             image = pygame.transform.scale(searchbar_image, text_surface[0])
             self.display_surf.blit(image,text_surface[1])
             self.showText(text,position,textsize)

@@ -13,7 +13,7 @@ class ServerGame(MastermindServerTCP):
         self.data_Player1 = None  # Data ist jetzt ein 3er Tupel mit Links/Rechts pos, Koords und erschaffener Kugel
         self.data_Player2 = None
         self.data_to_send = [None,None] # Liste der Tupel
-
+        self.indicator = ["",0]
 
         #Für die Objekte
         self.stuff_data_Player1 = None
@@ -21,7 +21,18 @@ class ServerGame(MastermindServerTCP):
         self.stuff_data_to_send = [None,None]
         
     def callback_client_handle(self, connection_object,data):
-        if data[0] == 0: # Verbindungsaufbau, Spielerzuweisung
+        if data == "gg" or self.indicator == "gg":
+            self.indicator = "gg"
+            data = "gg"
+            self.callback_client_send(connection_object, data)
+        elif data[0] == "level finished" or self.indicator[0] == "level finished":
+            if data[0] == "level finished": self.indicator = data
+            else:
+                data = self.indicator
+                self.indicator = ["",0]
+            self.callback_client_send(connection_object, data)
+            
+        elif data[0] == 0: # Verbindungsaufbau, Spielerzuweisung
             self.callback_client_send(connection_object, self.data_to_send)
             
         elif data[0] == -42: # Objektabgleich im Spiel

@@ -77,13 +77,18 @@ normal_level_3 = [("Leaving the vulcano, you calm down",None),
                   ("'What is going on? Where are these portals taking me?'",None),
                   ("'Why is every world more absurd than the one before?'",None),
                   ("'Why do I have to battle Pac-Mans.. I HATE Pac-Man..",None),
+                  ("The entire enterprise beginns to seem pointless to you",None),
+                  ("After one hour of travelling through the portal",None),
+                  ("You beginn to see a friendly looking planet","Gui/bg4.jpg"),
+                  ("You hope you'll find the clues you need",None),
+                  ("To get to the next level",None),]
 level_3_texts = [normal_level_3]
 
 ##########################
 #Level 4 finished Text
 ##########################
 
-normal_level_4 = [(" ",None),
+normal_level_4 = [("Finally, you found the right portal",None),
                   (" ",None),
                   (" ",None),
                   (" ",None),
@@ -97,7 +102,7 @@ level_4_texts = [normal_level_4]
 ##########################
 #Level 5 finished Text
 ##########################
-normal_level_4 = [(" ",None),
+normal_level_5 = [(" ",None),
                   (" ",None),
                   (" ",None),
                   (" ",None),
@@ -106,4 +111,4 @@ normal_level_4 = [(" ",None),
                   (" ",None),
                   (" ",None)]
 
-level_4_texts = [normal_level_4]
+level_5_texts = [normal_level_5]

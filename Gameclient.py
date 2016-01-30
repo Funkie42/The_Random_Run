@@ -20,14 +20,16 @@ def create_Client(mainport,mainclient_ip):
     client.connect(client_ip,port)
 
 def send_data(data):
-    # Data ist meist ein 4er Tupel mit Spieler, Links/Rechts pos, Koords und erschaffener Kugel
-    # Oder bei Objects mit Tupel mit Spieler,
     client.send(data)
-    #print(data)
-    if data[0] == 1:
-        return client.receive(True)[1]
+    recieved_data = client.receive(True)
+    if data == "gg" or recieved_data == "gg":
+        return "gg"
+    elif recieved_data[0] == "level finished":
+        return recieved_data
+    elif data[0] == 1: # Spieler 1 oder 2
+        return recieved_data[1]
     else:
-        return client.receive(True)[0]
+        return recieved_data[0]
 
 
 
