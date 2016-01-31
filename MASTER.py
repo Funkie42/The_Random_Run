@@ -10,7 +10,7 @@ multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 opponentscore = 0
-test_startlvl = 1# Für Testen
+test_startlvl = 5# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
@@ -806,8 +806,8 @@ def set_everything(start_level):
         w3 = construct_level(3)
         w3.sterbehoehe = 4000
         w4 = construct_level(4)
-        wend = construct_level(0)
-        game = [tut_w,w1,w2,w3,w4,wend] 
+        wmetzel = construct_level(6)
+        game = [tut_w,w1,w2,w3,w4,wmetzel] 
         current_level = game[start_level]
         score = 0 
         #for w in game:
@@ -858,15 +858,15 @@ def on_execute(multi_True = False,start_level = 1): # Multiplayer starten oder S
                                                                            (), # Positition des Spielers
                                                                            ()))
                                                         for event in pygame.event.get():
-                                                                if event.type == QUIT or  (event.type == KEYDOWN:and event.key == K_ESCAPE):
+                                                                if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                                                                         if multiplayer: send_data("gg")
                                                                         pygame.quit()
                                                                         sys.exit()
                                                                 elif event.type == KEYDOWN:
                                                                         if event.key == K_F12: # Für Beenden und zurück zum startmenü
                                                                                 if multiplayer: send_data("gg")
-                                                                                w.removeFromSpace()
-                                                                                w.finish = True
+                                                                                #w.removeFromSpace()
+                                                                                #w.finish = True
                                                                                 return (False,score,-1)
                                                                 
                                                         pygame.display.flip()

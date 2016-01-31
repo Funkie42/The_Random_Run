@@ -452,9 +452,9 @@ class Main:
                 get_Highscore(playername,highscore)
         else: # Falls abgebrochen wurde keine Bonustime
             music_change(menu_music)
-            if multiplayer: self.blend_in_text("Either you or your opponent left the game" ,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*5,buttonHeight*2))
+            if multiplayer: self.blend_in_text("Either you or your opponent left the game" ,(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*3,buttonHeight*2))
             time.sleep(2)
-            self.blend_in_text("Your Score: "+ str(score_info[1]) ,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*5,buttonHeight*2))
+            self.blend_in_text("Your Score: "+ str(score_info[1]) ,(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*3,buttonHeight*2))
             get_Highscore(playername,score_info[1])
             time.sleep(2)
             return "Highscore_screen"
@@ -512,8 +512,8 @@ class Main:
                 server.accepting_allow() 
                 client_ip = server_ip
                 Gameclient.create_Client(port,client_ip)
-
-                self.blend_in_text("Awaiting 2nd Player",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
+                self.showText("Abort with 'F12'",(int(WINDOWw/2),175),12)
+                self.blend_in_text("Awaiting 2nd Player",(int(WINDOWw/2),int(WINDOWh/2)),26,(buttonWidth*2,buttonHeight*2))
                 time.sleep(1)
                 
                 self.gameplay(True)
@@ -521,13 +521,15 @@ class Main:
                 Gameclient.client.disconnect()
                 server.disconnect_clients()
                 server.disconnect()    
-            except IOError:
+            except:
                 self.blend_in_text("Something went wrong..",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
                 time.sleep(2)
                 self.blend_in_text("Wait a minute and try again",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
+                self.blend_in_text("Maybe a server is running on you Computer already?",(int(WINDOWw/2),int(WINDOWh/1.3)),12,(int(buttonWidth*2.5),int(buttonHeight/2)))
                 time.sleep(2)
                 music_change(menu_music)
-            Gameclient.client.disconnect()
+            try: Gameclient.client.disconnect()
+            except: pass
             server.disconnect_clients()
             server.disconnect() 
                
