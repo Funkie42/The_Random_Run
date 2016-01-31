@@ -33,12 +33,17 @@ def send_data(data):
 
 
 
-def get_player_number():
+def get_player_number(ghostmode):
+    global p2_ghostmode
     player = 0
-    client.send([0])
-    if client.receive(True) == [None,None]:
+    client.send([0,ghostmode])
+    x = client.receive(True) 
+    if x == [None,None]:
         player = 1
     else:
         player = 2
-    return  player
+        if x == "duell":
+            return (player,False)
+            
+    return  (player,True)
     

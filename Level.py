@@ -19,7 +19,8 @@ w2_bild = "Gui/bg2.jpg"
 w3_bild = "Gui/bg3.jpg"
 w4_bild = "Gui/bg4.jpg"
 w5_bild = "Gui/bg5.jpg"
-bg_bilder = [tut_bild,w1_bild,w2_bild,w3_bild,w4_bild,w5_bild,w4_bild]
+w6_bild = w4_bild
+bg_bilder = [tut_bild,w1_bild,w2_bild,w3_bild,w4_bild,w5_bild,w6_bild]
 
 ########################Tutorial#######################################################################
 ###########Blöcke###################
@@ -290,7 +291,11 @@ w4_portal = 4
 #LEVEL5
 ###########Blöcke###################
 # Inhalt der Tupel:   ( left,   top,    width,  height)
-w5_blockkoordinaten = []
+w5_blockkoordinaten = [(100,100,100,100),
+                       (100,100,100,100),
+                       (100,100,100,100),
+                       (100,100,100,100),
+                       (100,100,100,100)]
 w5_textboxes = []
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 w5_boden_gegner = [] # TODO
@@ -299,7 +304,7 @@ w5_flug_gegner = []
 w5_powerups = []
 w5_speichpunkte = []
 w5_steine = []
-w5_portal = 11111
+w5_portal = 0
 
 #6 Level
 ###########Blöcke###################
@@ -308,24 +313,25 @@ w6_blockkoordinaten = [(300,7700,500,300),
                        (0,6000,300,2000),
                        (2300,6000,300,2000),
                        (300,6000,2000,300),
-                       (1800,7700,500,300), #4
+                       (2200,7700,100,300), #4
                        (100,100,1,1),
                        (700,7500,200,50),
                        (1700,7500,200,50),
                        (1000,7250,50,50),
                        (1300,7250,50,50),
-                       (1600,7250,50,50),
+                       (1600,7250,50,50), # 10
                        (700,7250,50,50),
                        (1850,7250,50,50),
                        (800,7000,50,50),
                        (1750,7000,50,50),
-                       (900,6800,750,50),
+                       (900,6800,750,50), #15
                        (950,6600,25,200),
                        (1600,6600,25,200),
                        (950,6300,25,200),
                        (1600,6300,25,200),
-                       (300,6700,200,50),
-                       (2150,6700,200,50)]
+                       (300,6700,200,50), #20
+                       (2150,6700,200,50),
+                       (1800,7700,400,300)]
 w6_textboxes = []
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 w6_boden_gegner = [] # TODO

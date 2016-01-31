@@ -33,7 +33,16 @@ class ServerGame(MastermindServerTCP):
             self.callback_client_send(connection_object, data)
             
         elif data[0] == 0: # Verbindungsaufbau, Spielerzuweisung
-            self.callback_client_send(connection_object, self.data_to_send)
+            if self.indicator == ["duell",0] and data[1] == True:
+                self.indicator = ["",0]
+                self.callback_client_send(connection_object, "duell")
+                
+            if data[1] == True: # Ghostmode
+                self.callback_client_send(connection_object, self.data_to_send)
+            else:
+                self.indicator = ["duell",0]
+                self.callback_client_send(connection_object, self.data_to_send)
+            
             
         elif data[0] == -42: # Objektabgleich im Spiel
             if data[1] == 1:
@@ -46,10 +55,10 @@ class ServerGame(MastermindServerTCP):
             
         else: # Datenaustausch im Spiel
             if data[0] == 1:
-                self.data_Player1 = (data[1],data[2],data[3])
+                self.data_Player1 = (data[1],data[2],data[3],data[4])
                 self.data_to_send[0] = self.data_Player1
             else:
-                self.data_Player2 = (data[1],data[2],data[3])
+                self.data_Player2 = (data[1],data[2],data[3],data[4])
                 self.data_to_send[1] = self.data_Player2
             self.callback_client_send(connection_object, self.data_to_send)
         

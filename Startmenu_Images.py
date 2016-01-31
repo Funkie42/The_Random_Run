@@ -83,22 +83,19 @@ open_screen_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/open_game
 open_screen_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/open_game_clicked.png")
 
 #Try Connecting Button
-#search_button = pygame.image.load(PFAD + "Gui/Buttons/bl_search_off.png") 
-#search_button_cursor_over  = pygame.image.load(PFAD + "Gui/Buttons/bl_search_on.png")
-#search_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/bl_search_clicked.png")
 search_button = pygame.image.load(PFAD + "Gui/Buttons/connect_off.png") 
 search_button_cursor_over  = pygame.image.load(PFAD + "Gui/Buttons/connect_on.png")
 search_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/connect_clicked.png")
 
 #Open a normal game Button
-host_normal_button = pygame.image.load(PFAD + "Gui/Buttons/ng_off.png") 
-host_normal_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/ng_on.png")
-host_normal_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/ng_clicked.png") 
+host_normal_button = pygame.image.load(PFAD + "Gui/Buttons/blue_ghostmode_off.png") 
+host_normal_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/blue_ghostmode_on.png")
+host_normal_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/blue_ghostmode_clicked.png") 
 
 #Open a minigame Button
-host_minigame_button = pygame.image.load(PFAD + "Gui/Buttons/mg_off.png")
-host_minigame_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/mg_on.png")
-host_minigame_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/mg_clicked.png") 
+host_minigame_button = pygame.image.load(PFAD + "Gui/Buttons/blue_duell_off.png")
+host_minigame_button_cursor_over = pygame.image.load(PFAD + "Gui/Buttons/blue_duell_on.png")
+host_minigame_button_clicked = pygame.image.load(PFAD + "Gui/Buttons/blue_duell_clicked.png") 
 
 #####################
 #Highscore Menu

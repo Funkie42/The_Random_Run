@@ -10,7 +10,7 @@ multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 opponentscore = 0
-test_startlvl = 5# Für Testen
+test_startlvl = 0# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
@@ -134,6 +134,7 @@ class Spieler(pygame.sprite.Sprite):
 #WELT/LEVELKLASSE
 class Welt():
         def __init__(self, BACKGROUNDSURF, boeden, hindernisse, power_ups, steine, speicherpunkte, portal, spieler1, spieler2, textboxes = []):
+                global current_speicherpunkt, hintergrund_rect
                 self.BACKGROUNDSURF = BACKGROUNDSURF
                 self.BACKGROUNDSURF = pygame.transform.scale(self.BACKGROUNDSURF, (int(LEVELSURF.get_width() * 2/3), DISPLAYSURF.get_height() + 25))
                 self.sterbehoehe = 200
@@ -144,9 +145,9 @@ class Welt():
                 self.speicherpunkte = speicherpunkte
                 self.portal = portal
                 self.textboxes = textboxes
-                self.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(self.boeden[0], [waypoint_sprite]))
-                global current_speicherpunkt, hintergrund_rect
-                current_speicherpunkt = self.speicherpunkte[0]
+                if multiplayer_ghostmode:
+                        self.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(self.boeden[0], [waypoint_sprite]))
+                        current_speicherpunkt = self.speicherpunkte[0]
                 #backup_hintergrund_rect = hintergrund_rect
                 self.spieler1 = spieler1 
                 self.spieler2 = spieler2
@@ -259,6 +260,7 @@ class Welt():
                         alle_spieler.append(self.anderer_spieler)
 
                 if not self.init:
+                        print(self.speicherpunkte)
                         self.spieler.body.position.x = self.speicherpunkte[0].rect.left
                         self.spieler.body.position.y = self.speicherpunkte[0].rect.top - 250
                         self.addToSpace()
@@ -565,6 +567,8 @@ explosion_sprite = SpriteSheet.SpriteSheet("Gui/explotion.png")
 
 lebensanzeige = pygame.image.load("Gui/powerups/heart.png")#.convert()
 lebensanzeige = pygame.transform.scale(lebensanzeige,(25,25))
+lebensanzeige2 = pygame.image.load("Gui/powerups/flash.png")#.convert()
+lebensanzeige2 = pygame.transform.scale(lebensanzeige2,(25,25))
 
 #SPIELER
 s = Spieler()
@@ -641,44 +645,48 @@ def main():
                                                         p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
                                                                            (current_level.spieler.direction,current_level.spieler.state), #  Richtung in die er schaut und sprite_in_use
                                                                            (current_level.spieler.body.position.x,current_level.spieler.body.position.y), # Positition des Spielers
-                                                                           ((current_level.spieler.direction,
-                                                                             new_kugel)))) # "Neue Kugel" (De facto alles um eine zu erstellen)
+                                                                           ((current_level.spieler.direction,new_kugel)),# "Neue Kugel" (De facto alles um eine zu erstellen)
+                                                                             (current_level.spieler.hitpoints,death_counter))) 
                                                         if p2_data == "gg":
                                                                 w.removeFromSpace()
                                                                 w.finish = True
                                                                 return (False,score,-1,"")
 
                                                         elif p2_data != None: # Sobald ein 2ter Spieler im Spiel ist
-                                                                
-                                                                (p2_direction, p2_koords, p2_kugel) = p2_data
-                                                                if p2_kugel[1]:
-                                                                        Kugel((900 * p2_direction[0], -75), p2_koords[0],p2_koords[1],p2_direction[0])
+                                                                (p2_direction, p2_koords, p2_kugel,p2_hits) = p2_data
+                                                                try:#Anderen Spieler Daten setzten für Anzeige
+                                                                        
+                                                                        if p2_kugel[1]:
+                                                                                k = Kugel((900 * p2_direction[0], -75),(155,0,0), p2_koords[0],p2_koords[1],p2_direction[0])
+                                                                                k.shape.collision_type = 3
+                                                                        current_level.anderer_spieler.state = p2_direction[1]
+                                                                        current_level.anderer_spieler.body.position.x = p2_koords[0]
+                                                                        current_level.anderer_spieler.body.position.y = p2_koords[1]
+                                                                        current_level.anderer_spieler.direction = p2_direction[0]
+                                                                        current_level.anderer_spieler.hitpoints = p2_hits[0]
+                                                                        opponentscore = p2_hits[1]
+                                                                except: pass
 
-                                                                        #Anderen Spieler Daten setzten für Anzeige
-                                                                current_level.anderer_spieler.state = p2_direction[1]
-                                                                current_level.anderer_spieler.body.position.x = p2_koords[0]
-                                                                current_level.anderer_spieler.body.position.y = p2_koords[1]
-                                                                current_level.anderer_spieler.direction = p2_direction[0]
 
                                                                 
                                                 else: # Ghostmode
                                                         p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
                                                                            (current_level.spieler.direction,current_level.spieler.state), #  Richtung in die er schaut und sprite_in_use
                                                                            (current_level.spieler.body.position.x,current_level.spieler.body.position.y),
-                                                                             (score))) # Positition des Spielers
+                                                                             (score),())) # Positition des Spielers
                                                         if p2_data == "gg":
                                                                 w.removeFromSpace()
                                                                 w.finish = True
                                                                 return (False,score,-1,"")
                                                         elif p2_data[0] == "level finished":
-                                                                print(game.index(current_level))
+                                                                #print(game.index(current_level))
                                                                 w.removeFromSpace()
                                                                 w.finish = True
                                                                 if game.index(current_level) + 1 < len(game):
                                                                         current_level = game[game.index(current_level) + 1]
                                                                 return(True,score,0,"lost")
                                                         elif p2_data != None: # Sobald ein 2ter Spieler im Spiel ist
-                                                                (p2_direction, p2_koords,p2_score) = p2_data
+                                                                (p2_direction, p2_koords,p2_score,_) = p2_data
                                                                 try:
                                                                         current_level.anderer_spieler.state = p2_direction[1]
                                                                         current_level.anderer_spieler.body.position.x = p2_koords[0]
@@ -706,7 +714,7 @@ def main():
                                 ### Highscoreanzeige ###
                                 if bonustime > 0: bonustime = 300 - int(time.time() - start_time - pause_time)
                                 else: bonustime = 0
-                                if not TOMFAKTOR:
+                                if not TOMFAKTOR and multiplayer_ghostmode:
                                         bonustime_string = "Bonustime: " + str(bonustime)
                                         show_text(bonustime_string,20,(255,255,255),(20,20))
                                         score_string =  "Score: " + str(score)
@@ -731,9 +739,6 @@ def main():
                                                         show_text("He gets the Bonusscore and the level ends",20,(255,255,255),(333,20))
                                                 if (frame_counter > 500 and frame_counter < 600):
                                                         show_text("May the fastest win",20,(255,255,255),(333,20))
-                                                        
-                                                
-                                                
                                         if frame_counter > 500000000: frame_counter = 0
                                         if not multiplayer:
                                                 if old_death_counter < death_counter or dead_show > 0:
@@ -743,18 +748,52 @@ def main():
                                                 if kill_counter > 0:
                                                         kill_counter -= 1
                                                         kill_string = "+10"
-                                                        show_text(kill_string,scorechange_size,(0,155,0),(250,42))                                         
+                                                        show_text(kill_string,scorechange_size,(0,155,0),(250,42))
+                                                        
+                                if not multiplayer_ghostmode and not TOMFAKTOR:
+                                                show_text("P1 Kills: " + str(opponentscore),20,(255,255,255),(200,20))
+                                                show_text("P2 Kills: "+ str(death_counter),20,(55,55,55),(200,50))
+                                                if (frame_counter > 100 and frame_counter < 200):
+                                                        show_text("Welcome to the Duell-Mode",20,(255,255,255),(333,20))
+                                                if (frame_counter > 200 and frame_counter < 300):
+                                                        show_text("2 Players, unlimited ammo, 10 Lives",20,(255,255,255),(333,20))
+                                                if (frame_counter > 300 and frame_counter < 400):
+                                                        show_text("Let's dance!",20,(255,255,255),(333,20))
+                                                if (frame_counter > 400 and frame_counter < 500):
+                                                        show_text("But remember, not every hit kills",20,(255,255,255),(333,20))
                                         
                                 lebenscounter = 0
                                 for life in range(0,w.spieler.hitpoints):
                                         distance = 20
-                                        DISPLAYSURF.blit(lebensanzeige,(distance+ lebenscounter * 30,50))
+                                        if multiplayer_ghostmode: lifeheight = 50
+                                        else: lifeheight = 20
+                                        DISPLAYSURF.blit(lebensanzeige,(distance+ lebenscounter * 30,lifeheight))
                                         lebenscounter += 1
+                                if not multiplayer_ghostmode:
+                                        lebenscounter = 0
+                                        for life in range(0,w.anderer_spieler.hitpoints):
+                                                distance = 20
+                                                lifeheight = 50
+                                                DISPLAYSURF.blit(lebensanzeige2,(distance+ lebenscounter * 30,lifeheight))
+                                                lebenscounter += 1                                        
+                                        
                                         
 
 
                                 pygame.display.flip()
-                                
+                                if not multiplayer_ghostmode:
+                                        if death_counter >= 10:
+                                                send_data((playing_Spieler, # Spieler 1 oder 2
+                                                                           (current_level.spieler.direction,current_level.spieler.state), #  Richtung in die er schaut und sprite_in_use
+                                                                           (current_level.spieler.body.position.x,current_level.spieler.body.position.y), # Positition des Spielers
+                                                                           ((current_level.spieler.direction,new_kugel)),# "Neue Kugel" (De facto alles um eine zu erstellen)
+                                                                             (current_level.spieler.hitpoints,death_counter)))
+                                                #global multiplayer_ghostmode, multiplayer,current_level
+                                                #multiplayer_ghostmode = True
+                                                #current_level = None
+                                               # multiplayer = False
+                                                return False,1,1,"duell","lost"
+                                        elif opponentscore >= 10: return False,1,1,"duell","won"                                        
                                 if w.finish and __name__ != "__main__":
                                         old_score = score
                                         score += bonustime
@@ -800,63 +839,59 @@ def construct_level(level):
         
 def set_everything(start_level):
         global current_level,game,score
-        tut_w = construct_level(0)
+        game = []
+        if start_level == 0:
+                game.append(construct_level(0))
+        elif start_level == 6:
+                game.append(construct_level(6))
+        else:
+                for w in range(start_level,6):
+                        game.append(construct_level(w))
+        '''tut_w = construct_level(0)
         w1 = construct_level(1)
         w2 = construct_level(2)
         w3 = construct_level(3)
         w3.sterbehoehe = 4000
         w4 = construct_level(4)
+        w5 = construct_level(5)
         wmetzel = construct_level(6)
-        game = [tut_w,w1,w2,w3,w4,wmetzel] 
-        current_level = game[start_level]
+        game = [tut_w,w1,w2,w3,w4,w5,wmetzel] '''
+        current_level = game[0]#start_level
         score = 0 
         #for w in game:
         #        w.finish = False
                 
-def on_execute(multi_True = False,start_level = 1): # Multiplayer starten oder Singleplayer (bei False singleplayer)
-        global multiplayer,survival_time,playing_Spieler
-        multiplayer = multi_True     
+def on_execute(multi_True = False,start_level = 1, ghostmode = True): # Multiplayer starten oder Singleplayer (bei False singleplayer)
+        global multiplayer,survival_time,playing_Spieler,multiplayer_ghostmode, current_level, current_speicherpunkt
+        multiplayer = multi_True
+        multiplayer_ghostmode = ghostmode
         survival_time = time.time()#Für Highscore
-
-
-        
-        set_everything(start_level)
-        if multiplayer:
-                if __name__ == "__main__":
-                        try:
-                                print("Client connecting on \""+client_ip+"\", port "+str(port)+" . . .")
-                                create_Client(42042,'localhost')#192.168.178.37')
-                                print("Client connected!")
-                                playing_Spieler = get_player_number()
-                                #print(playing_Spieler)
-                                for w in game:
-                                        if playing_Spieler == 1:
-                                                w.spieler = current_level.spieler1# Der Spieler den dieser PC steuert
-                                                w.anderer_spieler = current_level.spieler2
-                                        else:
-                                                w.spieler = current_level.spieler2
-                                                w.anderer_spieler = current_level.spieler1
-                                main()
-                                client.disconnect()
-                                print("Client disconnected!")
-                        except MastermindError:
-                                print("No server found! Please start Server and try again!")
-                                pygame.quit()
-                                sys.exit()
-                else: # Start aus dem Menü heraus
-                        playing_Spieler = get_player_number()
+        if multiplayer: # Start nur aus dem Menü heraus
+                        playing_Spieler,p2_ghostmode = get_player_number(multiplayer_ghostmode)
+                        if playing_Spieler == 2 and not p2_ghostmode:
+                                multiplayer_ghostmode = p2_ghostmode
+                                set_everything(6)
+                        elif not ghostmode: set_everything(6)
+                        else: set_everything(1)
                         for w in game:
                                 if playing_Spieler == 1:
                                                 w.spieler = current_level.spieler1# Der Spieler den dieser PC steuert
                                                 w.anderer_spieler = current_level.spieler2
                                                 if multiplayer_ghostmode:
                                                         w.anderer_spieler.shape.collision_type = 0
+                                                else:
+                                                        w.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(w.boeden[0], [waypoint_sprite]))
+                                                        current_speicherpunkt = w.speicherpunkte[0]
+                                                        w.anderer_spieler.shape.collision_type = 3
                                                 awaiting_snd_player = True
                                                 while awaiting_snd_player:
+                                                        #print(playing_Spieler)
                                                         p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
                                                                            (), #  Richtung in die er schaut und sprite_in_use
                                                                            (), # Positition des Spielers
+                                                                           (),
                                                                            ()))
+                                                        #print(p2_data)
                                                         for event in pygame.event.get():
                                                                 if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                                                                         if multiplayer: send_data("gg")
@@ -876,8 +911,15 @@ def on_execute(multi_True = False,start_level = 1): # Multiplayer starten oder S
                                                 w.spieler = current_level.spieler2
                                                 w.anderer_spieler = current_level.spieler1
                                                 if multiplayer_ghostmode: w.anderer_spieler.shape.collision_type = 0
+                                                else:
+                                                        w.speicherpunkte = []
+                                                        w.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(w.boeden[4], [waypoint_sprite]))
+                                                        current_speicherpunkt = w.speicherpunkte[0]
+                                                        w.anderer_spieler.shape.collision_type = 3
+                                                        
                         return main()
         else:
+                set_everything(start_level)
                 for w in game: w.spieler = w.spieler1
                 if __name__ == "__main__": main()
                 # Singelplayerstart aus dem Menü heraus

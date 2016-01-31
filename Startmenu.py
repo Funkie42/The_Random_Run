@@ -99,7 +99,7 @@ bonus_running_sound ="Sounds/tztztztztztz.ogg"
 bonus_done_sound = "Sounds/melodie.ogg"
 
 game_music = 'Sounds/sequenz.ogg'
-level_music = ['Sounds/lvl1.ogg','Sounds/lvl1.ogg','Sounds/lvl2.ogg','Sounds/lvl3.ogg','Sounds/lvl4.ogg','Sounds/lvl5.ogg']
+level_music = ['Sounds/lvl1.ogg','Sounds/lvl1.ogg','Sounds/lvl2.ogg','Sounds/lvl3.ogg','Sounds/lvl4.ogg','Sounds/lvl5.ogg','Sounds/lvl5.ogg']
 menu_music = "Sounds/bg_music.ogg"
 
 
@@ -197,7 +197,7 @@ class Button(pygame.Surface):
             return open_screen_button,open_screen_button_cursor_over,open_screen_button_clicked
         elif self.goto_menutitle == "Open_game": # Multiplayer normales Spiel
             return host_normal_button,host_normal_button_cursor_over,host_normal_button_clicked
-        elif self.goto_menutitle == "Awaiting_Player_screen": # Multiplayer normales Spiel
+        elif self.goto_menutitle == "Open_duell_game": # Multiplayer normales Spiel
             return host_minigame_button,host_minigame_button_cursor_over,host_minigame_button_clicked        
 
     ##############
@@ -285,7 +285,7 @@ class Menu:
 
             elif self.menuname == "Open TCP-Server": 
                 self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos,"Open_game"))
-                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos, firstButtonYpos +buttonHeight+ int(buttonDistance/2),"Awaiting_Player_screen"))
+                self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos, firstButtonYpos +buttonHeight+ int(buttonDistance/2),"Open_duell_game"))
 
             elif self.menuname == "Enter Multiplayergame":
                 self.surfaces.append( (   (buttonWidth*2 + buttonDistance,buttonHeight), (firstButtonXpos,firstButtonYpos)  ) )
@@ -294,9 +294,6 @@ class Menu:
                 self.writeable_text =  ip
                 self.buttons.append(Button(buttonWidth*2 + buttonDistance,buttonHeight,firstButtonXpos,firstButtonYpos + buttonDistance*2,"Search"))
 
-            elif self.menuname == "Awaiting second player":
-                self.texts.append(("Let a friend join in to start the randomness!",(WINDOWw/2,WINDOWh/2-50),30))
-                self.texts.append(("(If you have one...)",(WINDOWw/2,WINDOWh/2-25),10))
                 
             elif self.menuname == "Choose name":
                 self.buttons.append(Button(buttonWidth,buttonHeight,firstButtonXpos + int((buttonWidth + buttonDistance)/2),firstButtonYpos+ int(buttonHeight*1.5),"confirm_name"))
@@ -335,7 +332,6 @@ class Main:
                       "Open_Multi_screen": Menu ("Open TCP-Server","Open_Multi_screen"),
                       "Link_In_screen": Menu("Enter Multiplayergame","Link_In_screen"),
                       "Open_game":Menu("Open_game","Open_game"), # Öffnet Multiplayerspiel
-                      "Awaiting_Player_screen": Menu("Awaiting second player","Awaiting_Player_screen"),
                      "Choose_name_screen": Menu("Choose name","Choose_name_screen")} 
 
         self.menu_in_use = self.menus["Start_screen"] # Startmenu in Benutzung
@@ -420,7 +416,7 @@ class Main:
 
 
         
-    def gameplay(self,multiplayer,start_level = 1):
+    def gameplay(self,multiplayer,start_level = 1,ghostmode = True):
         finished_level_number = start_level -1
         continue_game = True
         while continue_game:
@@ -428,9 +424,27 @@ class Main:
             finished_level_number += 1
             music_change(level_music[finished_level_number])
             if finished_level_number == start_level:
-                score_info = MASTER.on_execute(multiplayer,start_level) # (Continue Bool, Punktzahl, bonustime)
+                score_info = MASTER.on_execute(multiplayer,start_level,ghostmode) # (Continue Bool, Punktzahl, bonustime)
             else: score_info = MASTER.main()
-            print(finished_level_number)
+            if len(score_info) == 5: # Duell
+                if score_info[4] == "lost":
+                    self.blend_in_text("YOU LOSE",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*3,buttonHeight*2))
+                    time.sleep(2)
+                    lose_texts = ["Too slow, too weak, too everything","No match for the man","Better luck next time","Oh, my pooor baaaby","The babo got you",
+                                  "Maybe you should try cheating", "I'm glad not to be you","Really? That's all you've got?","Why are you hitting yourself?",
+                                  "No money, no game; no skill, no fame","That's gotta hurt"]
+                    lose_text = random.choice(lose_texts)
+                    self.blend_in_text(lose_text,(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*3,buttonHeight*2))
+                    time.sleep(3)
+                if score_info[4] == "won":
+                    self.blend_in_text("YOU WIN",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*3,buttonHeight*2))
+                    time.sleep(2)
+                    win_texts = ["You're a master of game","Good, better, " +playername + "!", "Rock, paper, KABAM!","Better than McGyver","Chabos be like 'Whaaat'",
+                                 "Daddy's home","M-m-m-monsterkill","He didn't even see you coming"]
+                    win_text = random.choice(win_texts)
+                    self.blend_in_text(win_text,(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*3,buttonHeight*2))
+                    time.sleep(3)
+                return
             continue_game = score_info[0]
             if continue_game:
                 if (not multiplayer or score_info[3] == "won"): self.level_finished(score_info,finished_level_number)
@@ -503,9 +517,9 @@ class Main:
             time.sleep(1)
             return self.gameplay(False,start_level)
         ###################################################################################################
-        # Multiplayer Open Game
+        # Multiplayer Open Game or Duell Game
         ###################################################################################################
-        elif(button.goto_menutitle == "Open_game"):
+        elif(button.goto_menutitle == "Open_game" or button.goto_menutitle == "Open_duell_game"):
             try:
                 server = Gameserver.ServerGame()
                 server.connect(server_ip,port)
@@ -516,12 +530,13 @@ class Main:
                 self.blend_in_text("Awaiting 2nd Player",(int(WINDOWw/2),int(WINDOWh/2)),26,(buttonWidth*2,buttonHeight*2))
                 time.sleep(1)
                 
-                self.gameplay(True)
+                if button.goto_menutitle == "Open_game": self.gameplay(True)
+                else: self.gameplay(True,6,False)
              
                 Gameclient.client.disconnect()
                 server.disconnect_clients()
                 server.disconnect()    
-            except:
+            except IOError:
                 self.blend_in_text("Something went wrong..",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
                 time.sleep(2)
                 self.blend_in_text("Wait a minute and try again",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
@@ -535,7 +550,7 @@ class Main:
                
             time.sleep(2)
             return "Open_Multi_screen"         
-        
+
         ###############################
         #Mulitplayer Link in
         ###############################
@@ -554,7 +569,7 @@ class Main:
 
                 self.gameplay(True)
              
-            except :
+            except IOError:
                 try: self.blend_in_text("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
                 except: self.endIt()
                 music_change(menu_music)
