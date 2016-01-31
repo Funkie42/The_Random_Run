@@ -275,11 +275,11 @@ w3_portal = 29
 # Inhalt der Tupel:   ( left,   top,    width,  height)
 schräge = []
 x = 2000
-while x < 3600:
-    y = 8070 - x
-    schräge.append((x,y,1,20))
-    x += 3
-w4_blockkoordinaten = [(3900,4500,10,10),#(150,7750,400,250),
+#while x < 3600:
+#    y = 8070 - x
+#    schräge.append((x,y,1,20))
+#    x += 3
+w4_blockkoordinaten = [(150,7750,400,250),
                        (700,7750,300,250),
                        (0,6700,100,1300),
                        (100,7750,50,250), #3
