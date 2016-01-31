@@ -10,7 +10,7 @@ multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 opponentscore = 0
-test_startlvl = 0# Für Testen
+test_startlvl = 4# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
@@ -26,6 +26,7 @@ kugel_sound  = "Sounds/phaser.wav"
 portal_sound = "Sounds/swoop.wav"
 waypoint_sound = "Sounds/wp.wav"
 rocket_sound = "Sounds/rocket_sound.wav"
+jumppad_sound = "Sounds/jump_pad.ogg"
 
 
 
@@ -236,7 +237,6 @@ class Welt():
                         i.body.velocity.x = 0
                         if rect.colliderect(i.rect):
                                 LEVELSURF.blit(i.sprite_list[i.sprite_iterator], i.rect)
-
                 for i in self.speicherpunkte:
                          if rect.colliderect(i.rect):
                                 LEVELSURF.blit(i.sprite_list[i.sprite_iterator], i.rect)
@@ -260,7 +260,6 @@ class Welt():
                         alle_spieler.append(self.anderer_spieler)
 
                 if not self.init:
-                        print(self.speicherpunkte)
                         self.spieler.body.position.x = self.speicherpunkte[0].rect.left
                         self.spieler.body.position.y = self.speicherpunkte[0].rect.top - 250
                         self.addToSpace()
@@ -447,6 +446,7 @@ def player_jumps_fliegender_gegner(space, arbiter):
 
 def player_jumps_highjump(space, arbiter):
         if arbiter.contacts[0].normal.int_tuple[0] == 0:
+                pygame.mixer.Sound(jumppad_sound).play()
                 current_level.spieler.body.velocity.y = -1000
                 current_level.spieler.double_jump_counter = 1
         else:
@@ -570,10 +570,6 @@ lebensanzeige = pygame.transform.scale(lebensanzeige,(25,25))
 lebensanzeige2 = pygame.image.load("Gui/powerups/flash.png")#.convert()
 lebensanzeige2 = pygame.transform.scale(lebensanzeige2,(25,25))
 
-#SPIELER
-s = Spieler()
-s2 = Spieler()
-
 
 #SPIEL
 game = []
@@ -612,6 +608,7 @@ def main():
                                                         if multiplayer: send_data("gg")
                                                         w.removeFromSpace()
                                                         w.finish = True
+                                                        if not multiplayer_ghostmode: return False,1,1,"duell","defaultlose"
                                                         return (False,score,-1)
                                                 if event.key == K_p and not multiplayer: #Pause TODO
                                                         pass
@@ -650,6 +647,7 @@ def main():
                                                         if p2_data == "gg":
                                                                 w.removeFromSpace()
                                                                 w.finish = True
+                                                                if not multiplayer_ghostmode: return False,1,1,"duell","defaultwin"
                                                                 return (False,score,-1,"")
 
                                                         elif p2_data != None: # Sobald ein 2ter Spieler im Spiel ist
@@ -807,7 +805,7 @@ def show_text(text,size,color,position):
         thisRect.x = position[0]
         thisRect.y = position[1]
         DISPLAYSURF.blit(thisPrint,thisRect)
-def construct_level(level):
+def construct_level(level,players):
         blocks = []
         leveldesign_block = pygame.image.load(Level.level_grounds[level]).convert() # z.B. level1_ground oder so
         for blockkoord in Level.blockkoords[level]:
@@ -833,20 +831,27 @@ def construct_level(level):
         for stein in Level.steine[level]:
                         spaceshuttles.append(Boden.Stein(blocks[stein], turbine_sprite))
         p = Speicherpunkt.Portal(blocks[Level.portale[level]], [portal2_sprite])
-        bild = pygame.image.load(Level.bg_bilder[level]).convert() 
-        return Welt(bild,blocks,enemys,powerups,spaceshuttles,waypoints,p,s,s2,texts)
+        bild = pygame.image.load(Level.bg_bilder[level]).convert()
+
+        return Welt(bild,blocks,enemys,powerups,spaceshuttles,waypoints,p,players[0],players[1],texts)
 
         
 def set_everything(start_level):
+        #SPIELER
+        s = Spieler()
+        s2 = Spieler()
         global current_level,game,score
         game = []
         if start_level == 0:
-                game.append(construct_level(0))
+                game.append(construct_level(0,(s,s2)))
         elif start_level == 6:
-                game.append(construct_level(6))
+                game.append(construct_level(6,(s,s2)))
         else:
                 for w in range(start_level,6):
-                        game.append(construct_level(w))
+                        x = construct_level(w,(s,s2))
+                        game.append(x)
+                        if w == 3: x.sterbehoehe = 4000
+                        if w == 4: x.sterbehoehe = 100
         '''tut_w = construct_level(0)
         w1 = construct_level(1)
         w2 = construct_level(2)
@@ -915,8 +920,7 @@ def on_execute(multi_True = False,start_level = 1, ghostmode = True): # Multipla
                                                         w.speicherpunkte = []
                                                         w.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(w.boeden[4], [waypoint_sprite]))
                                                         current_speicherpunkt = w.speicherpunkte[0]
-                                                        w.anderer_spieler.shape.collision_type = 3
-                                                        
+                                                        w.anderer_spieler.shape.collision_type = 3                            
                         return main()
         else:
                 set_everything(start_level)

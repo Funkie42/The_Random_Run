@@ -444,6 +444,15 @@ class Main:
                     win_text = random.choice(win_texts)
                     self.blend_in_text(win_text,(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*3,buttonHeight*2))
                     time.sleep(3)
+                if score_info[4] == "defaultlose":
+                    self.blend_in_text("You quitter!",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*3,buttonHeight*2))
+                    time.sleep(2)
+                if score_info[4] == "defaultwin":
+                    self.blend_in_text("Your opponent left the game",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*3,buttonHeight*2))
+                    time.sleep(2)
+                    self.blend_in_text("You win by default!",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*3,buttonHeight*2))
+                    time.sleep(2)                    
+                music_change(menu_music)
                 return
             continue_game = score_info[0]
             if continue_game:
