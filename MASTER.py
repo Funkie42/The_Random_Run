@@ -10,7 +10,7 @@ multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 opponentscore = 0
-test_startlvl = 4# Für Testen
+test_startlvl = 1# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
@@ -180,7 +180,8 @@ class Welt():
                 for i in self.steine:
                         space.remove(i.body, i.shape)
                 for i in self.hindernisse:
-                        i.remove(space)
+                        if not i.dead:
+                                i.remove(space)
                 for i in self.power_ups:
                         space.remove(i.body, i.shape)
                 for i in self.speicherpunkte:
@@ -211,22 +212,24 @@ class Welt():
                                 LEVELSURF.blit(i.current_sprite(),i.center_rect())
                                
                 for i in self.hindernisse:
-                        if (i.body.position.y > LEVELSURF.get_height() - self.sterbehoehe or i.hitpoints < 0 )and i in self.hindernisse: #evtl zu updaten
-                                ex = Explotion(i.body)
-                                self.hindernisse.remove(i)
-                                space.remove(i.body, i.shape)
-                                global kill_counter
-                                kill_counter += 15
-                        if rect.colliderect(i.center_rect()):
-                                LEVELSURF.blit(i.current_sprite(), i.center_rect())
-                                random_int = random.randint(0,800)
-                                if random_int == 100:
-                                        i.engage(self.spieler.body.position.x)
-                                if i.kugel_counter == i.feuerrate:
-                                        k = Kugel((1200 * i.direction, -50),((245,12,188)), i.body.position.x + (15 * i.direction), i.body.position.y - 10, False)
-                                        k.shape.collision_type = 3
-                                        k.shape.sprite_group = 2
-                        i.update()
+                        if not i.dead:
+                                if (i.body.position.y > LEVELSURF.get_height() - self.sterbehoehe or i.hitpoints < 0 )and i in self.hindernisse: #evtl zu updaten
+                                        ex = Explotion(i.body)
+                                        i.dead = True
+                                        #self.hindernisse.remove(i)
+                                        space.remove(i.body, i.shape)
+                                        global kill_counter
+                                        kill_counter += 15
+                                if rect.colliderect(i.center_rect()):
+                                        LEVELSURF.blit(i.current_sprite(), i.center_rect())
+                                        random_int = random.randint(0,800)
+                                        if random_int == 100:
+                                                i.engage(self.spieler.body.position.x)
+                                        if i.kugel_counter == i.feuerrate:
+                                                k = Kugel((1200 * i.direction, -50),((245,12,188)), i.body.position.x + (15 * i.direction), i.body.position.y - 10, False)
+                                                k.shape.collision_type = 3
+                                                k.shape.sprite_group = 2
+                                i.update()
                                 
                 for i in self.power_ups:
                         if i.body.position.y > LEVELSURF.get_height() - self.sterbehoehe and i in self.power_ups: #evtl zu updaten
@@ -282,6 +285,15 @@ class Welt():
                                         spieler.hitpoints = hitpoints
                                         for j in self.steine:
                                                 j.respawn()
+                                        for j in self.hindernisse:
+                                                if j.dead:
+                                                        j.dead = False
+                                                        j.init(space)
+                                                        j.body.position = j.start
+                                                        j.hitpoints = j.baseHitpoints
+                                                        j.body.velocity.y = 0
+                                                        j.body.velocity.x = 0
+                                                        j.moveSpeed = j.baseMoveSpeed
                                         spieler.body.velocity.x = 0
                                         spieler.body.velocity.y = -50
                                         spieler.body.position = (current_speicherpunkt.rect.left + 50, current_speicherpunkt.rect.top - 200)
@@ -425,6 +437,9 @@ def player_jumps_gegner(space, arbiter):
         if arbiter.contacts[0].normal.int_tuple[0] == 0:
                 current_level.spieler.body.velocity.y = -650
                 current_level.spieler.double_jump_counter = 1
+                for i in current_level.hindernisse:
+                        if i.body == arbiter.shapes[1].body:
+                                i.hitpoints -= 2
         else:
                 current_level.spieler.hitpoints -= 1
                 current_level.spieler.body.velocity.x = -450 * current_level.spieler.direction
@@ -817,7 +832,8 @@ def construct_level(level,players):
                         texts.append(Boden.Textbox(pygame.Rect(textbox[0],textbox[1],textbox[2],textbox[3],),pygame.font.Font('freesansbold.ttf', textbox[4]).render(textbox[5],True,(255,255,255))))
         enemys = []
         for gegner in Level.bodengegner[level]:
-            enemys.append(Hindernis.Gegner(blocks[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
+                if gegner[2] == Level.zyklop_sprite: enemys.append(Hindernis.Gegner(blocks[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4],1))
+                else:enemys.append(Hindernis.Gegner(blocks[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
         for gegner in Level.fluggegner[level]:
             enemys.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6],gegner[7]))
         waypoints = []
@@ -922,6 +938,3 @@ def on_execute(multi_True = False,start_level = 1, ghostmode = True): # Multipla
 
 
 if __name__ == "__main__":      on_execute(multiplayer,test_startlvl)
-
-
-

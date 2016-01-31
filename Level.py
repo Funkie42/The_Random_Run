@@ -1,4 +1,4 @@
-import SpriteSheet
+import SpriteSheet, pygame
 
 #SPIELERSPRITES
 character_sprite = SpriteSheet.SpriteSheet("Gui/character.png")
@@ -6,6 +6,7 @@ character2_sprite = SpriteSheet.SpriteSheet("Gui/character2.png")
 alien_sprite = SpriteSheet.SpriteSheet("Gui/alien.png")
 pacman_sprite = SpriteSheet.SpriteSheet("Gui/epm_spritesheet.png")
 zyklop_sprite = SpriteSheet.SpriteSheet("Gui/zyklop.png")
+zyklop_sprite.sprite_sheet = pygame.transform.flip(zyklop_sprite.sprite_sheet,True,False)
 
 #GELÄNDESPRITES
 level_grounds = ["Gui/ground5.png","Gui/ground.png",
@@ -135,11 +136,11 @@ w1_blockkoordinaten = [(50, 3000, 300, 50),
                        (4300, 2100, 50, 50)]
 
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
-w1_boden_gegner = [(2, 3, alien_sprite, 50, 100),
+w1_boden_gegner = ((2, 3, zyklop_sprite, 50, 100),
                    (5, 3, alien_sprite, 100, 100),
                    (8, 3, alien_sprite, 1, 100),
                    (12, 3, alien_sprite, 10, 100),
-                   (30, 10, alien_sprite, 10, 10)]
+                   (30, 10, alien_sprite, 10, 10))
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
 w1_flug_gegner = [(1600, 2100, 3850, 4, pacman_sprite, 10, 100,True),
                   (900, 1450, 3850, 6, pacman_sprite, 10, 100,True),
