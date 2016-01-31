@@ -79,36 +79,53 @@ normal_level_3 = [("Leaving the vulcano, you calm down",None),
                   ("'Why do I have to battle Pac-Mans.. I HATE Pac-Man..",None),
                   ("The entire enterprise beginns to seem pointless to you",None),
                   ("After one hour of travelling through the portal",None),
-                  ("You beginn to see a friendly looking planet","Gui/bg4.jpg"),
+                  ("You beginn to see a mysterious planet","Gui/bg4.jpg"),
                   ("You hope you'll find the clues you need",None),
-                  ("To get to the next level",None),]
+                  ("To get to the next level",None),
+                  ("And to get home",None),]
 level_3_texts = [normal_level_3]
 
 ##########################
 #Level 4 finished Text
 ##########################
 
-normal_level_4 = [("Finally, you found the right portal",None),
-                  (" ",None),
-                  (" ",None),
-                  (" ",None),
-                  (" ",None),
-                  (" ",None),
-                  (" ",None),
-                  (" ",None)]
+normal_level_4 = [("'What were these Spaceships?!'",None),
+                  ("At least now you knew what you are up against",None),
+                  ("But since you defeated them, you feel like you can do this",None),
+                  ("The shadow pops up in your mind",None),
+                  ("'So he's the leader..'",None),
+                  ("You get to a door, in the middle of the portalstream",None),
+                  ("When you knock, a red alien opens the door",None),
+                  ("You draw your gun when he starts screaming:",None)
+                  ("'Don't shoot me! I can show you the way!', he utters",None),
+                  ("'What way? Where to?', you ask mistrustingly",None),
+                  ("'The ship where he is!'",None),
+                  ("'He.. you mean..' 'Yes! The shadow!'",None),
+                  ("'Take me there!', you demand, 'I want to go home!'",None),
+                  ("The alien agrees with a grin on his face",None),
+                  ("Soon you can see the end of the portal",None),
+                  ("The ship is gigantic",None),
+                  ("You realize you red guide is gone",None),
+                  ("Where did he go? Maybe another portal?",None)]
 
 level_4_texts = [normal_level_4]
 
 ##########################
 #Level 5 finished Text
 ##########################
-normal_level_5 = [(" ",None),
-                  (" ",None),
-                  (" ",None),
-                  (" ",None),
-                  (" ",None),
-                  (" ",None),
-                  (" ",None),
-                  (" ",None)]
+normal_level_5 = [("Finally! You defeated him",None),
+                  ("As you step in the portal you take one glance back",None),
+                  ("'Well, that was wierd', you say",None),
+                  ("'Where the heck did I even GET that gun from?",None),
+                  ("And what was up with that suit?",None),
+                  ("I was in my pyjamas when this started!'",None),
+                  ("You're left with more questions than answers",None),
+                  ("You reach home, but what was that all?",None)
+                  ("An illusion or reality?",None),
+                  ("Fiction or thread?",None),
+                  ("Me, a dreamer or a hero?",None),
+                  ("You'll probably never know",None),
+                  ("THE END",None),
+                  ("?",None),]
 
 level_5_texts = [normal_level_5]

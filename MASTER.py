@@ -852,19 +852,8 @@ def set_everything(start_level):
                         game.append(x)
                         if w == 3: x.sterbehoehe = 4000
                         if w == 4: x.sterbehoehe = 100
-        '''tut_w = construct_level(0)
-        w1 = construct_level(1)
-        w2 = construct_level(2)
-        w3 = construct_level(3)
-        w3.sterbehoehe = 4000
-        w4 = construct_level(4)
-        w5 = construct_level(5)
-        wmetzel = construct_level(6)
-        game = [tut_w,w1,w2,w3,w4,w5,wmetzel] '''
         current_level = game[0]#start_level
         score = 0 
-        #for w in game:
-        #        w.finish = False
                 
 def on_execute(multi_True = False,start_level = 1, ghostmode = True): # Multiplayer starten oder Singleplayer (bei False singleplayer)
         global multiplayer,survival_time,playing_Spieler,multiplayer_ghostmode, current_level, current_speicherpunkt
