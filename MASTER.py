@@ -17,7 +17,7 @@ dead_show = 0
 kill_counter = 0
 scorechange_size = 35
 
-TOMFAKTOR = False # Weil tom keinen Text anzeigen kann
+TOMFAKTOR = not False # Weil tom keinen Text anzeigen kann
 
 jump_sound = "Sounds/jump.wav"
 explosion_sound = "Sounds/dead.wav"
@@ -442,8 +442,8 @@ def player_jumps_gegner(space, arbiter):
                                 i.hitpoints -= 2
         else:
                 current_level.spieler.hitpoints -= 1
-                current_level.spieler.body.velocity.x = -450 * current_level.spieler.direction
-                current_level.spieler.body.velocity.y = -750
+                current_level.spieler.body.velocity.x = -300 * current_level.spieler.direction
+                current_level.spieler.body.velocity.y = -450
         return True
 
 def player_jumps_fliegender_gegner(space, arbiter):
@@ -454,8 +454,8 @@ def player_jumps_fliegender_gegner(space, arbiter):
                 arbiter.shapes[1].collision_type = 3
         else:
                 current_level.spieler.hitpoints -= 1
-                current_level.spieler.body.velocity.x = -450 * current_level.spieler.direction
-                current_level.spieler.body.velocity.y = -750
+                current_level.spieler.body.velocity.x = -300 * current_level.spieler.direction
+                current_level.spieler.body.velocity.y = -450
                 #current_level.spieler.moveSpeed = 0
         return True
 
