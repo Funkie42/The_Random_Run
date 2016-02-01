@@ -417,12 +417,20 @@ w4_portal = 93
 #LEVEL5
 ###########Blöcke###################
 # Inhalt der Tupel:   ( left,   top,    width,  height)
-w5_blockkoordinaten = [(100,100,100,100),
+w5_blockkoordinaten = [(200,4000,800,300),
+                        (0,3300,100,700),
+                       (0,4000,200,300),
+                       (100,3300,1400,300),
+                       (1000,4000,500,300),
+                       (1500,3800,2000,300),
+                       (1500,3300,2000,400),#6
+                       (1500,4000,400,300),
                        (100,100,100,100),
-                       (100,100,100,100),
-                       (100,100,100,100),
-                       (100,100,100,100)]
-w5_textboxes = []
+                       (3500,3800,300,1000),
+                       (3500,3700,100,100),
+                       (3500,3000,300,700),
+                       ]
+w5_textboxes = [(400,3700,800,60,20,"You feel it, it's the final stretch"),]
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 w5_boden_gegner = [] # TODO
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
@@ -430,7 +438,7 @@ w5_flug_gegner = []
 w5_powerups = []
 w5_speichpunkte = []
 w5_steine = []
-w5_portal = 0
+w5_portal = 8
 
 #6 Level
 ###########Blöcke###################

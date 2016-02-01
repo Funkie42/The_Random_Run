@@ -17,7 +17,7 @@ dead_show = 0
 kill_counter = 0
 scorechange_size = 35
 
-TOMFAKTOR = not False # Weil tom keinen Text anzeigen kann
+TOMFAKTOR = False # Weil tom keinen Text anzeigen kann
 
 jump_sound = "Sounds/jump.wav"
 explosion_sound = "Sounds/dead.wav"
