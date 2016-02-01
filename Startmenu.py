@@ -36,7 +36,7 @@ buttonHeight = int(buttonWidth / 2)
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
-levelcodes = ["","","heartattack","randomness","pymunk","stonepower"]
+levelcodes = ["","","heartattack","randomness","pymunk","stonepower","None ;)"]
 
 def music_change(new_music):
     pygame.mixer.music.stop()
@@ -463,6 +463,7 @@ class Main:
         if score_info[2] >= 0: # Test, ob durch F12 abgebrochen wurde oder nicht
             if finished_level_number == 5:
                 self.level_finished(score_info,finished_level_number)
+                self.interlevel_scene(finished_level_number)
                 highscore = score_info[1] + score_info[2]
                 get_Highscore(playername,highscore)
                 self.display_surf.fill((0,0,0))
@@ -688,6 +689,7 @@ class Main:
             leveltext = random.choice(Texts.level_4_texts)
         elif level == 5:
             leveltext = random.choice(Texts.level_5_texts)
+            print("1")
         else:
             return False
         

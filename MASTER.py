@@ -10,7 +10,7 @@ multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 opponentscore = 0
-test_startlvl = 1# Für Testen
+test_startlvl = 5# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
@@ -111,7 +111,7 @@ class Spieler(pygame.sprite.Sprite):
                 if self.dash_counter > 0:
                         pass
                         self.body.position.x += 60 * self.direction
-                        ###################################self.dash_counter -= 1
+                        self.dash_counter -= 1
 
         def selfblit(self):
                 #if self.sprite_iterator >= len(self.sprite_list[self.state]):
@@ -467,7 +467,7 @@ def player_jumps_highjump(space, arbiter):
         else:
                 arbiter.shapes[1].body.position.x += 5 * current_level.spieler.direction
         return True
-
+  
 def kugel_hits_highjump(space, arbiter):
         arbiter.shapes[1].body.position.x += 20 * current_level.spieler.direction
         arbiter.shapes[0].group = 2
@@ -475,7 +475,7 @@ def kugel_hits_highjump(space, arbiter):
 
 def player_hits_portal(space, arbiter):
         global current_level
-        random_int = random.randint(0,100)
+        random_int = random.randint(0,20)
         if random_int == 1 and not TOMFAKTOR:
                 score_string = "You randomly passed away of a heart attack" 
                 thisPrint = pygame.font.Font('freesansbold.ttf', 35).render(score_string,True,(255,255,255))
@@ -494,6 +494,12 @@ def player_hits_portal(space, arbiter):
         if game.index(current_level) + 1 < len(game):
                 current_level = game[game.index(current_level) + 1]
                 #current_speicherpunkt = current_level.speicherpunkte[0]
+        return True
+
+def player_hits_dash(space,arbiter):
+        pygame.mixer.Sound(jumppad_sound).play()
+        current_level.spieler.dash_counter += 5
+        current_level.spieler.double_jump_counter = 1
         return True
 
 def player_stands_stein(space, arbiter):
@@ -537,6 +543,7 @@ current_speicherpunkt = False
 # 5 = Highjump
 # 6 = fliegender Gegner
 # 7 = Portal
+#15 = Dash_powerup
 
 #SPRITEGROUPS
 # 1 = Kugel
@@ -552,6 +559,7 @@ space.add_collision_handler(1,5, post_solve=player_jumps_highjump)
 space.add_collision_handler(4,5, begin=kugel_hits_highjump)
 space.add_collision_handler(1,7, begin=player_hits_portal)
 space.add_collision_handler(1,8, post_solve=player_stands_stein, separate=player_leaves_stein)
+space.add_collision_handler(1,15, post_solve=player_hits_dash)
 space.gravity = (0, 1500)
 clock = pygame.time.Clock()
 fps = 30
@@ -577,6 +585,8 @@ portal1_sprite =pygame.image.load("Gui/portal1.png")
 portal1_sprite = pygame.transform.scale(portal1_sprite,(130,130))
 portal2_sprite = pygame.image.load("Gui/portal2.png")
 portal2_sprite = pygame.transform.scale(portal2_sprite,(130,130))
+dashPW_sprite = pygame.image.load("Gui/powerups/shoe.png")
+dashPW_sprite = pygame.transform.scale(dashPW_sprite,(30,30))
 turbine_sprite = SpriteSheet.SpriteSheet("Gui/turbine_sprite.png")
 explosion_sprite = SpriteSheet.SpriteSheet("Gui/explotion.png")
 
@@ -637,8 +647,7 @@ def main():
                                                 if event.key == K_UP:
                                                         new_kugel = True ####################################
                                                 if event.key == K_d:
-                                                        if not w.spieler.is_Grounded:
-                                                                w.spieler.dash_counter += 5
+                                                        w.spieler.dash_counter += 5
                                                 if event.key == K_F5:
                                                         w.spieler.is_alive = False
                                 frame_counter += 1                               
@@ -723,7 +732,9 @@ def main():
                                 space.step(1/35)
                                 clock.tick(25)
                                 DISPLAYSURF.blit(camera_blit(), (0,0))
-
+                                if w.portal.rect.left == w.boeden[8].rect.left: # Endgegner Portal spawn!
+                                        w.portal = Speicherpunkt.Portal(w.boeden[28], [portal1_sprite])
+                                        space.add(w.portal.shape)
                                 ### Highscoreanzeige ###
                                 if bonustime > 0: bonustime = 300 - int(time.time() - start_time - pause_time)
                                 else: bonustime = 0
@@ -843,6 +854,8 @@ def construct_level(level,players):
         for powerup in Level.powerups[level]:
                 if powerup[0] == "highjump":
                         powerups.append(Power_Ups.High_Jump(blocks[powerup[1]], [highjump_sprite]))
+                if powerup[0] == "dash":
+                        powerups.append(Power_Ups.DashPW(blocks[powerup[1]], [dashPW_sprite]))
         spaceshuttles = []
         for stein in Level.steine[level]:
                         spaceshuttles.append(Boden.Stein(blocks[stein], turbine_sprite))

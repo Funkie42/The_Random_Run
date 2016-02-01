@@ -426,16 +426,40 @@ w5_blockkoordinaten = [(200,4000,800,300),
                        (1500,3300,2000,400),#6
                        (1500,4000,400,300),
                        (100,100,100,100),
-                       (3500,3800,300,1000),
-                       (3500,3700,100,100),
-                       (3500,3000,300,700),
+                       (3500,3800,400,1000),
+                       (3860,3000,50,1600),
+                       (3500,3400,400,300),
+                       (3800,3800,1,1), #12
+                       (3900,4500,1000,300),
+                       (4900,3200,400,1600),
+                       (3500,2900,1800,300),
+                       (3500,3200,400,200),
+                       (4100,4250,50,50),
+                       (4100,4000,50,50),
+                       (4100,3750,0,0),
+                       (4100,3500,50,50),#20
+                       (4700,4250,50,50),
+                       (4700,4000,50,50),
+                       (4700,3750,50,50),
+                       (4700,3500,50,50),
+                       (4420,3875,50,50),
+                       (4420,4125,50,50),
+                       (4420,3625,50,50),
+                       (4380,3350,1,0), #28
                        ]
-w5_textboxes = [(400,3700,800,60,20,"You feel it, it's the final stretch"),]
+w5_textboxes = [(400,3700,800,60,20,"You feel it, it's the final stretch"),
+                (1600,3600,400,60,20,"As you walk down the corridor"),
+                 (1600,3850,400,60,16,"You sense that there's just one enemy left"),
+                (2100,3600,400,60,20,"Excited to finally see what he looks like"),
+                (2100,3850,400,60,20,"You keep walking.."),
+                 (2600,3600,400,60,20,"Nothing left to do, just you and him"),
+                  (3200,3600,200,60,20,"It's showtime!")
+                (3400,3850,200,60,20,"Let's dash"]
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 w5_boden_gegner = [] # TODO
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
 w5_flug_gegner = []
-w5_powerups = []
+w5_powerups = [("dash",12)]
 w5_speichpunkte = []
 w5_steine = []
 w5_portal = 8

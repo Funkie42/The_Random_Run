@@ -106,24 +106,25 @@ normal_level_4 = [("'What were these Spaceships?!'",None),
                   ("Soon you can see the end of the portal",None),
                   ("The ship is gigantic",None),
                   ("You realize you red guide is gone",None),
-                  ("Where did he go? Maybe another portal?",None)]
+                  ("Where did he go? Was he ever there?",None)]
 
 level_4_texts = [normal_level_4]
 
 ##########################
 #Level 5 finished Text
 ##########################
-normal_level_5 = [("Finally! You defeated him",None),
-                  ("As you step in the portal you take one glance back",None),
+normal_level_5 = [("Finally! You defeated the Spaceship",None),
+                  ("As you step in the portal you take one glance back.",None),
                   ("'Well, that was wierd', you say",None),
-                  ("'Where the heck did I even GET that gun from?",None),
+                  ("'I really wanted to see that shadow though..",None),
+                  ("Where the heck did I even GET that gun from?",None),
                   ("And what was up with that suit?",None),
                   ("I was in my pyjamas when this started!'",None),
                   ("You're left with more questions than answers",None),
                   ("You reach home, but what was that all?",None),
                   ("An illusion or reality?",None),
-                  ("Fiction or thread?",None),
-                  ("Me, a dreamer or a hero?",None),
+                  ("Fiction or danger?",None),
+                  ("'Me, a dreamer or a hero?'",None),
                   ("You'll probably never know",None),
                   ("THE END",None),
                   ("?",None),]
