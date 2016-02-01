@@ -586,7 +586,7 @@ portal1_sprite = pygame.transform.scale(portal1_sprite,(130,130))
 portal2_sprite = pygame.image.load("Gui/portal2.png")
 portal2_sprite = pygame.transform.scale(portal2_sprite,(130,130))
 dashPW_sprite = pygame.image.load("Gui/powerups/shoe.png")
-dashPW_sprite = pygame.transform.scale(dashPW_sprite,(30,30))
+dashPW_sprite = pygame.transform.scale(dashPW_sprite,(40,40))
 turbine_sprite = SpriteSheet.SpriteSheet("Gui/turbine_sprite.png")
 explosion_sprite = SpriteSheet.SpriteSheet("Gui/explotion.png")
 
@@ -646,7 +646,7 @@ def main():
                                                                         w.spieler.double_jump_counter -= 1
                                                 if event.key == K_UP:
                                                         new_kugel = True ####################################
-                                                if event.key == K_d:
+                                                if event.key == K_k:
                                                         w.spieler.dash_counter += 5
                                                 if event.key == K_F5:
                                                         w.spieler.is_alive = False

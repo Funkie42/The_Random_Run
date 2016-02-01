@@ -453,8 +453,8 @@ w5_textboxes = [(400,3700,800,60,20,"You feel it, it's the final stretch"),
                 (2100,3600,400,60,20,"Excited to finally see what he looks like"),
                 (2100,3850,400,60,20,"You keep walking.."),
                  (2600,3600,400,60,20,"Nothing left to do, just you and him"),
-                  (3200,3600,200,60,20,"It's showtime!")
-                (3400,3850,200,60,20,"Let's dash"]
+                  (3200,3600,200,60,20,"It's showtime!"),
+                (3400,3850,200,60,20,"Let's dash")]
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 w5_boden_gegner = [] # TODO
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
