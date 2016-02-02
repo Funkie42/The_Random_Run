@@ -7,6 +7,7 @@ alien_sprite = SpriteSheet.SpriteSheet("Gui/alien.png")
 pacman_sprite = SpriteSheet.SpriteSheet("Gui/epm_spritesheet.png")
 zyklop_sprite = SpriteSheet.SpriteSheet("Gui/zyklop.png")
 zyklop_sprite.sprite_sheet = pygame.transform.flip(zyklop_sprite.sprite_sheet,True,False)
+endgegner_sprite = SpriteSheet.SpriteSheet("Gui/ufo_sprite_sheet.png")
 
 #GELÄNDESPRITES
 level_grounds = ["Gui/ground5.png","Gui/ground.png",
@@ -20,7 +21,7 @@ w2_bild = "Gui/bg2.jpg"
 w3_bild = "Gui/bg3.jpg"
 w4_bild = "Gui/bg4.jpg"
 w5_bild = "Gui/bg5.jpg"
-w6_bild = w4_bild
+w6_bild = "Gui/bg_bonus.jpg"
 bg_bilder = [tut_bild,w1_bild,w2_bild,w3_bild,w4_bild,w5_bild,w6_bild]
 
 ########################Tutorial#######################################################################
@@ -399,7 +400,7 @@ w4_boden_gegner = [(14,25,alien_sprite,20,25),
                    (63,10,alien_sprite,20,17),
                    (61,10,alien_sprite,20,14),
                    (59,10,alien_sprite,20,10),
-                   (57,10,alien_sprite,20,18)] # TODO
+                   (57,10,alien_sprite,20,18)] 
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
 w4_flug_gegner = [(7500,7800,1375, 12, pacman_sprite,10,10,False),
                   (7350,7650,1675, 12, pacman_sprite,10,10,False),
@@ -427,7 +428,7 @@ w5_blockkoordinaten = [(200,4000,800,300),
                        (1500,4000,400,300),
                        (100,100,100,100),
                        (3500,3800,400,1000),
-                       (3860,3000,50,1600),
+                       (3860,3000,30,1600),
                        (3500,3400,400,300),
                        (3800,3800,1,1), #12
                        (3900,4500,1000,300),
@@ -436,12 +437,12 @@ w5_blockkoordinaten = [(200,4000,800,300),
                        (3500,3200,400,200),
                        (4100,4250,50,50),
                        (4100,4000,50,50),
-                       (4100,3750,0,0),
-                       (4100,3500,50,50),#20
+                       (4100,750,0,0),
+                       (4100,500,0,0),#20
                        (4700,4250,50,50),
                        (4700,4000,50,50),
                        (4700,3750,50,50),
-                       (4700,3500,50,50),
+                       (4700,500,0,0),
                        (4420,3875,50,50),
                        (4420,4125,50,50),
                        (4420,3625,50,50),

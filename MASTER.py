@@ -10,12 +10,14 @@ multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 opponentscore = 0
-test_startlvl = 5# Für Testen
+test_startlvl = 1# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
 kill_counter = 0
 scorechange_size = 35
+frame_counter = 0
+final_boss = None
 
 TOMFAKTOR = False # Weil tom keinen Text anzeigen kann
 
@@ -27,7 +29,7 @@ portal_sound = "Sounds/swoop.wav"
 waypoint_sound = "Sounds/wp.wav"
 rocket_sound = "Sounds/rocket_sound.wav"
 jumppad_sound = "Sounds/jump_pad.ogg"
-
+dash_sound = "Sounds/swuuuuush.ogg"
 
 
 class Spieler(pygame.sprite.Sprite):
@@ -46,6 +48,9 @@ class Spieler(pygame.sprite.Sprite):
                 self.double_jump_iterator = 0
 
                 self.direction = 1 #1 = rechts, -1 = links
+                self.sprites1 = []
+                self.sprites2 = []
+                self.make_sprites()
                 self.hitpoints = hitpoints
                 self.mass = 10
                 self.moveSpeed = 1
@@ -54,7 +59,7 @@ class Spieler(pygame.sprite.Sprite):
                 self.body = pymunk.Body(self.mass, pymunk.inf)
                 self.shape = pymunk.Poly.create_box(self.body, (self.current_sprite().get_width(), self.current_sprite().get_height()))
                 space.add(self.body, self.shape)
-                self.shape.collision_type = 1 # To change for ghostmode to 0
+                self.shape.collision_type = 1 
 
                 self.dash_counter = 0
                 self.double_jump_counter = 1
@@ -63,31 +68,30 @@ class Spieler(pygame.sprite.Sprite):
                 self.onStein = False
                 self.is_alive = True
 
+        def make_sprites(self):
+                for i in range(0,17):
+                    x = self.sprite.get_image(25 + i * self.sprite.sprite_sheet.get_width()/17 , 5, self.sprite.sprite_sheet.get_width()/17 -55, self.sprite.sprite_sheet.get_height() - 5).convert()
+                    self.sprites1.append(x)
+                    self.sprites2.append(pygame.transform.flip(x,True,False))        
+
         def rect(self):
                 x = pygame.Rect(0,0, self.current_sprite().get_width(), self.current_sprite().get_height())
                 x.center = self.body.position
                 return x
 
         def current_sprite(self):
-                #return self.sprite_list[self.state][self.sprite_iterator]
                 if self.direction == 1:
-                        x = self.sprite.get_image(25 + self.spalte * self.sprite.sprite_sheet.get_width()/17 , 5, self.sprite.sprite_sheet.get_width()/17 -55, self.sprite.sprite_sheet.get_height() - 5)
-                        #x = pygame.transform.scale(x, (90, 130))
-                        return x
+                        return self.sprites1[self.spalte]
                 else:
-                        x = pygame.transform.flip(self.sprite.get_image(25 + self.spalte * self.sprite.sprite_sheet.get_width()/17 , 5, self.sprite.sprite_sheet.get_width()/17 -55, self.sprite.sprite_sheet.get_height() - 5), True, False)
-                        #x = pygame.transform.scale(x, (90, 130))
-                        return x
+                        return self.sprites2[self.spalte]
 
 
         def state_update(self):
                 keys = pygame.key.get_pressed()
                 if self.direction == 1 and keys[K_LEFT] and not keys[K_RIGHT] and self.moveSpeed != 0:
                         self.direction = -1
-                        #self.rev_sprite_list()
                 elif self.direction == -1 and keys[K_RIGHT] and not keys[K_LEFT] and self.moveSpeed != 0:
                         self.direction = 1
-                        #self.rev_sprite_list()
                 if self.is_Grounded and not (keys[K_RIGHT] or keys[K_LEFT]):
                         self.state = 0
                 elif self.is_Grounded and (keys[K_RIGHT] or keys[K_LEFT]):
@@ -109,7 +113,6 @@ class Spieler(pygame.sprite.Sprite):
 
         def dash(self):
                 if self.dash_counter > 0:
-                        pass
                         self.body.position.x += 60 * self.direction
                         self.dash_counter -= 1
 
@@ -149,7 +152,6 @@ class Welt():
                 if multiplayer_ghostmode:
                         self.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(self.boeden[0], [waypoint_sprite]))
                         current_speicherpunkt = self.speicherpunkte[0]
-                #backup_hintergrund_rect = hintergrund_rect
                 self.spieler1 = spieler1 
                 self.spieler2 = spieler2
                 self.spieler = None 
@@ -216,8 +218,8 @@ class Welt():
                                 if (i.body.position.y > LEVELSURF.get_height() - self.sterbehoehe or i.hitpoints < 0 )and i in self.hindernisse: #evtl zu updaten
                                         ex = Explotion(i.body)
                                         i.dead = True
-                                        #self.hindernisse.remove(i)
-                                        space.remove(i.body, i.shape)
+                                        try:space.remove(i.body, i.shape)
+                                        except: pass
                                         global kill_counter
                                         kill_counter += 15
                                 if rect.colliderect(i.center_rect()):
@@ -288,6 +290,8 @@ class Welt():
                                         for j in self.hindernisse:
                                                 if j.dead:
                                                         j.dead = False
+                                                        if j.baseHitpoints == 4:
+                                                                j.shape.collision_type = 6
                                                         j.init(space)
                                                         j.body.position = j.start
                                                         j.hitpoints = j.baseHitpoints
@@ -331,13 +335,12 @@ class Explotion(object):
 
 
 class Kugel(object):
-        def __init__(self, vec,farbe, x_pos = 0, y_pos = 0, spielerdir = 0): ###################XPOS YPOS geändert für Multiplayer
+        def __init__(self, vec,farbe, x_pos = 0, y_pos = 0, spielerdir = 0):
                 object.__init__(self)                   #Spielerdir = 0 heißt eigener Player direction
                 pygame.mixer.Sound(kugel_sound).play()
                 self.vec = vec
                 self.body = pymunk.Body(1, pymunk.moment_for_circle(1, 7, 7))
                 self.farbe = farbe
-                ###########################
                 if x_pos == 0:
                         x_pos = current_level.spieler.body.position.x
                 if y_pos == 0:
@@ -346,7 +349,6 @@ class Kugel(object):
                         spielerdir = current_level.spieler.direction
                 self.body.position = (x_pos +60 * spielerdir,
                                       y_pos - 35)
-                ##############################
                 self.shape = pymunk.Circle(self.body,  7)
                 space.add(self.body, self.shape)
                 self.body.velocity.x = vec[0]
@@ -435,11 +437,17 @@ def player_hits_kugel(space, arbiter):
 
 def player_jumps_gegner(space, arbiter):
         if arbiter.contacts[0].normal.int_tuple[0] == 0:
-                current_level.spieler.body.velocity.y = -650
-                current_level.spieler.double_jump_counter = 1
                 for i in current_level.hindernisse:
                         if i.body == arbiter.shapes[1].body:
-                                i.hitpoints -= 2
+                                if current_level.spieler.body.position.y < arbiter.shapes[1].body.position.y:
+                                        current_level.spieler.body.velocity.y = -650
+                                        current_level.spieler.double_jump_counter = 1
+                                        print("hop")
+                                        i.hitpoints -= 2
+                                else:
+                                        current_level.spieler.hitpoints -= 1
+                                        i.body.velocity.y = -400
+                                        print("top")
         else:
                 current_level.spieler.hitpoints -= 1
                 current_level.spieler.body.velocity.x = -300 * current_level.spieler.direction
@@ -456,8 +464,18 @@ def player_jumps_fliegender_gegner(space, arbiter):
                 current_level.spieler.hitpoints -= 1
                 current_level.spieler.body.velocity.x = -300 * current_level.spieler.direction
                 current_level.spieler.body.velocity.y = -450
-                #current_level.spieler.moveSpeed = 0
         return True
+
+#def player_jumps_boss(space, arbiter):
+ #       if arbiter.contacts[0].normal.int_tuple[0] == 0:
+ #               current_level.spieler.body.velocity.y = -650
+ #               current_level.spieler.double_jump_counter = 1
+ #               space.add(arbiter.shapes[1].body)
+   #     else:
+ #               current_level.spieler.hitpoints -= 1
+   #             current_level.spieler.body.velocity.x = -300 * current_level.spieler.direction
+  #             current_level.spieler.body.velocity.y = -450
+ #       return True
 
 def player_jumps_highjump(space, arbiter):
         if arbiter.contacts[0].normal.int_tuple[0] == 0:
@@ -497,7 +515,7 @@ def player_hits_portal(space, arbiter):
         return True
 
 def player_hits_dash(space,arbiter):
-        pygame.mixer.Sound(jumppad_sound).play()
+        if current_level.spieler.dash_counter == 0: pygame.mixer.Sound(dash_sound).play()
         current_level.spieler.dash_counter += 5
         current_level.spieler.double_jump_counter = 1
         return True
@@ -519,13 +537,13 @@ def player_stands_stein(space, arbiter):
                 arbiter.shapes[1].body.velocity.y += 2
         else:
                 pymunk.Body.update_velocity(arbiter.shapes[1].body, ((0, -2000)), 0.9, 1/35)
-                #rint(arbiter.shapes[1].body.velocity_func)
                 pass
                
         return True
 
 def player_leaves_stein(space, arbiter):
         current_level.spieler.onStein = False
+        cänt_touch_dis()
 
 # UNIVERSELLE OPTIONEN
 pygame.init()
@@ -544,6 +562,7 @@ current_speicherpunkt = False
 # 6 = fliegender Gegner
 # 7 = Portal
 #15 = Dash_powerup
+#16 = Boss
 
 #SPRITEGROUPS
 # 1 = Kugel
@@ -560,6 +579,7 @@ space.add_collision_handler(4,5, begin=kugel_hits_highjump)
 space.add_collision_handler(1,7, begin=player_hits_portal)
 space.add_collision_handler(1,8, post_solve=player_stands_stein, separate=player_leaves_stein)
 space.add_collision_handler(1,15, post_solve=player_hits_dash)
+#space.add_collision_handler(1,16, begin=player_jumps_boss)
 space.gravity = (0, 1500)
 clock = pygame.time.Clock()
 fps = 30
@@ -605,23 +625,19 @@ explosions = []
 
 
 def main():
-        global score,dead_show
+        global score,dead_show,death_counter, kill_counter, current_level, opponentscore,frame_counter
         start_time = time.time()
         pause_time = 0
         bonustime = 300
-        frame_counter = 0       
+        kill_counter = 0
+        death_counter = 0
         for w in game:
-                        global death_counter, kill_counter, current_level, opponentscore
-                        kill_counter = 0
-                        death_counter = 0
                         while not w.finish and w == current_level:
-                                
                                 old_death_counter = death_counter
                                 new_kugel = False
 #################################
                                 #Event Getter
-#################################
-                                
+################################# 
                                 for event in pygame.event.get():
                                         if event.type == QUIT or  (event.type == KEYUP and event.key == K_ESCAPE):
                                                 if multiplayer: send_data("gg")
@@ -647,10 +663,11 @@ def main():
                                                 if event.key == K_UP:
                                                         new_kugel = True ####################################
                                                 if event.key == K_k:
+                                                        pass
                                                         w.spieler.dash_counter += 5
                                                 if event.key == K_F5:
                                                         w.spieler.is_alive = False
-                                frame_counter += 1                               
+                                frame_counter += 1
                                 keys = pygame.key.get_pressed()
                                 if keys[K_RIGHT] or keys[K_LEFT]:
                                         w.spieler.move()
@@ -688,9 +705,7 @@ def main():
                                                                         current_level.anderer_spieler.hitpoints = p2_hits[0]
                                                                         opponentscore = p2_hits[1]
                                                                 except: pass
-
-
-                                                                
+                                                              
                                                 else: # Ghostmode
                                                         p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
                                                                            (current_level.spieler.direction,current_level.spieler.state), #  Richtung in die er schaut und sprite_in_use
@@ -717,11 +732,7 @@ def main():
                                                                         opponentscore = p2_score
                                                                 except: pass
                                 else: current_level.spieler2 = None # Im Singleplayer braucht man keinen 2. Spieler
-                                       # if frame_counter%10 == 0:
-#
-  #                                              frame_counter = 0
-    #                                            stuff_data = send_data((-42,playing_Spieler,1,1))
-                                
+
 #################################################################
                                 if w.spieler.hitpoints <= 0: w.spieler.is_alive = False
                                 if (frame_counter % 1 == 0): LEVELSURF.blit(hintergrund_blit(),(rect.left -10, rect.top -10))
@@ -732,9 +743,11 @@ def main():
                                 space.step(1/35)
                                 clock.tick(25)
                                 DISPLAYSURF.blit(camera_blit(), (0,0))
-                                #if w.portal.rect.left == w.boeden[8].rect.left: # Endgegner Portal spawn!
-                                 #       w.portal = Speicherpunkt.Portal(w.boeden[28], [portal1_sprite])
-                                 #       space.add(w.portal.shape)
+                                if final_boss != None: # Endgegner Portal spawn!
+                                        if final_boss.dead:
+                                                w.portal = Speicherpunkt.Portal(w.boeden[28], [portal1_sprite])
+                                                space.add(w.portal.shape)
+                                 
                                 ### Highscoreanzeige ###
                                 if bonustime > 0: bonustime = 300 - int(time.time() - start_time - pause_time)
                                 else: bonustime = 0
@@ -812,10 +825,7 @@ def main():
                                                                            (current_level.spieler.body.position.x,current_level.spieler.body.position.y), # Positition des Spielers
                                                                            ((current_level.spieler.direction,new_kugel)),# "Neue Kugel" (De facto alles um eine zu erstellen)
                                                                              (current_level.spieler.hitpoints,death_counter)))
-                                                #global multiplayer_ghostmode, multiplayer,current_level
-                                                #multiplayer_ghostmode = True
-                                                #current_level = None
-                                               # multiplayer = False
+
                                                 return False,1,1,"duell","lost"
                                         elif opponentscore >= 10: return False,1,1,"duell","won"                                        
                                 if w.finish and __name__ != "__main__":
@@ -832,6 +842,7 @@ def show_text(text,size,color,position):
         thisRect.y = position[1]
         DISPLAYSURF.blit(thisPrint,thisRect)
 def construct_level(level,players):
+        global final_boss
         blocks = []
         leveldesign_block = pygame.image.load(Level.level_grounds[level]).convert() # z.B. level1_ground oder so
         for blockkoord in Level.blockkoords[level]:
@@ -847,6 +858,9 @@ def construct_level(level,players):
                 else:enemys.append(Hindernis.Gegner(blocks[gegner[0]],gegner[1],gegner[2],gegner[3],gegner[4]))
         for gegner in Level.fluggegner[level]:
             enemys.append(Hindernis.FliegenderGegner(gegner[0],gegner[1],gegner[2],gegner[3],gegner[4],gegner[5],gegner[6],gegner[7]))
+        if level == 5:
+                final_boss = Hindernis.Endgegner(4100,4700,3400,15,Level.endgegner_sprite,10,20)
+                enemys.append(final_boss)
         waypoints = []
         for speicherpunkt in Level.speicherpunkte[level]:
                 waypoints.append(Speicherpunkt.Speicherpunkt(blocks[speicherpunkt], [waypoint_sprite]))
@@ -891,14 +905,47 @@ def set_everything(start_level):
                 game.append(construct_level(6,(s,s2)))
         else:
                 for w in range(start_level,6):
+                        if w < 6: load_screen(w)
                         x = construct_level(w,(s,s2))
                         game.append(x)
-                        if w == 3: x.sterbehoehe = 4000
+                        #if w == 3: x.sterbehoehe = 4000
                         if w == 4: x.sterbehoehe = 100
         current_level = game[0]#start_level
         score = 0 
-def change_world_parameters():
-        pass
+def change_world_parameters_multi(w):
+        if playing_Spieler == 1:
+                w.spieler = current_level.spieler1# Der Spieler den dieser PC steuert
+                w.anderer_spieler = current_level.spieler2
+                if multiplayer_ghostmode:
+                        w.anderer_spieler.shape.collision_type = 0
+                else:
+                        w.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(w.boeden[0], [waypoint_sprite]))
+                        current_speicherpunkt = w.speicherpunkte[0]
+                        w.anderer_spieler.shape.collision_type = 3
+                awaiting_snd_player = True
+                while awaiting_snd_player:
+                        p2_data = send_data((playing_Spieler,(),(),(),()))# Spieler 1 oder 2
+                        for event in pygame.event.get():
+                                if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                                        send_data("gg")
+                                        pygame.quit()
+                                        sys.exit()
+                                elif event.type == KEYDOWN:
+                                        if event.key == K_F12: # Für Beenden und zurück zum startmenü
+                                                send_data("gg")
+                                                return (False,score,-1)
+                        pygame.display.flip()
+                        if p2_data != None:     awaiting_snd_player = False    
+        else:
+                w.spieler = current_level.spieler2
+                w.anderer_spieler = current_level.spieler1
+                if multiplayer_ghostmode: w.anderer_spieler.shape.collision_type = 0
+                else:
+                        w.speicherpunkte = []
+                        w.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(w.boeden[4], [waypoint_sprite]))
+                        current_speicherpunkt = w.speicherpunkte[0]
+                        w.anderer_spieler.shape.collision_type = 3            
+          
 def on_execute(multi_True = False,start_level = 1, ghostmode = True): # Multiplayer starten oder Singleplayer (bei False singleplayer)
         global multiplayer,survival_time,playing_Spieler,multiplayer_ghostmode, current_level, current_speicherpunkt
         multiplayer = multi_True
@@ -913,45 +960,12 @@ def on_execute(multi_True = False,start_level = 1, ghostmode = True): # Multipla
                         elif not ghostmode: set_everything(6)
                         else: set_everything(1)
                         for w in game:
-                                if playing_Spieler == 1:
-                                                w.spieler = current_level.spieler1# Der Spieler den dieser PC steuert
-                                                w.anderer_spieler = current_level.spieler2
-                                                if multiplayer_ghostmode:
-                                                        w.anderer_spieler.shape.collision_type = 0
-                                                else:
-                                                        w.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(w.boeden[0], [waypoint_sprite]))
-                                                        current_speicherpunkt = w.speicherpunkte[0]
-                                                        w.anderer_spieler.shape.collision_type = 3
-                                                awaiting_snd_player = True
-                                                while awaiting_snd_player:
-                                                        p2_data = send_data((playing_Spieler,(),(),(),()))# Spieler 1 oder 2
-                                                        for event in pygame.event.get():
-                                                                if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                                                                        if multiplayer: send_data("gg")
-                                                                        pygame.quit()
-                                                                        sys.exit()
-                                                                elif event.type == KEYDOWN:
-                                                                        if event.key == K_F12: # Für Beenden und zurück zum startmenü
-                                                                                if multiplayer: send_data("gg")
-                                                                                return (False,score,-1)
-                                                        pygame.display.flip()
-                                                        if p2_data != None:     awaiting_snd_player = False    
-                                else:
-                                                w.spieler = current_level.spieler2
-                                                w.anderer_spieler = current_level.spieler1
-                                                if multiplayer_ghostmode: w.anderer_spieler.shape.collision_type = 0
-                                                else:
-                                                        w.speicherpunkte = []
-                                                        w.speicherpunkte.insert(0, Speicherpunkt.Speicherpunkt(w.boeden[4], [waypoint_sprite]))
-                                                        current_speicherpunkt = w.speicherpunkte[0]
-                                                        w.anderer_spieler.shape.collision_type = 3                            
-                        return main()
-                
+                                change_world_parameters_multi(w)      
         else:   #Singleplayer
                 set_everything(start_level)
                 for w in game: w.spieler = w.spieler1
-                if __name__ == "__main__": main()
-                else:  return main() # Singelplayerstart aus dem Menü heraus
+        if __name__ == "__main__": main()
+        else:  return main() # start aus dem Menü heraus
 
 
 

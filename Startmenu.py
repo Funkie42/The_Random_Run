@@ -24,7 +24,6 @@ with open('Playername.txt','r') as g:
         playername = line
 
 gamename = "The Random Run"
-#new_playername = playername
 
 WINDOWw = 800 #window width
 WINDOWh = 600 #window height
@@ -36,7 +35,7 @@ buttonHeight = int(buttonWidth / 2)
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
-levelcodes = ["","","heartattack","randomness","pymunk","stonepower","None ;)"]
+levelcodes = ["","","heartattack","Not available","Unavailable","stonepower","None ;)"]
 
 def music_change(new_music):
     pygame.mixer.music.stop()
@@ -93,7 +92,6 @@ def reset_Highscore():
 
 #Sounds
 button_sound = "Sounds/click.wav"
-game_start_sound = None
 star_wars_sound = "Sounds/Startwars_intro.ogg"
 bonus_running_sound ="Sounds/tztztztztztz.ogg"
 bonus_done_sound = "Sounds/melodie.ogg"
@@ -125,17 +123,12 @@ class Button(pygame.Surface):
         
         #### Initiazing Images ####
         (normal,cursor_on,clicked) = self.get_images()
-
         self.normal_surf = pygame.transform.scale(normal,(self.width,self.height))
         self.cursor_on_surf = pygame.transform.scale(cursor_on,(self.width,self.height))
         self.clicked_surf = pygame.transform.scale(clicked,(self.width,self.height))
-
         self.image_surf = self.normal_surf # Aktuelles Bild
         
-
-    
         self.sound = pygame.mixer.Sound(button_sound)
-        #self.gameover_sound = pygame.mixer.Sound("Sounds/GtaVocals/Respect.wav")
 
     def get_images(self):
         
@@ -821,3 +814,5 @@ class Main:
 if __name__ == "__main__":        
     start = Main()
     start.on_execute()
+
+  
