@@ -10,7 +10,7 @@ multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 opponentscore = 0
-test_startlvl = 5# Für Testen
+test_startlvl = 3# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
@@ -747,10 +747,10 @@ def main():
                                         if multiplayer: show_text("P2 Score: "+ str(opponentscore),20,(55,55,55),(200,50))
                                         
                                         if (frame_counter > 1800 and frame_counter < 1850):
-                                                die_string = "Press F5 to instantly die painfully"
+                                                die_string = "Press F5 to restart form the last Checkpoint"
                                                 show_text(die_string,20,(255,255,255),(333,20))
                                         if (frame_counter > 1850 and frame_counter < 1900):
-                                                die_string = "Press 'F12' to give up and go home"
+                                                die_string = "Press 'F12' to exit"
                                                 show_text(die_string,20,(255,255,255),(333,20))
                                         if multiplayer:
                                                 if (frame_counter > 100 and frame_counter < 200):

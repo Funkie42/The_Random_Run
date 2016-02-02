@@ -12,6 +12,9 @@ class Hindernis():
         self.reihe = 0
         self.spalte = 0
         self.direction = 1
+        self.sprites1 = []
+        self.sprites2 = []
+        self.make_sprites()#
         self.rect = self.current_sprite().get_rect()
         self.hitpoints = 4
         self.baseHitpoints = self.hitpoints
@@ -21,6 +24,10 @@ class Hindernis():
         self.sprite_iterator = 0
         self.body = pymunk.Body(self.mass, pymunk.inf)
         self.kugel_counter = 0
+
+        
+        
+
         
     def center_rect(self):
         x = self.rect
@@ -57,25 +64,43 @@ class Gegner(Hindernis):
         else:
             self.body.velocity.x = -200
             self.direction = -1
-
+            
+    def make_sprites(self):
+        if self.sprite_type == 0:
+            for i in range(0,12):
+                x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 + 25 , 8, self.sprite.sprite_sheet.get_width()/12 - 60 , self.sprite.sprite_sheet.get_height() -25)
+                x = pygame.transform.scale(x, (90, 90)).convert()
+                self.sprites1.append(x)
+                self.sprites2.append(pygame.transform.flip(x,True,False))
+                
+        else:
+            for i in range(0,13):
+                x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/13 + 25 , 8, self.sprite.sprite_sheet.get_width()/13 - 60 , self.sprite.sprite_sheet.get_height() -10)
+                x = pygame.transform.scale(x, (90, 90)).convert()
+                self.sprites1.append(x)
+                self.sprites2.append(pygame.transform.flip(x,True,False))            
     def current_sprite(self):
         if self.sprite_type == 0:
                 if self.direction == 1:
-                    x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 + 25 , 8, self.sprite.sprite_sheet.get_width()/12 - 60 , self.sprite.sprite_sheet.get_height() -25)
-                    x = pygame.transform.scale(x, (90, 115))
+                    x = self.sprites1[self.reihe]
+                    #x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 + 25 , 8, self.sprite.sprite_sheet.get_width()/12 - 60 , self.sprite.sprite_sheet.get_height() -25)
+                    #x = pygame.transform.scale(x, (90, 115))
                     return x
                 else:
-                    x = pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 + 25,8, self.sprite.sprite_sheet.get_width()/12 - 60, self.sprite.sprite_sheet.get_height() -25), True, False)
-                    x = pygame.transform.scale(x, (90, 115))
+                    x = self.sprites2[self.reihe]
+                    #x = pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 + 25,8, self.sprite.sprite_sheet.get_width()/12 - 60, self.sprite.sprite_sheet.get_height() -25), True, False)
+                    #x = pygame.transform.scale(x, (90, 115))
                     return x
         else:
                 if self.direction == 1:
-                    x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/13 + 25 , 8, self.sprite.sprite_sheet.get_width()/13 - 60 , self.sprite.sprite_sheet.get_height() -10)
-                    x = pygame.transform.scale(x, (140, 150))
+                    x = self.sprites1[self.reihe]
+                    #x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/13 + 25 , 8, self.sprite.sprite_sheet.get_width()/13 - 60 , self.sprite.sprite_sheet.get_height() -10)
+                    #x = pygame.transform.scale(x, (140, 150))
                     return x
                 else:
-                    x = pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/13 + 25,8, self.sprite.sprite_sheet.get_width()/13 - 60, self.sprite.sprite_sheet.get_height() -10), True, False)
-                    x = pygame.transform.scale(x, (140, 150))
+                    x = self.sprites2[self.reihe]
+                    #x = pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/13 + 25,8, self.sprite.sprite_sheet.get_width()/13 - 60, self.sprite.sprite_sheet.get_height() -10), True, False)
+                    #x = pygame.transform.scale(x, (140, 150))
                     return x
 
         
@@ -130,6 +155,13 @@ class FliegenderGegner(Hindernis):
         self.shape.collision_type = 6
         self.shape.sprite_group = 2 #########!!!!!!!!!!!
 
+    def make_sprites(self):
+        for i in range(0,4):
+            x = self.sprite.get_image(i * self.sprite.sprite_sheet.get_width()/4 + 25 , 8, self.sprite.sprite_sheet.get_width()/4 - 60 , self.sprite.sprite_sheet.get_height() -10)
+            x = pygame.transform.scale(x, (90, 90)).convert()
+            self.sprites1.append(x)
+            self.sprites2.append(pygame.transform.flip(x,True,False))            
+        
     def init(self, space):
         space.add(self.shape)
 
@@ -138,12 +170,14 @@ class FliegenderGegner(Hindernis):
 
     def current_sprite(self):
         if self.direction == 1:
-            x = self.sprite.get_image(0, self.reihe*self.sprite.sprite_sheet.get_height()/4, self.sprite.sprite_sheet.get_width(), self.sprite.sprite_sheet.get_height()/4)
-            x = pygame.transform.scale(x, (90, 90))
+            x = self.sprites1[self.reihe]
+            #x = self.sprite.get_image(self.reihe * self.sprite.sprite_sheet.get_width()/4 + 25 , 8, self.sprite.sprite_sheet.get_width()/4 - 60 , self.sprite.sprite_sheet.get_height() -10)
+            #x = pygame.transform.scale(x, (90, 90)).convert()
             return x
         else:
-            x = pygame.transform.flip(self.sprite.get_image(0, self.reihe*self.sprite.sprite_sheet.get_height()/4, self.sprite.sprite_sheet.get_width(), self.sprite.sprite_sheet.get_height()/4), True, False)
-            x = pygame.transform.scale(x, (90, 90))
+            x = self.sprites2[self.reihe]
+            #x = pygame.transform.flip(self.sprite.get_image(self.reihe * self.sprite.sprite_sheet.get_width()/4 + 25 , 8, self.sprite.sprite_sheet.get_width()/4 - 60 , self.sprite.sprite_sheet.get_height() -10), True, False)
+            #x = pygame.transform.scale(x, (90, 90)).convert()
             return x
 
     def course(self):
@@ -173,7 +207,7 @@ class FliegenderGegner(Hindernis):
             if self.rect.top <= self.anfang:
                 self.direction = 1
         self.course()
-        if self.sprite_counter >= 15:
+        if self.sprite_counter >= 5:
             self.sprite_counter = 0
             if self.reihe < 3:
                 self.reihe += 1
