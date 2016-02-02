@@ -10,7 +10,7 @@ multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 opponentscore = 0
-test_startlvl = 3# Für Testen
+test_startlvl = 5# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
@@ -732,9 +732,9 @@ def main():
                                 space.step(1/35)
                                 clock.tick(25)
                                 DISPLAYSURF.blit(camera_blit(), (0,0))
-                                if w.portal.rect.left == w.boeden[8].rect.left: # Endgegner Portal spawn!
-                                        w.portal = Speicherpunkt.Portal(w.boeden[28], [portal1_sprite])
-                                        space.add(w.portal.shape)
+                                #if w.portal.rect.left == w.boeden[8].rect.left: # Endgegner Portal spawn!
+                                 #       w.portal = Speicherpunkt.Portal(w.boeden[28], [portal1_sprite])
+                                 #       space.add(w.portal.shape)
                                 ### Highscoreanzeige ###
                                 if bonustime > 0: bonustime = 300 - int(time.time() - start_time - pause_time)
                                 else: bonustime = 0
@@ -864,13 +864,27 @@ def construct_level(level,players):
 
         return Welt(bild,blocks,enemys,powerups,spaceshuttles,waypoints,p,players[0],players[1],texts)
 
-        
+def load_screen(level):
+        loadstring = "Loading: "
+        loadpos = (611,30)
+        if level == 0:
+                loadstring += "Tutorial"
+        elif level == 6:
+                loadstring += "Battleground"
+                loadpos = (555,30)
+        else:
+                loadstring += "Level " + str(level)
+        DISPLAYSURF.fill((0,0,0))
+        show_text(loadstring,20,(155,155,155),loadpos)
+        pygame.display.flip() 
+
 def set_everything(start_level):
         #SPIELER
         s = Spieler()
         s2 = Spieler()
         global current_level,game,score
         game = []
+        load_screen(start_level)
         if start_level == 0:
                 game.append(construct_level(0,(s,s2)))
         elif start_level == 6:
@@ -883,12 +897,14 @@ def set_everything(start_level):
                         if w == 4: x.sterbehoehe = 100
         current_level = game[0]#start_level
         score = 0 
-                
+def change_world_parameters():
+        pass
 def on_execute(multi_True = False,start_level = 1, ghostmode = True): # Multiplayer starten oder Singleplayer (bei False singleplayer)
         global multiplayer,survival_time,playing_Spieler,multiplayer_ghostmode, current_level, current_speicherpunkt
         multiplayer = multi_True
         multiplayer_ghostmode = ghostmode
         survival_time = time.time()#Für Highscore
+        
         if multiplayer: # Start nur aus dem Menü heraus
                         playing_Spieler,p2_ghostmode = get_player_number(multiplayer_ghostmode)
                         if playing_Spieler == 2 and not p2_ghostmode:
@@ -908,13 +924,7 @@ def on_execute(multi_True = False,start_level = 1, ghostmode = True): # Multipla
                                                         w.anderer_spieler.shape.collision_type = 3
                                                 awaiting_snd_player = True
                                                 while awaiting_snd_player:
-                                                        #print(playing_Spieler)
-                                                        p2_data = send_data((playing_Spieler, # Spieler 1 oder 2
-                                                                           (), #  Richtung in die er schaut und sprite_in_use
-                                                                           (), # Positition des Spielers
-                                                                           (),
-                                                                           ()))
-                                                        print(p2_data)
+                                                        p2_data = send_data((playing_Spieler,(),(),(),()))# Spieler 1 oder 2
                                                         for event in pygame.event.get():
                                                                 if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                                                                         if multiplayer: send_data("gg")
@@ -923,13 +933,9 @@ def on_execute(multi_True = False,start_level = 1, ghostmode = True): # Multipla
                                                                 elif event.type == KEYDOWN:
                                                                         if event.key == K_F12: # Für Beenden und zurück zum startmenü
                                                                                 if multiplayer: send_data("gg")
-                                                                                #w.removeFromSpace()
-                                                                                #w.finish = True
                                                                                 return (False,score,-1)
-                                                                
                                                         pygame.display.flip()
-                                                        if p2_data != None:
-                                                                awaiting_snd_player = False    
+                                                        if p2_data != None:     awaiting_snd_player = False    
                                 else:
                                                 w.spieler = current_level.spieler2
                                                 w.anderer_spieler = current_level.spieler1
@@ -940,12 +946,12 @@ def on_execute(multi_True = False,start_level = 1, ghostmode = True): # Multipla
                                                         current_speicherpunkt = w.speicherpunkte[0]
                                                         w.anderer_spieler.shape.collision_type = 3                            
                         return main()
-        else:
+                
+        else:   #Singleplayer
                 set_everything(start_level)
                 for w in game: w.spieler = w.spieler1
                 if __name__ == "__main__": main()
-                # Singelplayerstart aus dem Menü heraus
-                else:  return main()
+                else:  return main() # Singelplayerstart aus dem Menü heraus
 
 
 

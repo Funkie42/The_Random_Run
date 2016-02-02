@@ -546,7 +546,7 @@ class Main:
                 Gameclient.client.disconnect()
                 server.disconnect_clients()
                 server.disconnect()    
-            except IOError:
+            except :
                 self.blend_in_text("Something went wrong..",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
                 time.sleep(2)
                 self.blend_in_text("Wait a minute and try again",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
@@ -579,7 +579,7 @@ class Main:
 
                 self.gameplay(True)
              
-            except IOError:
+            except :
                 try: self.blend_in_text("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
                 except: self.endIt()
                 music_change(menu_music)

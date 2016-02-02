@@ -37,13 +37,12 @@ def get_player_number(ghostmode):
     global p2_ghostmode
     player = 0
     client.send([0,ghostmode])
-    x = client.receive(True) 
+    x = client.receive(True)
     if x == [None,None]:
         player = 1
     else:
         player = 2
         if x == "duell":
             return (player,False)
-            
     return  (player,True)
     

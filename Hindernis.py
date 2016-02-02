@@ -68,37 +68,37 @@ class Gegner(Hindernis):
     def make_sprites(self):
         if self.sprite_type == 0:
             for i in range(0,12):
-                x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 + 25 , 8, self.sprite.sprite_sheet.get_width()/12 - 60 , self.sprite.sprite_sheet.get_height() -25)
-                x = pygame.transform.scale(x, (90, 90)).convert()
+                x = self.sprite.get_image(i * self.sprite.sprite_sheet.get_width()/12 + 25 , 8, self.sprite.sprite_sheet.get_width()/12 - 60 , self.sprite.sprite_sheet.get_height() -25)
+                x = pygame.transform.scale(x, (90, 110)).convert()
                 self.sprites1.append(x)
                 self.sprites2.append(pygame.transform.flip(x,True,False))
                 
         else:
             for i in range(0,13):
-                x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/13 + 25 , 8, self.sprite.sprite_sheet.get_width()/13 - 60 , self.sprite.sprite_sheet.get_height() -10)
-                x = pygame.transform.scale(x, (90, 90)).convert()
+                x = self.sprite.get_image(i * self.sprite.sprite_sheet.get_width()/13 + 25 , 8, self.sprite.sprite_sheet.get_width()/13 - 60 , self.sprite.sprite_sheet.get_height() -10)
+                x = pygame.transform.scale(x, (90, 120)).convert()
                 self.sprites1.append(x)
                 self.sprites2.append(pygame.transform.flip(x,True,False))            
     def current_sprite(self):
         if self.sprite_type == 0:
                 if self.direction == 1:
-                    x = self.sprites1[self.reihe]
+                    x = self.sprites1[self.spalte]
                     #x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 + 25 , 8, self.sprite.sprite_sheet.get_width()/12 - 60 , self.sprite.sprite_sheet.get_height() -25)
                     #x = pygame.transform.scale(x, (90, 115))
                     return x
                 else:
-                    x = self.sprites2[self.reihe]
+                    x = self.sprites2[self.spalte]
                     #x = pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 + 25,8, self.sprite.sprite_sheet.get_width()/12 - 60, self.sprite.sprite_sheet.get_height() -25), True, False)
                     #x = pygame.transform.scale(x, (90, 115))
                     return x
         else:
                 if self.direction == 1:
-                    x = self.sprites1[self.reihe]
+                    x = self.sprites1[self.spalte]
                     #x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/13 + 25 , 8, self.sprite.sprite_sheet.get_width()/13 - 60 , self.sprite.sprite_sheet.get_height() -10)
                     #x = pygame.transform.scale(x, (140, 150))
                     return x
                 else:
-                    x = self.sprites2[self.reihe]
+                    x = self.sprites2[self.spalte]
                     #x = pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/13 + 25,8, self.sprite.sprite_sheet.get_width()/13 - 60, self.sprite.sprite_sheet.get_height() -10), True, False)
                     #x = pygame.transform.scale(x, (140, 150))
                     return x

@@ -38,7 +38,8 @@ class ServerGame(MastermindServerTCP):
                 self.callback_client_send(connection_object, "duell")
                 
             if data[1] == True: # Ghostmode
-                self.callback_client_send(connection_object, self.data_to_send)
+                self.callback_client_send(connection_object, self.stuff_data_to_send)
+                self.stuff_data_to_send = "cookie"
             else:
                 self.indicator = ["duell",0]
                 self.callback_client_send(connection_object, self.data_to_send)
