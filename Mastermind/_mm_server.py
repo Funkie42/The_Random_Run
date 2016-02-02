@@ -9,25 +9,25 @@ from _mm_errors import *
 
 class MastermindServerCallbacksDebug(object):
     def callback_connect          (self                                          ):
-        print("Server: The server has connected to \""+str(self._mm_ip)+"\" on port "+str(self._mm_port)+".")
+        #print("Server: The server has connected to \""+str(self._mm_ip)+"\" on port "+str(self._mm_port)+".")
         return super(MastermindServerCallbacksDebug,self).callback_connect()
     def callback_disconnect       (self                                          ):
-        print("Server: The server has disconnected.")
+        #print("Server: The server has disconnected.")
         return super(MastermindServerCallbacksDebug,self).callback_disconnect()
     def callback_connect_client   (self, connection_object                       ):
-        print("Server: A new client from \""+str(connection_object.address)+"\" has connected.")
+        #print("Server: A new client from \""+str(connection_object.address)+"\" has connected.")
         return super(MastermindServerCallbacksDebug,self).callback_connect_client(connection_object)
     def callback_disconnect_client(self, connection_object                       ):
-        print("Server: The client from \""+str(connection_object.address)+"\" has disconnected.")
+        #print("Server: The client from \""+str(connection_object.address)+"\" has disconnected.")
         return super(MastermindServerCallbacksDebug,self).callback_disconnect_client(connection_object)
     def callback_client_receive   (self, connection_object                       ):
-        print("Server: About to receive information from client \""+str(connection_object.address)+"\"!")
+        #print("Server: About to receive information from client \""+str(connection_object.address)+"\"!")
         return super(MastermindServerCallbacksDebug,self).callback_client_receive(connection_object)
     def callback_client_handle    (self, connection_object, data                 ):
-        print("Server: Handling data \""+str(data)+"\" from client \""+str(connection_object.address)+"\".")
+        #print("Server: Handling data \""+str(data)+"\" from client \""+str(connection_object.address)+"\".")
         return super(MastermindServerCallbacksDebug,self).callback_client_handle(connection_object,data)
     def callback_client_send      (self, connection_object, data,compression=None):
-        print("Server: About to send data \""+str(data)+"\" to client \""+str(connection_object.address)+"\" with compression \""+str(compression)+"\"!")
+        #print("Server: About to send data \""+str(data)+"\" to client \""+str(connection_object.address)+"\" with compression \""+str(compression)+"\"!")
         return super(MastermindServerCallbacksDebug,self).callback_client_send(connection_object, data,compression)
 class MastermindServerCallbacksEcho(object):
     def callback_client_handle(self, connection_object, data):
@@ -53,18 +53,18 @@ class MastermindServerBase(object):
         self._mm_connected = False
     def __del__(self):
         if self._mm_accepting_new_connections:
-            MastermindWarningServer("For a server, .accepting_disallow() was not called before destruction!  Calling automatically.")
+            #MastermindWarningServer("For a server, .accepting_disallow() was not called before destruction!  Calling automatically.")
             self.accepting_disallow()
         if len(self._mm_connections) != 0:
-            MastermindWarningServer("For a server, there are still active connections at the time of destruction.  Automatically calling .disconnect_clients().")
+            #MastermindWarningServer("For a server, there are still active connections at the time of destruction.  Automatically calling .disconnect_clients().")
             self.disconnect_clients()
         if self._mm_connected:
-            MastermindWarningServer("For a server, .disconnect() was not called before destruction!  Calling automatically.")
+            #MastermindWarningServer("For a server, .disconnect() was not called before destruction!  Calling automatically.")
             self.disconnect()
 
     def connect(self, ip,port):
         if self._mm_connected:
-            MastermindWarningServer("Server is already connected!  Ignoring .connect(...).")
+            #MastermindWarningServer("Server is already connected!  Ignoring .connect(...).")
             return
 
         self._mm_make_connection(ip,port)
@@ -77,13 +77,13 @@ class MastermindServerBase(object):
         self._mm_connected = True
     def disconnect(self):
         if not self._mm_connected:
-            MastermindWarningServer("Server is already disconnected!  Ignoring .disconnect().")
+            #MastermindWarningServer("Server is already disconnected!  Ignoring .disconnect().")
             return
         if self._mm_accepting_new_connections:
-            MastermindWarningServer("Server disconnecting, but still accepting new connections!  Automatically calling .accepting_disallow().")
+            #MastermindWarningServer("Server disconnecting, but still accepting new connections!  Automatically calling .accepting_disallow().")
             self.accepting_disallow()
         if len(self._mm_connections) != 0:
-            MastermindWarningServer("Server disconnecting, but has clients!  Automatically calling .disconnect_clients().")
+            #MastermindWarningServer("Server disconnecting, but has clients!  Automatically calling .disconnect_clients().")
             self.disconnect_clients()
 
         self._mm_close_connection()

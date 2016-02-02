@@ -10,8 +10,8 @@
 normal_intro = [("THE RANDOM RUN","Gui/splash.png"),
                 ("When you were sleeping sound in your bed",None),
                 ("A sudden burst of light wakes you up",None),
-                ("A creature, completely engulfed in darkness",None),
-                ("As he raises his hand you pass out",None),
+                ("A creature, completely engulfed in darkness","Gui/shadow.jpg"),
+                ("As he raises his hand you pass out","Gui/shadow.jpg"),
                 ("...",None),
                 ("By the time you wake up, it's dark again",None),
                 ("You start thinking it may have been a dream",None),
@@ -39,7 +39,7 @@ normal_level_1 = [("You have fought bravely and reached the second portal","Gui/
                   ("Suddenly, the smell of nature surrounds you",None),
                   ("A loud bang and you find yourself in a forest","Gui/bg2.jpg"),
                   ("You see an image in your mind",None),
-                  ("The creature, that brought you here..",None),
+                  ("The creature, that brought you here..","Gui/shadow.jpg"),
                   ("Who is he?","Gui/powerups/qm.png")]
 
 level_1_texts = [normal_level_1]
@@ -89,10 +89,11 @@ level_3_texts = [normal_level_3]
 #Level 4 finished Text
 ##########################
 
-normal_level_4 = [("'What were these Spaceships?!'",None),
+normal_level_4 = [("'What ARE there creatures?!'",None),
+                  ("'They even build castles to destroy me!'",None),
                   ("At least now you knew what you are up against",None),
                   ("But since you defeated them, you feel like you can do this",None),
-                  ("The shadow pops up in your mind",None),
+                  ("The shadow pops up in your mind","Gui/shadow.jpg"),
                   ("'So he's the leader..'",None),
                   ("You get to a door, in the middle of the portalstream",None),
                   ("When you knock, a red alien opens the door",None),
@@ -105,7 +106,7 @@ normal_level_4 = [("'What were these Spaceships?!'",None),
                   ("The alien agrees with a grin on his face",None),
                   ("Soon you can see the end of the portal",None),
                   ("The ship is gigantic",None),
-                  ("You realize you red guide is gone",None),
+                  ("You realize that your red guide is gone",None),
                   ("Where did he go? Was he ever there?",None)]
 
 level_4_texts = [normal_level_4]
@@ -116,9 +117,9 @@ level_4_texts = [normal_level_4]
 normal_level_5 = [("Finally! You defeated the Spaceship",None),
                   ("As you step in the portal you take one glance back.",None),
                   ("'Well, that was wierd', you say",None),
-                  ("'I really wanted to see that shadow though..",None),
-                  ("Where the heck did I even GET that gun from?",None),
-                  ("And what was up with that suit?",None),
+                  ("'I really wanted to see that shadow though..","Gui/shadow.jpg"),
+                  ("Where the heck did I even GET that gun from?","Gui/front.png"),
+                  ("And what was up with that suit?","Gui/front.png"),
                   ("I was in my pyjamas when this started!'",None),
                   ("You're left with more questions than answers",None),
                   ("You reach home, but what was that all?",None),
@@ -127,6 +128,6 @@ normal_level_5 = [("Finally! You defeated the Spaceship",None),
                   ("'Me, a dreamer or a hero?'",None),
                   ("You'll probably never know",None),
                   ("THE END",None),
-                  ("?",None),]
+                  ("?","Gui/Buttons/bl_credits_off.png")]
 
 level_5_texts = [normal_level_5]

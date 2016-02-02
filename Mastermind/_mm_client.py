@@ -20,12 +20,12 @@ class MastermindClientBase(object):
         self._mm_connected = False
     def __del__(self):
         if self._mm_connected:
-            MastermindWarningClient("In a client, .disconnect() was not called before destruction!  Calling automatically.")
+            #MastermindWarningClient("In a client, .disconnect() was not called before destruction!  Calling automatically.")
             self.disconnect()
 
     def connect(self, ip,port):
         if self._mm_connected:
-            MastermindWarningClient("Client is already connected!  Ignoring .connect(...).")
+            #MastermindWarningClient("Client is already connected!  Ignoring .connect(...).")
             return
 
         self._mm_make_connection(ip,port)
@@ -36,7 +36,7 @@ class MastermindClientBase(object):
         self._mm_connected = True
     def disconnect(self):
         if not self._mm_connected:
-            MastermindWarningClient("Client is already disconnected!")
+            #MastermindWarningClient("Client is already disconnected!")
             return
         self._mm_socket.close()
 

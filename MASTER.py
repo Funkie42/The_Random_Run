@@ -914,7 +914,7 @@ def on_execute(multi_True = False,start_level = 1, ghostmode = True): # Multipla
                                                                            (), # Positition des Spielers
                                                                            (),
                                                                            ()))
-                                                        #print(p2_data)
+                                                        print(p2_data)
                                                         for event in pygame.event.get():
                                                                 if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                                                                         if multiplayer: send_data("gg")
