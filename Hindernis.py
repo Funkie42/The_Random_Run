@@ -12,13 +12,9 @@ class Hindernis():
         self.reihe = 0
         self.spalte = 0
         self.direction = 1
-<<<<<<< HEAD
         self.sprites1 = []
         self.sprites2 = []
         self.make_sprites()
-=======
-        self.imFlug = False
->>>>>>> d27fa69797fecf2dc931ae53724f758abb40482b
         self.rect = self.current_sprite().get_rect()
         self.hitpoints = 5
         self.baseHitpoints = self.hitpoints
@@ -28,6 +24,10 @@ class Hindernis():
         self.sprite_iterator = 0
         self.body = pymunk.Body(self.mass, pymunk.inf)
         self.kugel_counter = 0
+
+        
+        
+
         
     def center_rect(self):
         x = self.rect
@@ -64,31 +64,26 @@ class Gegner(Hindernis):
         else:
             self.body.velocity.x = -200
             self.direction = -1
-
+            
+    def make_sprites(self):
+        if self.sprite_type == 0:
+            for i in range(0,12):
+                x = self.sprite.get_image(i * self.sprite.sprite_sheet.get_width()/12 + 25 , 8, self.sprite.sprite_sheet.get_width()/12 - 60 , self.sprite.sprite_sheet.get_height() -25)
+                x = pygame.transform.scale(x, (90, 110)).convert()
+                self.sprites1.append(x)
+                self.sprites2.append(pygame.transform.flip(x,True,False))
+                
+        else:
+            for i in range(0,13):
+                x = self.sprite.get_image(i * self.sprite.sprite_sheet.get_width()/13 + 25 , 8, self.sprite.sprite_sheet.get_width()/13 - 60 , self.sprite.sprite_sheet.get_height() -10)
+                x = pygame.transform.scale(x, (90, 120)).convert()
+                self.sprites1.append(x)
+                self.sprites2.append(pygame.transform.flip(x,True,False))            
     def current_sprite(self):
                 if self.direction == 1:
-<<<<<<< HEAD
                     return self.sprites1[self.spalte]
                 else:
                     return self.sprites2[self.spalte]
-=======
-                    x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 + 25 , 8, self.sprite.sprite_sheet.get_width()/12 - 60 , self.sprite.sprite_sheet.get_height() -25)
-                    x = pygame.transform.scale(x, (90, 115))
-                    return x
-                else:
-                    x = pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/12 + 25,8, self.sprite.sprite_sheet.get_width()/12 - 60, self.sprite.sprite_sheet.get_height() -25), True, False)
-                    x = pygame.transform.scale(x, (90, 115))
-                    return x
-        else:
-                if self.direction == 1:
-                    x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/13 + 25 , 8, self.sprite.sprite_sheet.get_width()/13 - 60 , self.sprite.sprite_sheet.get_height() -10)
-                    x = pygame.transform.scale(x, (140, 150))
-                    return x
-                else:
-                    x = pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/13 + 25,8, self.sprite.sprite_sheet.get_width()/13 - 60, self.sprite.sprite_sheet.get_height() -10), True, False)
-                    x = pygame.transform.scale(x, (140, 150))
-                    return x
->>>>>>> d27fa69797fecf2dc931ae53724f758abb40482b
 
         
     def update(self):
@@ -122,15 +117,8 @@ class Gegner(Hindernis):
                 self.sprite_iterator += 1
 
 class FliegenderGegner(Hindernis):
-<<<<<<< HEAD
     def __init__(self, anfang, ende, topOrleft, moveSpeed, sprite, mass, feuerrate, waagrecht=True):
         Hindernis.__init__(self, sprite, moveSpeed, mass, feuerrate)
-=======
-    def __init__(self, anfang, ende, topOrleft, moveSpeed, sprite, mass, feuerrate, waagrecht=True): ##!!!!
-        Hindernis.__init__(self, sprite, moveSpeed, mass, feuerrate) ####!!!!!!
-        self.endgegner = False
-        self.imFlug = True
->>>>>>> d27fa69797fecf2dc931ae53724f758abb40482b
         self.anfang = anfang
         self.ende = ende
         self.waagrecht = waagrecht
@@ -150,28 +138,24 @@ class FliegenderGegner(Hindernis):
         self.hitpoints = 4
         self.baseHitpoints = self.hitpoints
 
+    def make_sprites(self):
+        for i in range(0,4):
+            x = self.sprite.get_image(i * self.sprite.sprite_sheet.get_width()/4 + 25 , 8, self.sprite.sprite_sheet.get_width()/4 - 60 , self.sprite.sprite_sheet.get_height() -10)
+            x = pygame.transform.scale(x, (90, 90)).convert()
+            self.sprites1.append(x)
+            self.sprites2.append(pygame.transform.flip(x,True,False))            
+        
     def init(self, space):
         space.add(self.shape)
-        self.shape.collision_type = 6
 
     def remove(self, space):
         space.remove(self.shape)
 
     def current_sprite(self):
         if self.direction == 1:
-<<<<<<< HEAD
             return self.sprites1[self.reihe]
         else:
             return self.sprites2[self.reihe]
-=======
-            x = self.sprite.get_image(0, self.reihe*self.sprite.sprite_sheet.get_height()/4, self.sprite.sprite_sheet.get_width(), self.sprite.sprite_sheet.get_height()/4)
-            x = pygame.transform.scale(x, (90, 90))
-            return x
-        else:
-            x = pygame.transform.flip(self.sprite.get_image(0, self.reihe*self.sprite.sprite_sheet.get_height()/4, self.sprite.sprite_sheet.get_width(), self.sprite.sprite_sheet.get_height()/4), True, False)
-            x = pygame.transform.scale(x, (90, 90))
-            return x
->>>>>>> d27fa69797fecf2dc931ae53724f758abb40482b
 
     def course(self):
         if self.waagrecht:
@@ -200,58 +184,12 @@ class FliegenderGegner(Hindernis):
             if self.rect.top <= self.anfang:
                 self.direction = 1
         self.course()
-        if self.sprite_counter >= 15:
+        if self.sprite_counter >= 5:
             self.sprite_counter = 0
             if self.reihe < 3:
                 self.reihe += 1
             else:
                 self.reihe = 0
-
-class Endgegner(FliegenderGegner):
-    def __init__(self, anfang, ende, topOrleft, moveSpeed, sprite, mass, feuerrate, waagrecht=True):
-        FliegenderGegner.__init__(self, anfang, ende, topOrleft, moveSpeed, sprite, mass, feuerrate, waagrecht)
-        self.endgegner = True
-        self.hitpoints = 40
-        self.body.velocity_func = self.slow_space
-
-    def slow_space(self, body, gravity, damping, dt):
-        body.velocity.y = 0
-        if body.velocity.x > 1:
-            body.velocity.x = 1
-        elif body.velocity.x < -1:
-            body.velocity.x = -1
-
-    def current_sprite(self):
-            if self.direction == 1:
-                    x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/7 + 10 , 80, self.sprite.sprite_sheet.get_width()/7 - 50 , self.sprite.sprite_sheet.get_height() -100)
-                    #x = pygame.transform.scale(x, (90, 115))
-                    return x
-            else:
-                    x = pygame.transform.flip(self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/7 + 10,80, self.sprite.sprite_sheet.get_width()/7 - 50, self.sprite.sprite_sheet.get_height() -100), True, False)
-                    #x = pygame.transform.scale(x, (90, 115))
-                    return x
-        
-    def update(self):
-        if self.kugel_counter < self.feuerrate: 
-            self.kugel_counter += 1
-        else:
-            self.kugel_counter = 0
-        if self.rect.right >= self.ende:
-            self.direction = -1
-        if self.rect.left <= self.anfang:
-            self.direction = 1
-        self.course()
-        
-        if self.spalte <= 5:
-            self.spalte += 1
-        else:
-            self.spalte = 0
-        
-        if self.hitpoints == 5:
-            self.moveSpeed = 15
-            self.feuerrate = 15
-            self.shape.collision_type = 16
-
         
 class Endgegner(FliegenderGegner):
     def __init__(self, anfang, ende, topOrleft, moveSpeed, sprite, mass, feuerrate, waagrecht=True):
