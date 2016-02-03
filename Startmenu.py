@@ -572,7 +572,7 @@ class Main:
 
                 self.gameplay(True)
              
-            except :
+            except  :
                 try: self.blend_in_text("Connection Failed",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
                 except: self.endIt()
                 music_change(menu_music)

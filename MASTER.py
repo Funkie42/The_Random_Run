@@ -269,7 +269,11 @@ class Welt():
                         self.spieler.body.position.y = self.speicherpunkte[0].rect.top - 250
                         self.addToSpace()
                         self.init = True
-                        if multiplayer:  self.anderer_spieler.sprite = character2_sprite
+                        if multiplayer:
+                                self.anderer_spieler.sprite = character2_sprite
+                                self.anderer_spieler.sprites1 =[]
+                                self.anderer_spieler.sprites2 =[]
+                                self.anderer_spieler.make_sprites()
                         if playing_Spieler == 2:
                                 self.spieler.body.position.x += 100
                         
@@ -442,12 +446,10 @@ def player_jumps_gegner(space, arbiter):
                                 if current_level.spieler.body.position.y < arbiter.shapes[1].body.position.y:
                                         current_level.spieler.body.velocity.y = -650
                                         current_level.spieler.double_jump_counter = 1
-                                        print("hop")
                                         i.hitpoints -= 2
                                 else:
                                         current_level.spieler.hitpoints -= 1
                                         i.body.velocity.y = -400
-                                        print("top")
         else:
                 current_level.spieler.hitpoints -= 1
                 current_level.spieler.body.velocity.x = -300 * current_level.spieler.direction
@@ -466,16 +468,6 @@ def player_jumps_fliegender_gegner(space, arbiter):
                 current_level.spieler.body.velocity.y = -450
         return True
 
-#def player_jumps_boss(space, arbiter):
- #       if arbiter.contacts[0].normal.int_tuple[0] == 0:
- #               current_level.spieler.body.velocity.y = -650
- #               current_level.spieler.double_jump_counter = 1
- #               space.add(arbiter.shapes[1].body)
-   #     else:
- #               current_level.spieler.hitpoints -= 1
-   #             current_level.spieler.body.velocity.x = -300 * current_level.spieler.direction
-  #             current_level.spieler.body.velocity.y = -450
- #       return True
 
 def player_jumps_highjump(space, arbiter):
         if arbiter.contacts[0].normal.int_tuple[0] == 0:
@@ -543,7 +535,7 @@ def player_stands_stein(space, arbiter):
 
 def player_leaves_stein(space, arbiter):
         current_level.spieler.onStein = False
-        cänt_touch_dis()
+        cänt_touch_dis(space,arbiter)
 
 # UNIVERSELLE OPTIONEN
 pygame.init()
