@@ -159,20 +159,33 @@ w1_portal = 33
 #LEVEL2
 ###########Blöcke###################
 # Inhalt der Tupel:   ( left,   top,    width,  height)
-w2_blockkoordinaten = [(100, 5000, 100, 50),  (200, 4900, 100, 50), (300, 4700, 100, 50), (400, 4400, 100, 50), (500, 4100, 200, 50), (600, 3600, 100, 50),
-                       (1000, 3600, 100, 50), (1450, 3600, 200, 50), (2000, 3600, 700, 50), (2700, 3100, 100, 50), (1900, 3600, 100, 50)#10
-                       ,(3900, 4000, 100, 50)]
+w2_blockkoordinaten = [(100, 5000, 100, 50),
+                       (200, 4900, 100, 50),
+                       (300, 4700, 100, 50),
+                       (400, 4400, 100, 50),
+                       (500, 4100, 200, 50),
+                       (600, 3600, 100, 50), #5
+                       (1000, 3600, 100, 50),
+                       (1450, 3600, 200, 50),
+                       (2000, 3600, 700, 50),
+                       (2700, 3100, 100, 50),
+                       (1900, 3600, 100, 50)#10
+                       ,(3900, 4000, 100, 50),
+                       (4100,3100,100,50)]
 
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 w2_boden_gegner = [(2,10,alien_sprite,1,22),
                    (2,10,alien_sprite,1,22)] 
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
-w2_flug_gegner = [(2850, 3150, 3100, 5, pacman_sprite, 10, 125, True),(3200, 3550, 3100, 5, pacman_sprite, 10, 125, True),(3600, 3900, 3100, 5, pacman_sprite, 10, 125, True),
-                  (3100, 3500, 4000, 5, pacman_sprite, 10, 125, False), (3600, 4000, 4000, 5, pacman_sprite, 10, 125, False)]
+w2_flug_gegner = [(2850, 3150, 3100, 5, pacman_sprite, 10, 125, True),
+                  (3200, 3550, 3100, 5, pacman_sprite, 10, 125, True),
+                  (3600, 3900, 3100, 5, pacman_sprite, 10, 125, True),
+                  (3100, 3500, 4000, 5, pacman_sprite, 10, 125, False),
+                  (3600, 4000, 4000, 5, pacman_sprite, 10, 125, False)]
 w2_powerups = [("highjump", 4), ("dash", 6), ("highjump", 8)]
 w2_speichpunkte = [9]
 w2_steine= []
-w2_portal = 10
+w2_portal = 12
 
 #LEVEL3
 ###########Blöcke###################
