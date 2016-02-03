@@ -1,5 +1,5 @@
 import sys, pygame, pymunk, time, random, copy
-import Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, Level,cProfile
+import Boden, Hindernis, Power_Ups, SpriteSheet, Speicherpunkt, Level,cProfile, Piano
 from pygame.locals import*
 from copy import deepcopy
 from Gameclient import *
@@ -10,7 +10,7 @@ multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 opponentscore = 0
-test_startlvl = 5# Für Testen
+test_startlvl = 7# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
@@ -18,6 +18,7 @@ kill_counter = 0
 scorechange_size = 35
 frame_counter = 0
 final_boss = None
+startlevel = 1
 
 TOMFAKTOR = False # Weil tom keinen Text anzeigen kann
 
@@ -101,7 +102,7 @@ class Spieler(pygame.sprite.Sprite):
 
                         
         def jump(self):
-                pygame.mixer.Sound(jump_sound).play()
+                if startlevel != 7: pygame.mixer.Sound(jump_sound).play()
                 if current_level.spieler.body.velocity.y > 0:
                         self.body.velocity.y = -self.jumpPower
                 else:
@@ -682,7 +683,9 @@ def main():
                                         w.spieler.move()
                                 if new_kugel:
                                         k = Kugel((1200 * current_level.spieler.direction, -100),(218,165,32))        
-
+                                if startlevel == 7:
+                                    Piano.majestro(current_level.spieler.body.position.x,current_level.spieler.body.position.y)
+                                
 #################################################################
                                 #Mulitplayer Datenaustausch#
 #################################################################
@@ -916,6 +919,8 @@ def set_everything(start_level):
                 game.append(construct_level(0,(s,s2)))
         elif start_level == 6:
                 game.append(construct_level(6,(s,s2)))
+        elif start_level == 7:
+                game.append(construct_level(7,(s,s2))) 
         else:
                 for w in range(start_level,7):
                         if w < 6: load_screen(w)
@@ -960,7 +965,8 @@ def change_world_parameters_multi(w):
                         w.anderer_spieler.shape.collision_type = 3            
           
 def on_execute(multi_True = False,start_level = 1, ghostmode = True): # Multiplayer starten oder Singleplayer (bei False singleplayer)
-        global multiplayer,survival_time,playing_Spieler,multiplayer_ghostmode, current_level, current_speicherpunkt
+        global multiplayer,survival_time,playing_Spieler,multiplayer_ghostmode, current_level, current_speicherpunkt, startlevel
+        startlevel = start_level       
         multiplayer = multi_True
         multiplayer_ghostmode = ghostmode
         survival_time = time.time()#Für Highscore

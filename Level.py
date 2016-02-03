@@ -12,7 +12,7 @@ endgegner_sprite = SpriteSheet.SpriteSheet("Gui/ufo_sprite_sheet.png")
 #GELÄNDESPRITES
 level_grounds = ["Gui/ground5.png","Gui/ground.png",
                  "Gui/ground2.png","Gui/ground3.png",
-                 "Gui/ground4.png","Gui/ground5.png","Gui/ground5.png"]
+                 "Gui/ground4.png","Gui/ground5.png","Gui/ground5.png","Gui/keyboard.jpg"]
 
 # Background Bilder
 tut_bild = "Gui/bg_tut.jpg"
@@ -22,7 +22,7 @@ w3_bild = "Gui/bg3.jpg"
 w4_bild = "Gui/bg4.jpg"
 w5_bild = "Gui/bg5.jpg"
 w6_bild = "Gui/bg_bonus.jpg"
-bg_bilder = [tut_bild,w1_bild,w2_bild,w3_bild,w4_bild,w5_bild,w6_bild]
+bg_bilder = [tut_bild,w1_bild,w2_bild,w3_bild,w4_bild,w5_bild,w6_bild,w6_bild]
 
 ########################Tutorial#######################################################################
 ###########Blöcke###################
@@ -499,12 +499,27 @@ w6_speichpunkte = []
 w6_steine = []
 w6_portal = 5
 
-blockkoords = [tut_blockkoordinaten,w1_blockkoordinaten,w2_blockkoordinaten,w3_blockkoordinaten,w4_blockkoordinaten,w5_blockkoordinaten,w6_blockkoordinaten]
-textboxes = [tut_textboxes,[],[],w3_textboxes,w4_textboxes,w5_textboxes,w6_textboxes]
-bodengegner = [tut_boden_gegner,w1_boden_gegner,w2_boden_gegner,w3_boden_gegner,w4_boden_gegner,w5_boden_gegner,w6_boden_gegner]
-fluggegner = [tut_flug_gegner,w1_flug_gegner,w2_flug_gegner,w3_flug_gegner,w4_flug_gegner,w5_flug_gegner,w6_flug_gegner]
-speicherpunkte = [tut_speicherpunkte,w1_speichpunkte,w2_speichpunkte,w3_speichpunkte,w4_speichpunkte,w5_speichpunkte,w6_speichpunkte]
-powerups = [tut_powerups,w1_powerups,w2_powerups,w3_powerups,w4_powerups,w5_powerups,w6_powerups]
-steine = [tut_steine,w1_steine,w2_steine,w3_steine,w4_steine,w5_steine,w6_steine]
-portale = [tut_portal,w1_portal,w2_portal,w3_portal,w4_portal,w5_portal,w6_portal]
+# Bonus Level
+###########Blöcke###################
+# Inhalt der Tupel:   ( left,   top,    width,  height)
+bonus_blockkoordinaten =   [(0,1000,800 ,300),
+                            (800,0,500,8000)]
+                    
+                           
+bonus_boden_gegner = []
+bonus_flug_gegner = []
+bonus_powerups = []
+bonus_speicherpunkte = []
+bonus_steine = []
+bonus_portal = 1
+
+blockkoords = [tut_blockkoordinaten,w1_blockkoordinaten,w2_blockkoordinaten,w3_blockkoordinaten,w4_blockkoordinaten,w5_blockkoordinaten,w6_blockkoordinaten,bonus_blockkoordinaten]
+textboxes = [tut_textboxes,[],[],w3_textboxes,w4_textboxes,w5_textboxes,w6_textboxes,[]]
+bodengegner = [tut_boden_gegner,w1_boden_gegner,w2_boden_gegner,w3_boden_gegner,w4_boden_gegner,w5_boden_gegner,w6_boden_gegner,bonus_boden_gegner]
+fluggegner = [tut_flug_gegner,w1_flug_gegner,w2_flug_gegner,w3_flug_gegner,w4_flug_gegner,w5_flug_gegner,w6_flug_gegner,bonus_flug_gegner]
+speicherpunkte = [tut_speicherpunkte,w1_speichpunkte,w2_speichpunkte,w3_speichpunkte,w4_speichpunkte,w5_speichpunkte,w6_speichpunkte,bonus_speicherpunkte]
+powerups = [tut_powerups,w1_powerups,w2_powerups,w3_powerups,w4_powerups,w5_powerups,w6_powerups,bonus_powerups]
+steine = [tut_steine,w1_steine,w2_steine,w3_steine,w4_steine,w5_steine,w6_steine,bonus_steine]
+portale = [tut_portal,w1_portal,w2_portal,w3_portal,w4_portal,w5_portal,w6_portal,bonus_portal]
+
 

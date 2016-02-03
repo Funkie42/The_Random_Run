@@ -35,7 +35,7 @@ buttonHeight = int(buttonWidth / 2)
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
-levelcodes = ["","","heartattack","randomness","unavailable","stonepower","None ;)"]
+levelcodes = ["","","heartattack","randomness","unavailable","stonepower","Mozart","Mozart"]
 
 def music_change(new_music):
     pygame.mixer.music.stop()
@@ -97,7 +97,7 @@ bonus_running_sound ="Sounds/tztztztztztz.ogg"
 bonus_done_sound = "Sounds/melodie.ogg"
 
 game_music = 'Sounds/sequenz.ogg'
-level_music = ['Sounds/lvl1.ogg','Sounds/lvl1.ogg','Sounds/lvl2.ogg','Sounds/lvl3.ogg','Sounds/lvl4.ogg','Sounds/lvl5.ogg','Sounds/lvl5.ogg']
+level_music = ['Sounds/lvl1.ogg','Sounds/lvl1.ogg','Sounds/lvl2.ogg','Sounds/lvl3.ogg','Sounds/lvl4.ogg','Sounds/lvl5.ogg','Sounds/lvl5.ogg','Sounds/lvl5.ogg']
 menu_music = "Sounds/bg_music.ogg"
 
 
@@ -512,6 +512,8 @@ class Main:
                     start_level = 4
             elif levelcode == levelcodes[5]:
                     start_level = 5
+            elif levelcode == levelcodes[6]:
+                    start_level = 7
             else:
                 self.blend_in_text("Sorry, wrong code",(int(WINDOWw/2),int(WINDOWh/2)),30,(buttonWidth*2,buttonHeight*2))
                 time.sleep(2.5)
@@ -545,7 +547,8 @@ class Main:
                 self.blend_in_text("Wait a minute and try again",(int(WINDOWw/2),int(WINDOWh/2)),20,(buttonWidth*2,buttonHeight*2))
                 self.blend_in_text("Maybe a server is running on you Computer already?",(int(WINDOWw/2),int(WINDOWh/1.3)),12,(int(buttonWidth*2.5),int(buttonHeight/2)))
                 time.sleep(2)
-                music_change(menu_music)
+                try:music_change(menu_music)
+                except: pass
             try: Gameclient.client.disconnect()
             except: pass
             server.disconnect_clients()
