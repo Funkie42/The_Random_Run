@@ -10,7 +10,7 @@ multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 opponentscore = 0
-test_startlvl = 1# Für Testen
+test_startlvl = 3# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
@@ -218,8 +218,8 @@ class Welt():
                                 if (i.body.position.y > LEVELSURF.get_height() - self.sterbehoehe or i.hitpoints < 0 )and i in self.hindernisse: #evtl zu updaten
                                         ex = Explotion(i.body)
                                         i.dead = True
-                                        try:space.remove(i.body, i.shape)
-                                        except: pass
+                                        space.remove(i.body, i.shape)
+                                        
                                         global kill_counter
                                         kill_counter += 15
                                 if rect.colliderect(i.center_rect()):
@@ -302,6 +302,9 @@ class Welt():
                                                         j.body.velocity.y = 0
                                                         j.body.velocity.x = 0
                                                         j.moveSpeed = j.baseMoveSpeed
+                                                else:
+                                                        j.body.position = j.start
+                                                        j.hitpoints = j.baseHitpoints
                                         spieler.body.velocity.x = 0
                                         spieler.body.velocity.y = -50
                                         spieler.body.position = (current_speicherpunkt.rect.left + 50, current_speicherpunkt.rect.top - 200)
@@ -311,7 +314,6 @@ class Welt():
                         spieler.selfblit()
 
 class Explotion(object):
-        
         def __init__(self, body):
                 pygame.mixer.Sound(explosion_sound).play()
                 self.x = body.position.x
@@ -485,7 +487,7 @@ def kugel_hits_highjump(space, arbiter):
 
 def player_hits_portal(space, arbiter):
         global current_level
-        random_int = random.randint(0,20)
+        random_int = random.randint(0,25)
         if random_int == 1 and not TOMFAKTOR:
                 score_string = "You randomly passed away of a heart attack" 
                 thisPrint = pygame.font.Font('freesansbold.ttf', 35).render(score_string,True,(255,255,255))
@@ -497,13 +499,11 @@ def player_hits_portal(space, arbiter):
                 current_level.spieler.is_alive = False
                 return True
         
-        #current_level.removeFromSpace()
         current_level.removeFromSpace()
         pygame.mixer.Sound(portal_sound).play()
         current_level.finish = True
         if game.index(current_level) + 1 < len(game):
                 current_level = game[game.index(current_level) + 1]
-                #current_speicherpunkt = current_level.speicherpunkte[0]
         return True
 
 def player_hits_dash(space,arbiter):
@@ -617,7 +617,7 @@ explosions = []
 
 
 def main():
-        global score,dead_show,death_counter, kill_counter, current_level, opponentscore,frame_counter
+        global score,dead_show,death_counter, kill_counter, current_level, opponentscore,frame_counter, final_boss
         start_time = time.time()
         pause_time = 0
         bonustime = 300
@@ -732,14 +732,17 @@ def main():
                                 for i in kugeln: i.update()
                                 for i in explosions: i.update()
                                 pygame.draw.rect(LEVELSURF,(155,0,0),pygame.Rect(0,LEVELSURF.get_height() - w.sterbehoehe,LEVELSURF.get_width(),3))
-                                space.step(1/35)
-                                clock.tick(25)
-                                DISPLAYSURF.blit(camera_blit(), (0,0))
-                                if final_boss != None: # Endgegner Portal spawn!
+                                if final_boss != None: # Endgegner Tot - Level done!
                                         if final_boss.dead:
+                                                final_boss = None
                                                 w.portal = Speicherpunkt.Portal(w.boeden[28], [portal1_sprite])
                                                 space.add(w.portal.shape)
-                                 
+                                                #if game.index(current_level) + 1 < len(game):
+                                                #current_level = game[game.index(current_level) + 1]
+                                if not w.finish: space.step(1/35)
+                                clock.tick(25)
+                                DISPLAYSURF.blit(camera_blit(), (0,0))
+
                                 ### Highscoreanzeige ###
                                 if bonustime > 0: bonustime = 300 - int(time.time() - start_time - pause_time)
                                 else: bonustime = 0
@@ -853,6 +856,7 @@ def construct_level(level,players):
         if level == 5:
                 final_boss = Hindernis.Endgegner(4100,4700,3400,15,Level.endgegner_sprite,10,20)
                 enemys.append(final_boss)
+                
         waypoints = []
         for speicherpunkt in Level.speicherpunkte[level]:
                 waypoints.append(Speicherpunkt.Speicherpunkt(blocks[speicherpunkt], [waypoint_sprite]))
@@ -867,8 +871,8 @@ def construct_level(level,players):
                         spaceshuttles.append(Boden.Stein(blocks[stein], turbine_sprite))
         p = Speicherpunkt.Portal(blocks[Level.portale[level]], [portal2_sprite])
         bild = pygame.image.load(Level.bg_bilder[level]).convert()
-
-        return Welt(bild,blocks,enemys,powerups,spaceshuttles,waypoints,p,players[0],players[1],texts)
+        w = Welt(bild,blocks,enemys,powerups,spaceshuttles,waypoints,p,players[0],players[1],texts)
+        return w
 
 def load_screen(level):
         loadstring = "Loading: "
@@ -896,11 +900,11 @@ def set_everything(start_level):
         elif start_level == 6:
                 game.append(construct_level(6,(s,s2)))
         else:
-                for w in range(start_level,6):
+                for w in range(start_level,7):
                         if w < 6: load_screen(w)
                         x = construct_level(w,(s,s2))
                         game.append(x)
-                        #if w == 3: x.sterbehoehe = 4000
+                        if w == 3: x.sterbehoehe = 4000
                         if w == 4: x.sterbehoehe = 100
         current_level = game[0]#start_level
         score = 0 

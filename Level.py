@@ -21,7 +21,7 @@ w2_bild = "Gui/bg2.jpg"
 w3_bild = "Gui/bg3.jpg"
 w4_bild = "Gui/bg4.jpg"
 w5_bild = "Gui/bg5.jpg"
-w6_bild = w4_bild
+w6_bild = "Gui/bg_bonus.jpg"
 bg_bilder = [tut_bild,w1_bild,w2_bild,w3_bild,w4_bild,w5_bild,w6_bild]
 
 ########################Tutorial#######################################################################
@@ -101,7 +101,7 @@ tut_steine = [27]
 
 #LEVEL1
 # Inhalt der Tupel:   ( left,   top,    width,  height)
-w1_blockkoordinaten = [(50, 3000, 300, 50),
+w1_blockkoordinaten = [(50, 3000, 500, 50),
                     (550, 3000, 300, 50),
                     (950, 2850, 300, 50),
                      (1250, 2850, 50, 450),
@@ -134,7 +134,8 @@ w1_blockkoordinaten = [(50, 3000, 300, 50),
                        (3900, 2000, 150, 50),
                        (3850, 1950, 50, 100), # 31
                        (4050, 1600, 50, 250),  # Auskommentiert!?
-                       (4300, 2100, 50, 50)]
+                       (4300, 2100, 50, 50),
+                       (0,2500,50,550)]
 
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 w1_boden_gegner = ((2, 3, zyklop_sprite, 50, 100),
@@ -143,7 +144,7 @@ w1_boden_gegner = ((2, 3, zyklop_sprite, 50, 100),
                    (12, 3, alien_sprite, 10, 100),
                    (30, 10, alien_sprite, 10, 10))
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
-w1_flug_gegner = [#(1600, 2100, 3850, 4, pacman_sprite, 10, 100,True),
+w1_flug_gegner = [(1600, 2100, 3850, 4, pacman_sprite, 10, 100,True),
                   (900, 1450, 3850, 6, pacman_sprite, 10, 100,True),
                   (4100, 4500, 1000, 6, pacman_sprite, 10, 100, False),
                   (4100, 4500, 1500, 6, pacman_sprite, 10, 100, False),
@@ -173,7 +174,6 @@ w2_speichpunkte = [9]
 w2_steine= []
 w2_portal = 10
 
-
 #LEVEL3
 ###########Blöcke###################
 # Inhalt der Tupel:   ( left,   top,    width,  height)
@@ -200,10 +200,10 @@ w3_blockkoordinaten = [(50,2000,350,80),
                     (2800,2200,200,1750),#[20]
                     (3000,2100,100,1850),
                     (2400,2050,50,100),
-                       (1500,700,300,50),
-                       (1800,700,200,50),
-                       (2000,600,50,150),
-                       (2050,700,350,50),#[26]
+                       (1400,700,300,50),
+                       (1750,700,250,50),
+                       (1850,600,50,150),
+                       (2000,700,400,50),#[26]
                        (2350,600,50,300),
                        (4500,2000,1500,400),
                        (5000,1950,150,50),
@@ -396,7 +396,7 @@ w4_boden_gegner = [(14,25,alien_sprite,20,25),
                    (63,10,alien_sprite,20,17),
                    (61,10,alien_sprite,20,14),
                    (59,10,alien_sprite,20,10),
-                   (57,10,alien_sprite,20,18)] # TODO
+                   (57,10,alien_sprite,20,18)] 
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
 w4_flug_gegner = [(7500,7800,1375, 12, pacman_sprite,10,10,False),
                   (7350,7650,1675, 12, pacman_sprite,10,10,False),
@@ -424,7 +424,7 @@ w5_blockkoordinaten = [(200,4000,800,300),
                        (1500,4000,400,300),
                        (100,100,100,100),
                        (3500,3800,400,1000),
-                       (3860,3000,50,1600),
+                       (3860,3000,30,1600),
                        (3500,3400,400,300),
                        (3800,3800,1,1), #12
                        (3900,4500,1000,300),
@@ -433,12 +433,12 @@ w5_blockkoordinaten = [(200,4000,800,300),
                        (3500,3200,400,200),
                        (4100,4250,50,50),
                        (4100,4000,50,50),
-                       (4100,3750,0,0),
-                       (4100,3500,50,50),#20
+                       (4100,750,0,0),
+                       (4100,500,0,0),#20
                        (4700,4250,50,50),
                        (4700,4000,50,50),
                        (4700,3750,50,50),
-                       (4700,3500,50,50),
+                       (4700,500,0,0),
                        (4420,3875,50,50),
                        (4420,4125,50,50),
                        (4420,3625,50,50),

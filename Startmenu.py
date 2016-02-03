@@ -682,7 +682,6 @@ class Main:
             leveltext = random.choice(Texts.level_4_texts)
         elif level == 5:
             leveltext = random.choice(Texts.level_5_texts)
-            print("1")
         else:
             return False
         
@@ -724,7 +723,8 @@ class Main:
                     if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
                         self.endIt()
                     if event.type == KEYUP and event.key == K_SPACE:
-                        return
+                        if alpha_value > 250: pass
+                        else: return
                     if event.type == KEYUP and event.key == K_RETURN:
                         alpha_value = 260
                 if alpha_value <= 0:

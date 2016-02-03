@@ -195,9 +195,12 @@ class Endgegner(FliegenderGegner):
     def __init__(self, anfang, ende, topOrleft, moveSpeed, sprite, mass, feuerrate, waagrecht=True):
         FliegenderGegner.__init__(self, anfang, ende, topOrleft, moveSpeed, sprite, mass, feuerrate, waagrecht)
         self.endgegner = True
-        self.hitpoints = 27
+        self.hitpoints = 42
+        self.baseHitpoints = self.hitpoints
         self.body.velocity_func = self.slow_space
         self.shape.collision_type = 6
+        self.initial_movespeed = moveSpeed
+        self.init_feuerrate = feuerrate
 
     def slow_space(self, body, gravity, damping, dt):
         body.velocity.y = 0
@@ -228,11 +231,14 @@ class Endgegner(FliegenderGegner):
             self.spalte += 1
         else:
             self.spalte = 0
-        
-        if self.hitpoints == 10 or self.hitpoints == 5:
-            self.moveSpeed += 15
-            self.feuerrate = 8
+        if self.hitpoints % 5 == 0:
+            self.moveSpeed += 10
+            if self.feuerrate > 4:
+                self.feuerrate -= 1
             self.hitpoints -= 1
+        elif self.hitpoints == 42:
+            self.moveSpeed =self.initial_movespeed
+            self.feuerrate = self.init_feuerrate
             
 
         
