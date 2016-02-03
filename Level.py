@@ -58,7 +58,8 @@ tut_blockkoordinaten = [(100,4000,900,500),
                     (0,0,100,4500), #  [28]
                     (100,0,6000,100),
                     (300,300,150,100),
-                    (3650,3190,200,10)]
+                    (3650,3190,200,10)
+                        ]
 # Inhalt der Tupel:   (left,   top,    width,  height,size,text)
 tut_textboxes = [(200,3700,800,60,35,"Welcome to the tutorial of 'The Random Run'"),
                  (600,4100,350,40,25,"Press 'Space' to jump"),
@@ -135,7 +136,8 @@ w1_blockkoordinaten = [(50, 3000, 500, 50),
                        (3850, 1950, 50, 100), # 31
                        (4050, 1600, 50, 250),  # Auskommentiert!?
                        (4300, 2100, 50, 50),
-                       (0,2500,50,550)]
+                       #(0,2500,50,550)
+                       ]
 
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
 w1_boden_gegner = ((2, 3, zyklop_sprite, 50, 100),
@@ -159,41 +161,28 @@ w1_portal = 33
 #LEVEL2
 ###########Blöcke###################
 # Inhalt der Tupel:   ( left,   top,    width,  height)
-w2_blockkoordinaten = [(100, 5000, 100, 50),
-                       (200, 4900, 100, 50),
-                       (300, 4700, 100, 50),
-                       (400, 4400, 100, 50),
-                       (500, 4100, 200, 50),
-                       (600, 3600, 100, 50), #5
-                       (1000, 3600, 100, 50),
-                       (1450, 3600, 200, 50),
-                       (2000, 3600, 700, 50),
-                       (2700, 3100, 100, 50),
-                       (1900, 3600, 100, 50)#10
-                       ,(3900, 4000, 100, 50),
-                       (4100,3100,100,50)]
+w2_blockkoordinaten = [(100, 5000, 100, 50),  (200, 4900, 100, 50), (300, 4700, 100, 50), (400, 4400, 100, 50), (500, 4100, 200, 50), (600, 3600, 100, 50),
+                       (1000, 3600, 100, 50), (1450, 3600, 200, 50), (2000, 3600, 700, 50), (2700, 3100, 100, 50), (1900, 3600, 100, 50)#10
+                       ,(3900, 4000, 100, 50)]
 
 #Boden Gegner: (Block, Geschwindigkeit, Sprite, Masse,Feuerrate)
-w2_boden_gegner = [(2,10,alien_sprite,1,22),
-                   (2,10,alien_sprite,1,22)] 
+w2_boden_gegner = [] 
 #Fliegender Gegner: (anfang, ende, topOrleft, Geschwindigkeit, Sprite, Masse,Feuerrate, Waagrecht oder nicht (Bool, standart true))
-w2_flug_gegner = [(2850, 3150, 3100, 5, pacman_sprite, 10, 125, True),
-                  (3200, 3550, 3100, 5, pacman_sprite, 10, 125, True),
-                  (3600, 3900, 3100, 5, pacman_sprite, 10, 125, True),
-                  (3100, 3500, 4000, 5, pacman_sprite, 10, 125, False),
-                  (3600, 4000, 4000, 5, pacman_sprite, 10, 125, False)]
+w2_flug_gegner = [(2850, 3150, 3100, 5, pacman_sprite, 10, 125, True),(3200, 3550, 3100, 5, pacman_sprite, 10, 125, True),(3600, 3900, 3100, 5, pacman_sprite, 10, 125, True),
+                  (3100, 3500, 4000, 5, pacman_sprite, 10, 125, False), (3600, 4000, 4000, 5, pacman_sprite, 10, 125, False)]
 w2_powerups = [("highjump", 4), ("dash", 6), ("highjump", 8)]
 w2_speichpunkte = [9]
 w2_steine= []
-w2_portal = 12
+w2_portal = 11
+
 
 #LEVEL3
 ###########Blöcke###################
 # Inhalt der Tupel:   ( left,   top,    width,  height)
-w3_blockkoordinaten = [(50,2000,350,80),
+w3_blockkoordinaten = [(150,2000,300,80),
                     (500,3000,100,100),
-                    (0,1500,50,580),
-                    (0,1400,900,100),
+                    (50,1500,100,580),
+                    (50,1400,850,100),
                     (200,1250,70,50), #[4]
                     (300,750,200,50),
                     (850,650,400,50),
@@ -290,11 +279,11 @@ x = 2000
 #    y = 8070 - x
 #    schräge.append((x,y,1,20))
 #    x += 3
-w4_blockkoordinaten = [(150,7750,400,250),
+w4_blockkoordinaten = [(200,7750,400,250),
                        (700,7750,300,250),
-                       (0,6700,100,1300),
-                       (100,7750,50,250), #3
-                       (100,100,100,100),
+                       (50,6700,100,1300),
+                       (150,7750,50,250), #3
+                       (150,100,100,100),
                        (1200,7750,50,50),
                        (1200,7500,50,50),
                        (1500,7750,50,50),

@@ -10,7 +10,7 @@ multiplayer_ghostmode = True
 survival_time = 0
 score = 0
 opponentscore = 0
-test_startlvl = 2# Für Testen
+test_startlvl = 5# Für Testen
 hitpoints = 5
 death_counter = 0
 dead_show = 0
@@ -219,9 +219,10 @@ class Welt():
                                         ex = Explotion(i.body)
                                         i.dead = True
                                         space.remove(i.body, i.shape)
-                                        
                                         global kill_counter
                                         kill_counter += 15
+  
+                                        
                                 if rect.colliderect(i.center_rect()):
                                         LEVELSURF.blit(i.current_sprite(), i.center_rect())
                                         random_int = random.randint(0,800)
@@ -231,6 +232,17 @@ class Welt():
                                                 k = Kugel((1200 * i.direction, -50),((245,12,188)), i.body.position.x + (15 * i.direction), i.body.position.y - 10, False)
                                                 k.shape.collision_type = 3
                                                 k.shape.sprite_group = 2
+                                                if i.endgegner:
+                                                        k1 = Kugel((-1000, 500),((245,12,188)), i.body.position.x - 20, i.body.position.y +30, False)
+                                                        k2 = Kugel((0, 500),((245,12,188)), i.body.position.x, i.body.position.y +30, False)
+                                                        k3 = Kugel((1000, 500),((245,12,188)), i.body.position.x + 20, i.body.position.y +30, False)
+                                                        k1.shape.collision_type = 3
+                                                        k1.shape.sprite_group = 2
+                                                        k2.shape.collision_type = 3
+                                                        k2.shape.sprite_group = 2
+                                                        k3.shape.collision_type = 3
+                                                        k3.shape.sprite_group = 2
+                                                        ######################################%%%%%%%%%%%%%%%%%%%%%%%    
                                 i.update()
                                 
                 for i in self.power_ups:
@@ -427,6 +439,11 @@ def kugel_hits_gegner(space, arbiter):
         for i in current_level.hindernisse:
                 if i.body == arbiter.shapes[0].body:
                         i.hitpoints -= 1
+                if i.endgegner: ####################################MAAAAAAAAAAAAAAAAAAAAAARRRRRRRRRRRRRIIIIIIIIIIIIIIIUUUUUUUUUUUUUUUUSSSSSSSSSSSSSSSSSs
+                        j = pymunk.Body()
+                        j.position = i.body.position
+                        j.position.y -= 40
+                        ex = Explotion(j)
         return True
 
 def kugel_hits_fliegender_gegner(space, arbiter):

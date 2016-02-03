@@ -60,12 +60,12 @@ normal_level_2 = [("Finally you reach the Portal","Gui/splash.png"),
                   ("'So you have seen him'",None),
                   ("'Seen whom?', you reply",None),
                   ("'The Being that brought you here..'",None),
-                  ("'Well, I didn't, really, just some shades.. a figure!'",None),
+                  ("'Well, I didn't, really, just some shades.. a figure!'","Gui/shadow.jpg"),
                   ("'He doesn't want people to know what he looks like..'",None),
                   ("Just as the shadow appeared, it vanished again",None),
                   ("This time it seems to be a vulcanic planet","Gui/bg3.jpg"),
                   ("'A perfect place for a villian to hide', you think",None),
-                  ("You scream as you fall hard on the dusky ground",)]
+                  ("You scream as you fall hard on the dusky ground",None)]
 
 level_2_texts = [normal_level_2]
 

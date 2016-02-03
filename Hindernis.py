@@ -24,6 +24,7 @@ class Hindernis():
         self.sprite_iterator = 0
         self.body = pymunk.Body(self.mass, pymunk.inf)
         self.kugel_counter = 0
+        self.endgegner = False
 
         
         
@@ -211,7 +212,7 @@ class Endgegner(FliegenderGegner):
             
     def make_sprites(self):
         for i in range(0,7):
-            x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/7 + 10 , 80, self.sprite.sprite_sheet.get_width()/7 - 50 , self.sprite.sprite_sheet.get_height() -100).convert()
+            x = self.sprite.get_image(self.spalte * self.sprite.sprite_sheet.get_width()/7 + 10 , 90, self.sprite.sprite_sheet.get_width()/7 - 10 , self.sprite.sprite_sheet.get_height() -180).convert()
             x = pygame.transform.scale(x, (250, 175)).convert()
             self.sprites1.append(x)
             self.sprites2.append(pygame.transform.flip(x,True,False))

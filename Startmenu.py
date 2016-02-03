@@ -1,4 +1,4 @@
-import pygame,time, sys, MASTER, Gameclient,Gameserver,Texts, random#MASTERmulit,
+import pygame,time, sys, MASTER, Gameclient,Gameserver,Texts, random
 import fileinput # Für Highscore
 from Startmenu_Images import *
 from pygame.locals import *
@@ -27,7 +27,7 @@ gamename = "The Random Run"
 
 WINDOWw = 800 #window width
 WINDOWh = 600 #window height
-
+clock = pygame.time.Clock()
 buttonDistance = 50
 buttonWidth = int(WINDOWh/4)
 buttonHeight = int(buttonWidth / 2)
@@ -35,7 +35,7 @@ buttonHeight = int(buttonWidth / 2)
 firstButtonXpos = WINDOWw/2 - buttonWidth - buttonDistance/2
 firstButtonYpos = WINDOWh/3
 
-levelcodes = ["","","heartattack","Not available","Unavailable","stonepower","None ;)"]
+levelcodes = ["","","heartattack","randomness","unavailable","stonepower","None ;)"]
 
 def music_change(new_music):
     pygame.mixer.music.stop()
@@ -708,6 +708,7 @@ class Main:
         
             
             while alpha_value < 255:
+                clock.tick(42)
                 self.display_surf.fill((0,0,0))
                 self.display_surf.blit(thisPrint,thisRect)
                 if line[1] != None:
